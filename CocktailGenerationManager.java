@@ -8,10 +8,12 @@ public class CocktailGenerationManager {
 	private int generationNumber;
 	protected CocktailGeneration cocktailGeneration;
 	private int populationSize;
+	private CheckFitness fitnessCheck;
 		
-	public CocktailGenerationManager(int generationNumber, int generationSize) {
+	public CocktailGenerationManager(int generationNumber, int generationSize, CheckFitness fitnessCheck) {
 		this.generationNumber = generationNumber;
 		this.populationSize = generationSize;
+		this.fitnessCheck = fitnessCheck;
 		
 		Cocktail[] cocktails = new Cocktail[generationSize];
 		
@@ -74,6 +76,10 @@ public class CocktailGenerationManager {
 	
 	public int getPopulationSize() {
 		return populationSize;
+	}
+	
+	public void evaluate() {
+		cocktailGeneration.getNextRandomCocktail().setFitness(fitnessCheck);
 	}
 	
 	public String toString() {

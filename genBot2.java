@@ -3,7 +3,15 @@ package genBot2;
 public class genBot2 {
 
 	public static void main(String[] args) {
-		CocktailGenerationManager manager = new CocktailGenerationManager(0, 10);
+		CheckFitness fitnessCheck = new MatchCocktail(new Cocktail(new double[] {3.0/10.0, 6.0/10.0, 1.0/10.0}));
+
+		CocktailGenerationManager manager = new CocktailGenerationManager(0, 10, fitnessCheck);
+		
+		int generationSize = manager.getPopulationSize();
+		
+		for (int i = 0; i < generationSize; i++) {
+			manager.evaluate();
+		}
 		
 		System.out.println(manager.randomToString());
 		

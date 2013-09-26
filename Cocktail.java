@@ -132,12 +132,17 @@ public class Cocktail implements Comparable<Cocktail> {
 		
 		for (int i = 0; i < ingredientAmounts.length; i++) {
 			out += ingredientAmounts[i].toString();
-			if (i < ingredientAmounts.length - 1) {
+//			if (i < ingredientAmounts.length - 1) {
 				out += ", ";
-			}
+//			}
 		}
+		out += "Fitness: " + fitness;
 		
 		return out;
+	}
+	
+	public void setFitness(CheckFitness fitnessCheck) {
+		fitness = fitnessCheck.checkFitness(this);
 	}
 
 	@Override
