@@ -106,18 +106,18 @@ public class CocktailGeneration {
 		
 		double cocktailSelector1 = rnd.nextDouble();
 		double cocktailSelector2 = rnd.nextDouble();
-		
-		Cocktail cocktail1 = null;
-		Cocktail cocktail2 = null;
+				
+		Cocktail cocktail1 = population[0];
+		Cocktail cocktail2 = population[0];
 		
 		double[] rouletteWheel = generateRouletteWheel();
-		
+				
 		for (int i = 1; i < rouletteWheel.length; i++) {
-			if (cocktailSelector1 > rouletteWheel[i]) {
-				cocktail1 = population[i - 1];
+			if (cocktailSelector1 > rouletteWheel[i - 1] && cocktailSelector1 < rouletteWheel[i]) {
+				cocktail1 = population[i];
 			}
-			if (cocktailSelector2 > rouletteWheel[i]) {
-				cocktail2 = population[i - 1];
+			if (cocktailSelector2 > rouletteWheel[i - 1] && cocktailSelector2 < rouletteWheel[i]) {
+				cocktail2 = population[i];
 			}
 		}
 		

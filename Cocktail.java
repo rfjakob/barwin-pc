@@ -121,6 +121,13 @@ public class Cocktail implements Comparable<Cocktail> {
 		for (int i = 0; i < IngredientArray.getInstance().getNumberOfIngredients(); i++) {
 			if (i != mutatedIngredient) {
 				amounts[i] = amounts[i] + changeOthers;
+				
+				// this is not very elegant, but i found no better solution
+				if (amounts[i] < 0) {
+					amounts[i] = 0;
+				} else if (amounts[i] > 1) {
+					amounts[i] = 1;
+				}
 			}
 		}
 		
