@@ -3,11 +3,27 @@ package genBot2;
 import java.util.Arrays;
 import java.util.Random;
 
+/*
+ * A cocktail consists of a multiple IngredientAmounts (each ingredient in
+ * the IngredientArray must have an IngredientAmount).
+ * At the moment also the Cocktails Fitness is stored in the Cocktail class,
+ * however it might be better to take the fitness to it's own class later!
+ */
+
 public class Cocktail implements Comparable<Cocktail> {
 	
 	private IngredientAmount[] ingredientAmounts;
 	private double fitness;
-
+	private boolean fitnessIsSet;
+	
+	/*
+	 * Constructor
+	 * When the sum of all amounts is not equal to one, the amounts get normalized
+	 * so that this requirement is met.
+	 * @param amount an array of amounts (as doubles). The length of this array must
+	 * equal the length in IngredientArray
+	 * @see IngredientArray
+	 */
 	public Cocktail(double[] amount) {
 		
 		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
@@ -30,10 +46,13 @@ public class Cocktail implements Comparable<Cocktail> {
 			ingredientAmounts[i] = new IngredientAmount(ingredients[i], amount[i] / sum);
 		}
 		
-		// -1 is a placeholder for not set yet
-		fitness = -1;
+		fitnessIsSet = false;
 	}
 	
+	/*
+	 * The first generation needs random cocktails. They are constructed in this
+	 * static method. It may be better to create an own class for that.
+	 */
 	public static Cocktail newRandomCocktail() {
 		int ingredientNumber = IngredientArray.getInstance().getAllIngredients().length;
 		
@@ -61,6 +80,10 @@ public class Cocktail implements Comparable<Cocktail> {
 		return ingredientAmounts;
 	}
 	
+	/*
+	 * Returns the amount for an ingredient specified
+	 * @param ingredient The ingredient
+	 */
 	public double getAmount(Ingredient ingredient) {
 		for (int i = 0; i < ingredientAmounts.length; i++) {
 			if (ingredientAmounts[i].getIngredient().equals(ingredient)) {
@@ -70,6 +93,10 @@ public class Cocktail implements Comparable<Cocktail> {
 		throw new IllegalIngredientException("Ingredient " + ingredient.getName() + "is not defined");
 	}
 	
+	/*
+	 * Returns the amount for an ingredient specified
+	 * @param ingredientName The ingredients name
+	 */
 	public double getAmount(String ingredientName) {
 		Ingredient ingredient = IngredientArray.getInstance().getByName(ingredientName);
 		
@@ -79,15 +106,37 @@ public class Cocktail implements Comparable<Cocktail> {
 			throw new IllegalIngredientNameException("The ingredient " + ingredientName + "has not been defined!");
 		}
 	}
+
+	public boolean isFitnessSet() {
+		return fitnessIsSet;
+	}
 	
 	public void setFitness(double fitness) {
 		this.fitness = fitness;
+		fitnessIsSet = true;
 	}
 	
-	public double getFitness() {
-		return fitness;
+	/*
+	 * Returns the fitness if the fitness was set before. Throws an exception otherwise.
+	 * @return Coctails fitness
+	 */
+	public double getFitness() throws FitnessNotSetException {
+		if (isFitnessSet()) {
+			return fitness;
+		} else {
+			throw new FitnessNotSetException("Fitness was not set yet!");
+		}
 	}
 	
+	/*
+	 * Mutates the cocktail. An ingredient is randomly chosen and then changed
+	 * following a normal distribution with a standard deviation specified.
+	 * All other ingredients are then also changed so that the sum of the ingredients
+	 * equals one again. This is maybe not implemented optimal (check the code) but I 
+	 * found no better way.
+	 * @param stdDeviation the standard deviation
+	 * @return A mutated Cocktail
+	 */
 	public Cocktail mutate(double stdDeviation) {
 		if (stdDeviation < 0) {
 			throw new IllegalArgumentException("stdDeviation must be greater than 0 (" + stdDeviation + "was specified)!");
@@ -134,32 +183,43 @@ public class Cocktail implements Comparable<Cocktail> {
 		return new Cocktail(amounts);
 	}
 	
-	public String toString() {
-		String out = "";
-		
-		for (int i = 0; i < ingredientAmounts.length; i++) {
-			out += ingredientAmounts[i].toString();
-//			if (i < ingredientAmounts.length - 1) {
-				out += ", ";
-//			}
-		}
-		out += "Fitness: " + fitness;
-		
-		return out;
-	}
-	
 	public void setFitness(CheckFitness fitnessCheck) {
 		fitness = fitnessCheck.checkFitness(this);
 	}
 
+	public String toString() {
+			String out = "";
+			
+			for (int i = 0; i < ingredientAmounts.length; i++) {
+				out += ingredientAmounts[i].toString();
+	//			if (i < ingredientAmounts.length - 1) {
+					out += ", ";
+	//			}
+			}
+			out += "Fitness: " + fitness;
+			
+			return out;
+		}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 * This should maybe also be moved to another class
+	 */
 	@Override
 	public int compareTo(Cocktail otherCocktail) {
-		if (getFitness() < otherCocktail.getFitness()) {
-			return -1;
-		} else if (getFitness() > otherCocktail.getFitness()) {
-			return 1;
-		} else {
-			return 0;
+		try {
+			if (getFitness() < otherCocktail.getFitness()) {
+				return -1;
+			} else if (getFitness() > otherCocktail.getFitness()) {
+				return 1;
+			} else {
+				return 0;
+			}
+		} catch (FitnessNotSetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 		}
+		return 0;
 	}
 }
