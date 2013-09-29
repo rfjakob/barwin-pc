@@ -4,25 +4,33 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
+/*
+ * A genetic algorithm works in generations. This class defines one generation
+ * of cocktails.
+ */
+
 public class CocktailGeneration {
 	
-	private int populationSize;
 	private Cocktail[] population;
 	
 	private int[] randomPopulationOrder;
 	private int randomPopulationPosition;
 
-	public CocktailGeneration(int populationSize, Cocktail[] population) {
-		
-		this.populationSize = populationSize;
-		
+	/*
+	 * constructor
+	 * @param population an Array of cocktails
+	 */
+	public CocktailGeneration(Cocktail[] population) {		
 		this.population = population;
 		
-		this.randomPopulationOrder = generateRandomPopulationOrder(populationSize);
+		this.randomPopulationOrder = generateRandomPopulationOrder(population.length);
 		
 		this.randomPopulationPosition = 0;
 	}
-	
+		
+	/*
+	 * This method returns the numbers 0 to populationSize - 1 in random order
+	 */
 	private int[] generateRandomPopulationOrder(int populationSize) {
 		int[] randomPopulationOrder = new int[populationSize];
 		for (int i = 0; i < populationSize; i++) {
@@ -42,13 +50,18 @@ public class CocktailGeneration {
 	}
 
 	public int getPopulationSize() {
-		return populationSize;
+		return getPopulation().length;
 	}
 	
 	public Cocktail[] getPopulation() {
 		return population;
 	}
 	
+	/*
+	 * Returns the Cocktail with number cocktailNumber (usually used for random access)
+	 * @param cocktalNumber the position of the cocktail
+	 * @return the cocktail
+	 */
 	public Cocktail getCocktail(int cocktailNumber) {
 		if (cocktailNumber < 0 || cocktailNumber >= population.length) {
 			throw new IllegalArgumentException("There is no Cocktail number " + cocktailNumber + "in this generation!");
@@ -57,6 +70,10 @@ public class CocktailGeneration {
 		}
 	}
 	
+	/*
+	 * This works like an iterator - it returns the next random cocktail
+	 * @return the next random cocktail
+	 */
 	public Cocktail getNextRandomCocktail() {
 		Cocktail theCocktail =  getPopulation()[randomPopulationOrder[randomPopulationPosition]];
 		randomPopulationPosition = randomPopulationPosition + 1;
@@ -70,9 +87,13 @@ public class CocktailGeneration {
 //		return nextGen;
 //	}
 	
-	public double[] rouletteWheelShares() {
+	/*
+	 * Returns all fitnesses as shares of the sum of all fitnesses
+	 * @return an array of the shares
+	 */
+	public double[] rouletteWheelShares() throws FitnessNotSetException {
 		double fitnessSum = 0;
-		for (int i = 0; i < populationSize; i++) {
+		for (int i = 0; i < getPopulationSize(); i++) {
 			if (population[i].getFitness() >= 0) {
 				fitnessSum = fitnessSum + population[i].getFitness();
 			}
@@ -80,15 +101,20 @@ public class CocktailGeneration {
 		
 		// throw new exception if sum = 0
 		
-		double[] rouletteWheelShare = new double[populationSize];
-		for (int i = 0; i < populationSize; i++) {
+		double[] rouletteWheelShare = new double[getPopulationSize()];
+		for (int i = 0; i < getPopulationSize(); i++) {
 			rouletteWheelShare[i] = population[i].getFitness() / fitnessSum;
 		}
 		
 		return rouletteWheelShare;
 	}
 	
-	public double[] generateRouletteWheel() {
+	/*
+	 * Transforms the array to an "additive array" - shares like
+	 * {0.4, 0.5, 0.1} are transformed to {0.4, 0.9, 0.1}
+	 * @return an additive array
+	 */
+	public double[] generateRouletteWheel() throws FitnessNotSetException {
 		double[] rouletteWheelShare = rouletteWheelShares();
 		
 		double[] rouletteWheel = new double[rouletteWheelShare.length];
@@ -101,7 +127,11 @@ public class CocktailGeneration {
 		return rouletteWheel;
 	}
 	
-	public Cocktail crossover() {
+	/*
+	 * returns a new Cocktail based on the selection algorithm (is could be also taken
+	 * to another class - besides this is not really correct at the moment
+	 */
+	public Cocktail crossover() throws FitnessNotSetException {
 		Random rnd = new Random();
 		
 		double cocktailSelector1 = rnd.nextDouble();
@@ -136,27 +166,42 @@ public class CocktailGeneration {
 		return new Cocktail(ingredients);
 	}
 	
-	public CocktailGeneration allCrossovers(int populationSize) {
+	/*
+	 * makes all crossovers for the Generation
+	 * @return a new cocktail generation
+	 */
+	public CocktailGeneration allCrossovers(int populationSize) throws FitnessNotSetException {
 		Cocktail[] population = new Cocktail[populationSize];
 		
 		for (int i = 0; i < populationSize; i++) {
 			population[i] = crossover();
 		}
 		
-		return new CocktailGeneration(populationSize, population);
+		return new CocktailGeneration(population);
 	}
 	
+	/*
+	 * mutates the cocktails of the generation
+	 * @param stdDeviation the standard deviation of the mutation (how big should the
+	 * change be?).
+	 */
 	public void mutateCocktails(double stdDeviation) {
 		if (stdDeviation < 0) {
 			throw new IllegalArgumentException("stdDeviation must be greater than 0 (" + stdDeviation + "was specified)!");
 		}
-		for (int i = 0; i < populationSize; i++) {
+		for (int i = 0; i < getPopulationSize(); i++) {
 			population[i] = population[i].mutate(stdDeviation);
 		}
 	}
 
+	/*
+	 * applies elitism to the generation - some random cocktails are replaced with the
+	 * best cocktails from the previous generation
+	 * @param elitism number of cocktails to be replaced
+	 * @param cocktailGeneration the previous cocktail generation
+	 */
 	public void applyElitism(int elitism, CocktailGeneration cocktailGeneration) {
-		if (elitism < 0 || elitism > populationSize) {
+		if (elitism < 0 || elitism > getPopulationSize()) {
 			throw new IllegalArgumentException("Invalid number of elite-Cocktails (" + elitism + ")!");
 		}
 		
@@ -164,7 +209,7 @@ public class CocktailGeneration {
 		int[] otherRandomOrder = generateRandomPopulationOrder(cocktailGeneration.getPopulationSize());
 		Cocktail[] previousCocktails = new Cocktail[cocktailGeneration.getPopulationSize()];
 		
-		for (int i = 0; i < populationSize; i++) {
+		for (int i = 0; i < getPopulationSize(); i++) {
 			previousCocktails[i] = cocktailGeneration.getPopulation()[otherRandomOrder[i]];
 		}
 		

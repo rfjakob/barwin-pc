@@ -3,6 +3,11 @@ package genBot2;
 import java.util.Arrays;
 import java.util.Random;
 
+/*
+ * some kind of a container class - this class is responsible for generating a new
+ * generation of cocktails. Apart from information stored in the CocktailGeneration
+ * this class stores the generation number.
+ */
 public class CocktailGenerationManager {
 	
 	private int generationNumber;
@@ -10,6 +15,12 @@ public class CocktailGenerationManager {
 	private int populationSize;
 	private CheckFitness fitnessCheck;
 		
+	/*
+	 * constructor
+	 * @param generationNumber the number of the generation
+	 * @param generationSize how many Cocktails should be in the generation
+	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
+	 */
 	public CocktailGenerationManager(int generationNumber, int generationSize, CheckFitness fitnessCheck) {
 		this.generationNumber = generationNumber;
 		this.populationSize = generationSize;
@@ -21,9 +32,13 @@ public class CocktailGenerationManager {
 			cocktails[i] = generateRandomCocktail();
 		}
 		
-		cocktailGeneration = new CocktailGeneration(generationSize, cocktails);
+		cocktailGeneration = new CocktailGeneration(cocktails);
 	}
 	
+	/*
+	 * generates a random cocktail
+	 * @return a random cocktail
+	 */
 	private Cocktail generateRandomCocktail() {
 		int ingredientNumber = IngredientArray.getInstance().getNumberOfIngredients();
 		
@@ -50,7 +65,14 @@ public class CocktailGenerationManager {
 		return cocktail;
 	}
 	
-	public CocktailGeneration evolve(double stdDeviation, int elitism) {
+	/*
+	 * Evolves a cocktail generation with a specified stdDeviation and elitism. First
+	 * Crossover is applied, next mutation and then elitism
+	 * @param stdDeviation standard deviation
+	 * @param elitism number of cocktails to come to enter the next generation
+	 * @return the new cocktail generation
+	 */
+	public CocktailGeneration evolve(double stdDeviation, int elitism) throws FitnessNotSetException {
 		generationNumber = generationNumber + 1;
 		
 		// Clone current generation
@@ -78,6 +100,9 @@ public class CocktailGenerationManager {
 		return populationSize;
 	}
 	
+	/*
+	 * checks the fitness for the whole cocktail generation
+	 */
 	public void evaluate() {
 		cocktailGeneration.getNextRandomCocktail().setFitness(fitnessCheck);
 	}
@@ -89,6 +114,9 @@ public class CocktailGenerationManager {
 		return out;
 	}
 	
+	/*
+	 * prints the cocktail generation in random order
+	 */
 	public String randomToString() {
 		String out = "Generation number " + getGenerationNumber() + ":\n";
 		out += getCocktailGeneration().randomToString();

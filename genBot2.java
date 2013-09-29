@@ -15,7 +15,12 @@ public class genBot2 {
 		
 		System.out.println(manager.randomToString());
 		
-		System.out.println(manager.evolve(0.2, 2).toString());
+		try {
+			System.out.println(manager.evolve(0.2, 2).toString());
+		} catch (FitnessNotSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
