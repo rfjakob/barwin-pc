@@ -16,12 +16,19 @@ public class genBot2 {
 		System.out.println(manager.randomToString());
 		
 		try {
-			System.out.println(manager.evolve(0.2, 2).toString());
+			while (manager.getCocktailGeneration().getBestFitness() < -0.00005) {
+				manager.evolve(0.002, 2);
+				for (int i = 0; i < generationSize; i++) {
+					manager.evaluate();
+				}
+				
+				System.out.println(manager.bestFitnessToString());
+			}
+			
+			System.out.println("The best Cocktail is: " + manager.getCocktailGeneration().getBestCocktail().toString());
 		} catch (FitnessNotSetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
 }

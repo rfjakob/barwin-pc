@@ -110,12 +110,7 @@ public class Cocktail implements Comparable<Cocktail> {
 	public boolean isFitnessSet() {
 		return fitnessIsSet;
 	}
-	
-	public void setFitness(double fitness) {
-		this.fitness = fitness;
-		fitnessIsSet = true;
-	}
-	
+		
 	/*
 	 * Returns the fitness if the fitness was set before. Throws an exception otherwise.
 	 * @return Coctails fitness
@@ -185,6 +180,20 @@ public class Cocktail implements Comparable<Cocktail> {
 	
 	public void setFitness(CheckFitness fitnessCheck) {
 		fitness = fitnessCheck.checkFitness(this);
+		fitnessIsSet = true;
+	}
+	
+	public double[] getAmountsAsDouble() {
+		IngredientArray ingredients = IngredientArray.getInstance();
+		double[] amounts = new double[ingredients.getNumberOfIngredients()];
+		for (int i = 0; i < amounts.length; i++) {
+			amounts[i] = getAmount(ingredients.getAllIngredients()[i]);
+		}
+		return(amounts);
+	}
+	
+	public Cocktail copy() {
+		return new Cocktail(getAmountsAsDouble());
 	}
 
 	public String toString() {

@@ -18,7 +18,7 @@ public class MatchCocktail implements CheckFitness {
 			squaredDistance += Math.pow(referenceCocktail.getAmount(ingredients[i]) - cocktail.getAmount(ingredients[i]), 2);
 		}
 		
-		return (1.0 / squaredDistance);
+		return ((-1) * squaredDistance);
 	}
 
 }

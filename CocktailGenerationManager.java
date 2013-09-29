@@ -72,7 +72,7 @@ public class CocktailGenerationManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public CocktailGeneration evolve(double stdDeviation, int elitism) throws FitnessNotSetException {
+	public void evolve(double stdDeviation, int elitism) throws FitnessNotSetException {
 		generationNumber = generationNumber + 1;
 		
 		// Clone current generation
@@ -85,7 +85,7 @@ public class CocktailGenerationManager {
 		// Elitism
 		nextGeneration.applyElitism(elitism, getCocktailGeneration());
 		
-		return nextGeneration;
+		cocktailGeneration = nextGeneration;
 	}
 
 	public int getGenerationNumber() {
@@ -104,7 +104,17 @@ public class CocktailGenerationManager {
 	 * checks the fitness for the whole cocktail generation
 	 */
 	public void evaluate() {
-		cocktailGeneration.getNextRandomCocktail().setFitness(fitnessCheck);
+		if (cocktailGeneration.hasNextRandomCocktail()) {
+			cocktailGeneration.getNextRandomCocktail().setFitness(fitnessCheck);
+		}
+	}
+	
+	public String meanFitnessToString() throws FitnessNotSetException {
+		return "Generation number " + getGenerationNumber() + ": " + getCocktailGeneration().getMeanFitness();
+	}
+	
+	public String bestFitnessToString() throws FitnessNotSetException {
+		return "Generation number " + getGenerationNumber() + ": " + getCocktailGeneration().getBestFitness();
 	}
 	
 	public String toString() {
