@@ -14,6 +14,7 @@ public class CocktailGenerationManager {
 	protected CocktailGeneration cocktailGeneration;
 	private int populationSize;
 	private CheckFitness fitnessCheck;
+	private Recombination recombination;
 		
 	/*
 	 * constructor
@@ -21,10 +22,11 @@ public class CocktailGenerationManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public CocktailGenerationManager(int generationNumber, int generationSize, CheckFitness fitnessCheck) {
+	public CocktailGenerationManager(int generationNumber, int generationSize, CheckFitness fitnessCheck, Recombination recombination) {
 		this.generationNumber = generationNumber;
 		this.populationSize = generationSize;
 		this.fitnessCheck = fitnessCheck;
+		this.recombination = recombination;
 		
 		Cocktail[] cocktails = new Cocktail[generationSize];
 		
@@ -72,18 +74,20 @@ public class CocktailGenerationManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public void evolve(double stdDeviation, int elitism) throws FitnessNotSetException {
+	public void evolve(int truncation, int elitism) throws FitnessNotSetException {
 		generationNumber = generationNumber + 1;
 		
 		// Clone current generation
 		// CocktailGeneration nextGeneration = cocktailGeneration.clone();
 		
-		// Crossover
-		CocktailGeneration nextGeneration = cocktailGeneration.allCrossovers(populationSize);
-		// Mutate
-		nextGeneration.mutateCocktails(stdDeviation);
+		// Truncation
+		CocktailGeneration nextGeneration = truncation(truncation, getCocktailGeneration());
+
+		// Crossover & Mutation
+		nextGeneration = recombination.recombine(nextGeneration, getPopulationSize());
+
 		// Elitism
-		nextGeneration.applyElitism(elitism, getCocktailGeneration());
+		nextGeneration = applyElitism(elitism, getCocktailGeneration(), nextGeneration);
 		
 		cocktailGeneration = nextGeneration;
 	}
@@ -107,6 +111,64 @@ public class CocktailGenerationManager {
 		if (cocktailGeneration.hasNextRandomCocktail()) {
 			cocktailGeneration.getNextRandomCocktail().setFitness(fitnessCheck);
 		}
+	}
+
+	/*
+	 * applies truncation to the generation - the worst cocktails are removed from the
+	 * generation
+	 * @param truncation how many cocktails should be removed from the generation
+	 * @param cocktailGeneration 
+	 */
+	public CocktailGeneration truncation(int truncation, CocktailGeneration cocktailGeneration) {
+		if (truncation < 0) {
+			throw new IllegalArgumentException("Invalid number of truncated cocktails (" + truncation + ")!");
+		} else if (truncation >= cocktailGeneration.getPopulationSize()) {
+			throw new IllegalArgumentException("You try to truncate all cocktails of the generation. This is impossible");
+		}
+		Cocktail[] rankedCocktails = cocktailGeneration.rankCocktails();
+		
+		Cocktail[] truncatedCocktails = new Cocktail[rankedCocktails.length - truncation];
+		
+		for (int i = 0; i < rankedCocktails.length - truncation; i++) {
+			truncatedCocktails[i] = rankedCocktails[i];
+		}
+		
+		return new CocktailGeneration(truncatedCocktails);
+	}
+
+	/*
+	 * applies elitism to the generation - some random cocktails are replaced with the
+	 * best cocktails from the previous generation
+	 * @param elitism number of cocktails to be replaced
+	 * @param oldCocktailGeneration the previous cocktail generation
+	 * @param newCocktailGeneration the new cocktail generation
+	 * @return a cocktail generation with elitism applied
+	 */
+	public CocktailGeneration applyElitism(int elitism, CocktailGeneration oldCocktailGeneration, CocktailGeneration newCocktailGeneration) {
+		if (elitism < 0) {
+			throw new IllegalArgumentException("Invalid number of elite-Cocktails (" + elitism + ")!");
+		}
+
+		
+		if (elitism > newCocktailGeneration.getPopulationSize()) {
+			elitism = newCocktailGeneration.getPopulationSize();
+		}
+		if (elitism > oldCocktailGeneration.getPopulationSize()) {
+			elitism = oldCocktailGeneration.getPopulationSize();
+		}
+		
+		// rank
+		Cocktail[] oldCocktails = oldCocktailGeneration.rankCocktails();
+		
+		Cocktail[] newPopulation = newCocktailGeneration.getPopulation();
+		int[] randomOrder = newCocktailGeneration.generateRandomPopulationOrder();
+		
+		// now we have the previous cocktails ranked. Now replace <elitism> cocktails in the current population
+		for (int i = 0; i < elitism; i++) {
+			newPopulation[randomOrder[i]] = oldCocktails[i].copy();
+		}
+		
+		return new CocktailGeneration(newPopulation);
 	}
 	
 	public String meanFitnessToString() throws FitnessNotSetException {
