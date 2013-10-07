@@ -68,7 +68,7 @@ public class genBot2 {
 					manager.evaluate();
 				}
 				
-				System.out.println("Mean: " + manager.meanFitnessToString());
+				System.out.println("Mean: " + manager.meanFitnessToString() + ", ");
 				System.out.print("Best: " + manager.bestFitnessToString());
 			}
 			
