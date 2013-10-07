@@ -1,8 +1,8 @@
 package genBot2;
 
-public abstract class rouletteWheelSelection {
+public abstract class RouletteWheelSelection {
 
-	public rouletteWheelSelection() {
+	public RouletteWheelSelection() {
 		// TODO Auto-generated constructor stub
 	}
 

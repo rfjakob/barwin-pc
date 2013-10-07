@@ -2,15 +2,14 @@ package genBot2;
 
 import java.util.Random;
 
-public class OnePointCrossover extends rouletteWheelSelection implements Recombination {
+public class OnePointCrossover extends RouletteWheelSelection implements Recombination {
 
 	public OnePointCrossover() {
 		// Nothing at the moment
 	}
 
 	/*
-	 * returns two new Cocktails based on the selection algorithm (is could be also taken
-	 * to another class - besides this is not really correct at the moment
+	 * returns two new Cocktails based on the selection algorithm 
 	 */
 	public Cocktail[] crossover(CocktailGeneration cocktailGeneration) throws FitnessNotSetException {
 		Random rnd = new Random();
