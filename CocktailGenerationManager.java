@@ -11,7 +11,7 @@ import java.util.Random;
 public class CocktailGenerationManager {
 	
 	private int generationNumber;
-	protected CocktailGeneration cocktailGeneration;
+	private CocktailGeneration cocktailGeneration;
 	private int populationSize;
 	private CheckFitness fitnessCheck;
 	private Recombination recombination;

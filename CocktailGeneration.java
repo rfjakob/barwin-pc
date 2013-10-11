@@ -1,5 +1,6 @@
 package genBot2;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
@@ -9,8 +10,13 @@ import java.util.Random;
  * of cocktails.
  */
 
-public class CocktailGeneration {
+public class CocktailGeneration implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Cocktail[] population;
 	
 	private int[] randomPopulationOrder;

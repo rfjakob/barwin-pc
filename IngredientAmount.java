@@ -1,13 +1,19 @@
 package genBot2;
 
+import java.io.Serializable;
+
 /*
  * This class consists of an Ingredient and an amount (as a double).
  * It is therefore the base for a cocktail which consists of multipe 
  * IngredientAmounts.
  */
 
-public class IngredientAmount {
+public class IngredientAmount implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final Ingredient ingredient;
 	private double amount;
 	

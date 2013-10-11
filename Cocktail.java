@@ -1,5 +1,6 @@
 package genBot2;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -10,8 +11,12 @@ import java.util.Random;
  * however it might be better to take the fitness to it's own class later!
  */
 
-public class Cocktail implements Comparable<Cocktail> {
+public class Cocktail implements Comparable<Cocktail>, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private IngredientAmount[] ingredientAmounts;
 	private double fitness;
 	private boolean fitnessIsSet;

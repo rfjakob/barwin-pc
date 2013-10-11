@@ -1,5 +1,7 @@
 package genBot2;
 
+import java.io.Serializable;
+
 /*
  * Class to store ingredients. Only the name, the price per liter
  * and the output line for Arduino are stored. the specific amount
@@ -7,8 +9,12 @@ package genBot2;
  * @see IngredientAmount
  */
 
-public class Ingredient {
+public class Ingredient implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String name;
 	private double pricePerLiter;
 	private int arduinoOutputLine;
