@@ -3,11 +3,11 @@ package genBot2;
 public class MutationAndIntermediateRecombination implements Recombination {
 
 	private IntermediateRecombination intermediateRecombination;
-	private Mutation mutation;
+	private SureMutation mutation;
 	
 	public MutationAndIntermediateRecombination(double variableArea, double stdDeviation) {
 		this.intermediateRecombination = new IntermediateRecombination(variableArea);
-		this.mutation = new Mutation(stdDeviation);
+		this.mutation = new SureMutation(stdDeviation);
 	}
 
 	@Override

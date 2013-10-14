@@ -22,7 +22,7 @@ public class genBot2 {
 			}
 		
 		try {
-			DataBaseDriver drv = new DataBaseDriver("testDB.db", 10);
+			DataBaseDriver drv = new DataBaseDriver("testDB.db", true);
 			drv.reset();
 			
 			drv.insert(0, manager.getCocktailGeneration());

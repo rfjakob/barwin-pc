@@ -3,11 +3,11 @@ package genBot2;
 public class MutationAndOnePointCrossover implements Recombination {
 
 	private OnePointCrossover onePointCrossover;
-	private Mutation mutation;
+	private StandardMutation mutation;
 	
 	public MutationAndOnePointCrossover(double stdDeviation) {
 		this.onePointCrossover = new OnePointCrossover();
-		this.mutation = new Mutation(stdDeviation);
+		this.mutation = new StandardMutation(stdDeviation);
 	}
 
 	@Override

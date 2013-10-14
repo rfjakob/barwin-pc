@@ -15,18 +15,29 @@ import java.sql.Statement;
 
 public class DataBaseDriver {
 	
-	private int timeout;
+	private int timeout = 20;
 	private String fileName;
 	private Connection connection;
 
-	public DataBaseDriver(String fileName, int timeout) throws SQLException {
+	public DataBaseDriver(String fileName) throws SQLException {
 		this.fileName = fileName;
-		this.timeout = timeout;
-		setup(fileName, timeout);
+		setup(fileName);
 	}
 	
-	private void setup(String fileName, int timeout) throws SQLException {
+	public DataBaseDriver(String fileName, boolean reset) throws SQLException {
+		this(fileName);
+		
+		if (reset) {
+			reset();
+		}
+	}
+		
+	private void setup(String fileName) throws SQLException {
 		connection = DriverManager.getConnection("jdbc:sqlite:"+ fileName);
+	}
+	
+	public void setTimeOut(int timeout) {
+		this.timeout = timeout;
 	}
 	
 	public void reset() throws SQLException {
@@ -35,7 +46,7 @@ public class DataBaseDriver {
 			dbFile.delete();
 		}
 		
-		setup(fileName, timeout);
+		setup(fileName);
 
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(timeout);
