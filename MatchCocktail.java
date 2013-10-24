@@ -1,5 +1,7 @@
 package genBot2;
 
+import java.util.Random;
+
 public class MatchCocktail implements CheckFitness {
 	
 	Cocktail referenceCocktail;
@@ -17,6 +19,10 @@ public class MatchCocktail implements CheckFitness {
 		for (int i = 0; i < ingredients.length; i++) {
 			squaredDistance += Math.pow(referenceCocktail.getAmount(ingredients[i]) - cocktail.getAmount(ingredients[i]), 2);
 		}
+		
+		Random rnd = new Random();
+		
+		squaredDistance = squaredDistance + rnd.nextGaussian();
 		
 		return ((-1) * squaredDistance);
 	}

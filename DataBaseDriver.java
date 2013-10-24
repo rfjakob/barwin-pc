@@ -56,35 +56,56 @@ public class DataBaseDriver {
 				+ "time datetime default current_timestamp, "
 				+ "generation blob"
 				+ ")");
+		
+		statement.close();
 	}
 	
-	public void insert(int generationNumber, CocktailGeneration generation) throws SQLException, IOException {
-		PreparedStatement statement = connection.prepareStatement("insert into cocktailgeneration (number, generation) values (?, ?)");
+	public void insert(int generationNumber, CocktailGeneration generation) throws SQLException {
+		try {
+			PreparedStatement statement = connection.prepareStatement("insert into cocktailgeneration (number, generation) values (?, ?)");
+			statement.setObject(1, generationNumber);
+			statement.setObject(2, serialize(generation));
 		
-		statement.setObject(1, generationNumber);
-		statement.setObject(2, serialize(generation));
-		
-		statement.execute();
+			statement.execute();
+		} catch (SQLException | IOException e) {
+			throw new SQLException("Insertion failed", e);
+		}
 	}
 	
-	public CocktailGeneration select(int generationNumber) throws SQLException, ClassNotFoundException, IOException {
-		PreparedStatement statement = connection.prepareStatement("select generation from cocktailgeneration where number=?");
+	public CocktailGeneration select(int generationNumber) throws SQLException {
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement("select generation from cocktailgeneration where number=?");
 		
-		statement.setObject(1, generationNumber);
+			statement.setObject(1, generationNumber);
+		
+			ResultSet rs = statement.executeQuery();
+				
+			if (rs.next()) {
+				ObjectInputStream ois = new ObjectInputStream(
+						new ByteArrayInputStream(
+								rs.getBytes("generation")
+								)
+						);
+            
+				return (CocktailGeneration) ois.readObject();
+			}
+		} catch (SQLException | IOException | ClassNotFoundException e) {
+			throw new SQLException("select failed", e);
+		}
+		return null;
+	}
+	
+	public int getLastGenerationNumber() throws SQLException {
+		PreparedStatement statement = connection.prepareStatement("select max(number) from cocktailgeneration");
 		
 		ResultSet rs = statement.executeQuery();
-				
+		
 		if (rs.next()) {
-            ObjectInputStream ois = new ObjectInputStream(
-            	new ByteArrayInputStream(
-            		rs.getBytes("generation")
-            	)
-            );
-            
-            return (CocktailGeneration) ois.readObject();
+			return rs.getInt("max(number)");
 		}
 		
-		return null;
+		return 0;
 	}
 	
 	private byte[] serialize(CocktailGeneration cocktailGeneration) throws IOException {

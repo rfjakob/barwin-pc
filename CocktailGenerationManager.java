@@ -1,5 +1,7 @@
 package genBot2;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -15,6 +17,9 @@ public class CocktailGenerationManager {
 	private int populationSize;
 	private CheckFitness fitnessCheck;
 	private Recombination recombination;
+	private DataBaseDriver dbDriver;
+	
+	private boolean didJustLoad = false;
 		
 	/*
 	 * constructor
@@ -22,19 +27,29 @@ public class CocktailGenerationManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public CocktailGenerationManager(int generationNumber, int generationSize, CheckFitness fitnessCheck, Recombination recombination) {
-		this.generationNumber = generationNumber;
+	public CocktailGenerationManager(int generationSize, CheckFitness fitnessCheck, Recombination recombination, DataBaseDriver dbDriver) throws SQLException {
 		this.populationSize = generationSize;
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
+		this.dbDriver = dbDriver;
 		
-		Cocktail[] cocktails = new Cocktail[generationSize];
+		if (dbDriver.getLastGenerationNumber() == 0) {
+			Cocktail[] cocktails = new Cocktail[generationSize];
 		
-		for (int i = 0; i < generationSize; i++) {
-			cocktails[i] = generateRandomCocktail();
+			for (int i = 0; i < generationSize; i++) {
+				cocktails[i] = generateRandomCocktail();
+			}
+			
+			generationNumber = 0;
+		
+			cocktailGeneration = new CocktailGeneration(cocktails);
+		} else {
+			generationNumber = dbDriver.getLastGenerationNumber();
+			
+			cocktailGeneration = load();
+			
+			didJustLoad = true;
 		}
-		
-		cocktailGeneration = new CocktailGeneration(cocktails);
 	}
 	
 	/*
@@ -74,7 +89,13 @@ public class CocktailGenerationManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public void evolve(int truncation, int elitism) throws FitnessNotSetException {
+	public void evolve(int truncation, int elitism) throws FitnessNotSetException, SQLException {
+		if (didJustLoad) {
+			didJustLoad = false;
+		} else {
+			save();			
+		}
+		
 		generationNumber = generationNumber + 1;
 		
 		// Clone current generation
@@ -102,6 +123,34 @@ public class CocktailGenerationManager {
 	
 	public int getPopulationSize() {
 		return populationSize;
+	}
+	
+	public CocktailGeneration load() throws SQLException {
+		return load(dbDriver.getLastGenerationNumber());
+	}
+	
+	public CocktailGeneration load(int number) throws SQLException {
+		return dbDriver.select(number);
+	}
+	
+	public void loadFromDB(int number) throws SQLException {
+		cocktailGeneration = load(number);
+		
+		didJustLoad = true;
+	}
+	
+	public void loadLastFromDB() throws SQLException {
+		cocktailGeneration = load();
+		
+		didJustLoad = true;
+	}
+	
+	public void save() throws SQLException {
+		doSave(generationNumber, cocktailGeneration);
+	}
+	
+	public void doSave(int generationNumber, CocktailGeneration cocktailGeneration) throws SQLException {
+		dbDriver.insert(generationNumber, cocktailGeneration);
 	}
 	
 	/*
