@@ -1,8 +1,13 @@
 package genBot2;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.Random;
 
 /*
@@ -13,11 +18,17 @@ import java.util.Random;
 public class CocktailGenerationManager {
 	
 	private int generationNumber;
+	private int truncation;
+	private int elitism;
+	
 	private CocktailGeneration cocktailGeneration;
 	private int populationSize;
 	private CheckFitness fitnessCheck;
 	private Recombination recombination;
 	private DataBaseDriver dbDriver;
+	
+	private String propPath;
+	private String dbDriverPath;
 	
 	private boolean didJustLoad = false;
 		
@@ -27,16 +38,74 @@ public class CocktailGenerationManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public CocktailGenerationManager(int generationSize, CheckFitness fitnessCheck, Recombination recombination, DataBaseDriver dbDriver) throws SQLException {
-		this.populationSize = generationSize;
+	public CocktailGenerationManager(int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {		
+		Properties props = new Properties();
+		props.setProperty("populationSize", String.valueOf(populationSize));
+		props.setProperty("truncation", String.valueOf(truncation));
+		props.setProperty("elitism", String.valueOf(elitism));
+		props.setProperty("dbDriverPath", dbDriverPath);
+		
+		try {
+			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		loadProps(propPath);
+		
+		constructRest(fitnessCheck, recombination, dbReset, propPath);
+	}
+	
+	public CocktailGenerationManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
+		loadProps(propPath);
+		
+		try {
+			constructRest(fitnessCheck, recombination, dbReset, propPath);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadProps(String propPath) {
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream(propPath + ".properties"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(props.getProperty("populationSize"));
+		updateProps(Integer.parseInt(props.getProperty("populationSize")), Integer.parseInt(props.getProperty("truncation")), Integer.parseInt(props.getProperty("elitism")), props.getProperty("dbDriverPath"));
+	}
+	
+	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath) {
+		this.populationSize = populationSize;
+		this.truncation = truncation;
+		this.elitism = elitism;
+		this.dbDriverPath = dbDriverPath;
+	}
+
+	private void constructRest(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
-		this.dbDriver = dbDriver;
+		
+		this.propPath = propPath;
+		
+		this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset);
 		
 		if (dbDriver.getLastGenerationNumber() == 0) {
-			Cocktail[] cocktails = new Cocktail[generationSize];
+			Cocktail[] cocktails = new Cocktail[getPopulationSize()];
 		
-			for (int i = 0; i < generationSize; i++) {
+			for (int i = 0; i < getPopulationSize(); i++) {
 				cocktails[i] = generateRandomCocktail();
 			}
 			
@@ -50,6 +119,7 @@ public class CocktailGenerationManager {
 			
 			didJustLoad = true;
 		}
+
 	}
 	
 	/*
@@ -89,12 +159,15 @@ public class CocktailGenerationManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public void evolve(int truncation, int elitism) throws FitnessNotSetException, SQLException {
+	public void evolve() throws FitnessNotSetException, SQLException {
 		if (didJustLoad) {
 			didJustLoad = false;
 		} else {
 			save();			
 		}
+		
+		// load poperties - they may have been updated
+		loadProps(propPath);
 		
 		generationNumber = generationNumber + 1;
 		

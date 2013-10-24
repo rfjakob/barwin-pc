@@ -59,8 +59,34 @@ public class CocktailGeneration implements Serializable {
 		return getPopulation().length;
 	}
 	
+	public int getFitnessedPopulationSize() {
+		Cocktail[] cocktails = getPopulation();
+		int ret = 0;
+		
+		for (int i = 0; i< cocktails.length; i++) {
+			if (cocktails[i].isFitnessSet()) {
+				ret++;
+			}
+		}
+		return ret;
+	}
+	
 	public Cocktail[] getPopulation() {
 		return population;
+	}
+	
+	public Cocktail[] getFitnessedPopulation() {
+		Cocktail[] cocktails = getPopulation();
+		Cocktail[] retCocktails = new Cocktail[getFitnessedPopulationSize()];
+		int j = 0;
+		
+		for (int i = 0; i < cocktails.length; i++) {
+			if (cocktails[i].isFitnessSet()) {
+				retCocktails[j] = cocktails[i];
+				j++;
+			}
+		}
+		return retCocktails;
 	}
 	
 	/*
@@ -150,7 +176,7 @@ public class CocktailGeneration implements Serializable {
 	}
 	
 	public double getMeanFitness() throws FitnessNotSetException {
-		return (getFitnessSum(getPopulation()) / getPopulationSize());
+		return (getFitnessSum(getFitnessedPopulation()) / getFitnessedPopulationSize());
 	}
 	
 	public Cocktail getBestCocktail() {

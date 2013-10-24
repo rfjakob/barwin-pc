@@ -23,8 +23,12 @@ public class genBot2 {
 		
 		try {
 			// Set a db-file
-			DataBaseDriver dbDriver = new DataBaseDriver("superdatabase", true);
+//			DataBaseDriver dbDriver = new DataBaseDriver("superdatabase", true);
+			String dbDriverPath = "aDBFile";
 		
+			// Set a properties file
+			String propPath = "storedSettings";
+			
 			// CheckFitness fitnessCheck = new MatchCocktail(new Cocktail(new double[] {3.0/10.0, 6.0/10.0, 1.0/10.0}));
 			Cocktail referenceCocktail = new Cocktail(referenceAmounts);
 			CheckFitness fitnessCheck = new MatchCocktail(referenceCocktail);
@@ -37,15 +41,15 @@ public class genBot2 {
 		
 			System.out.println("Enter generation size - shouldn't be too low. Bigger generations make the algorithm slower (especially in reality, when the cocktails need to be evaluated by humans), too small generations reduce possibilities of evolution:");
 //			int firstGenerationSize = input.nextInt();
-			int firstGenerationSize = 10;
+			int firstGenerationSize = 2;
 	
 			System.out.println("Enter truncation amount (how many of the worst Cocktails should be truncated in crossover - 2 to 4 suggested, try also something different:");
 //			int truncation = input.nextInt();
-			int truncation = 3;
+			int truncation = 0;
 
 			System.out.println("Enter elitism amount (how many of the best Cocktails should be in the next generation -  I usually take 2, 1 is probably also fine:");
 //			int elitism = input.nextInt();
-			int elitism = 2;
+			int elitism = 0;
 		
 			System.out.println("Enter mutation standard deviation - 0.05 maybe?:");
 //			double mutation = input.nextDouble();
@@ -54,7 +58,7 @@ public class genBot2 {
 			// Set a recombination
 			Recombination mutationCrossover = new MutationAndIntermediateRecombination(0.25, mutation);
 		
-			CocktailGenerationManager manager = new CocktailGenerationManager(firstGenerationSize, fitnessCheck, mutationCrossover, dbDriver);
+			CocktailGenerationManager manager = new CocktailGenerationManager(firstGenerationSize, truncation, elitism, dbDriverPath, true, fitnessCheck, mutationCrossover, propPath);
 		
 			int generationSize = manager.getPopulationSize();
 		
@@ -74,8 +78,8 @@ public class genBot2 {
 			try {
 //				while (manager.getCocktailGeneration().getMeanFitness() < -1 * Math.abs(target)) {
 				while (true) {
-					manager.evolve(truncation, elitism);
-					for (int i = 0; i < generationSize; i++) {
+					manager.evolve();
+					for (int i = 0; i < manager.getPopulationSize(); i++) {
 						manager.evaluate();
 					}
 					

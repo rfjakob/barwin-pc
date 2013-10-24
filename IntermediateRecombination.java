@@ -108,10 +108,10 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	 * makes all crossovers for the Generation
 	 * @return a new cocktail generation
 	 */
-	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int populationSize) throws FitnessNotSetException {
-		Cocktail[] population = new Cocktail[populationSize];
+	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException {
+		Cocktail[] population = new Cocktail[newPopulationSize];
 		
-		for (int i = 0; i < populationSize; i = i + 2) {
+		for (int i = 0; i < newPopulationSize; i = i + 2) {
 			Cocktail[] children = crossover(cocktailGeneration);
 			population[i] = children[0];
 			// we have to check if both children fit in the population (only even numbers)

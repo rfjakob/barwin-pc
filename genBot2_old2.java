@@ -12,7 +12,7 @@ public class genBot2_old2 {
 		// Set a recombination
 		CocktailGenerationManager manager;
 		try {
-			manager = new CocktailGenerationManager(10, null, null, null);
+			manager = new CocktailGenerationManager(10, 0, 0, null, false, null, null, null);
 
 			System.out.println("First Generation:");
 			System.out.println(manager.toString());
