@@ -58,16 +58,16 @@ public class genBot2 {
 			// Set a recombination
 			Recombination mutationCrossover = new MutationAndIntermediateRecombination(0.25, mutation);
 		
-			CocktailGenerationManager manager = new CocktailGenerationManager(firstGenerationSize, truncation, elitism, dbDriverPath, false, fitnessCheck, mutationCrossover, propPath);
+			EvolutionAlgorithmManager evoManager = new EvolutionAlgorithmManager(firstGenerationSize, truncation, elitism, dbDriverPath, false, fitnessCheck, mutationCrossover, propPath);
 		
-			int generationSize = manager.getPopulationSize();
+			int generationSize = evoManager.getGenManager().getCurrentPopulationSize();
 		
 			for (int i = 0; i < generationSize; i++) {
-				manager.evaluate();
+				evoManager.evaluate();
 			}
 		
 			System.out.println("First Generation:");
-			System.out.println(manager.randomToString());
+			System.out.println(evoManager.getGenManager().randomToString());
 			System.out.println("Press <Enter> to start the genetic algorithm");
 			try {
 				  System.in.read();
@@ -78,13 +78,13 @@ public class genBot2 {
 			try {
 //				while (manager.getCocktailGeneration().getMeanFitness() < -1 * Math.abs(target)) {
 				while (true) {
-					manager.evolve();
-					for (int i = 0; i < manager.getPopulationSize(); i++) {
-						manager.evaluate();
+					evoManager.evolve();
+					for (int i = 0; i < evoManager.getGenManager().getCurrentPopulationSize(); i++) {
+						evoManager.evaluate();
 					}
 					
-					System.out.println("Mean: " + manager.meanFitnessToString() + ", ");
-					System.out.print("Best: " + manager.bestFitnessToString());
+					System.out.println("Mean: " + evoManager.getGenManager().meanFitnessToString() + ", ");
+					System.out.print("Best: " + evoManager.getGenManager().bestFitnessToString());
 				}
 				
 //				System.out.println("The mean Cocktail is: " + manager.meanFitnessToString());

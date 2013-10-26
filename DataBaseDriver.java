@@ -54,17 +54,17 @@ public class DataBaseDriver {
 		statement.executeUpdate("create table cocktailgeneration("
 				+ "number integer primary key, "
 				+ "time datetime default current_timestamp, "
-				+ "generation blob"
+				+ "generationManager blob"
 				+ ")");
 		
 		statement.close();
 	}
 	
-	public void insert(int generationNumber, CocktailGeneration generation) throws SQLException {
+	public void insert(int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
 		try {
-			PreparedStatement statement = connection.prepareStatement("insert into cocktailgeneration (number, generation) values (?, ?)");
+			PreparedStatement statement = connection.prepareStatement("insert into cocktailgeneration (number, generationManager) values (?, ?)");
 			statement.setObject(1, generationNumber);
-			statement.setObject(2, serialize(generation));
+			statement.setObject(2, serialize(generationManager));
 		
 			statement.execute();
 		} catch (SQLException | IOException e) {
@@ -72,10 +72,10 @@ public class DataBaseDriver {
 		}
 	}
 	
-	public CocktailGeneration select(int generationNumber) throws SQLException {
+	public CocktailGenerationManager select(int generationNumber) throws SQLException {
 		PreparedStatement statement;
 		try {
-			statement = connection.prepareStatement("select generation from cocktailgeneration where number=?");
+			statement = connection.prepareStatement("select generationManager from cocktailgeneration where number=?");
 		
 			statement.setObject(1, generationNumber);
 		
@@ -84,11 +84,11 @@ public class DataBaseDriver {
 			if (rs.next()) {
 				ObjectInputStream ois = new ObjectInputStream(
 						new ByteArrayInputStream(
-								rs.getBytes("generation")
+								rs.getBytes("generationManager")
 								)
 						);
             
-				return (CocktailGeneration) ois.readObject();
+				return (CocktailGenerationManager) ois.readObject();
 			}
 		} catch (SQLException | IOException | ClassNotFoundException e) {
 			throw new SQLException("select failed", e);
@@ -108,11 +108,11 @@ public class DataBaseDriver {
 		return 0;
 	}
 	
-	private byte[] serialize(CocktailGeneration cocktailGeneration) throws IOException {
+	private byte[] serialize(CocktailGenerationManager cocktailGenerationManager) throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(bos);
 		
-		oos.writeObject(cocktailGeneration);
+		oos.writeObject(cocktailGenerationManager);
 		oos.flush();
 		oos.close();
 		bos.close();
