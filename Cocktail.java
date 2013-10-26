@@ -95,14 +95,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 				return ingredientAmounts[i].getAmount();
 			}
 		}
-		
-		// for loaded cocktails this doesn't work as the ingredient objects are different
-		for (int i = 0; i < ingredientAmounts.length; i++) {
-			if (ingredientAmounts[i].getIngredient().getName().equals(ingredient.getName())) {
-				return ingredientAmounts[i].getAmount();
-			}
-		}
-		
+				
 		throw new IllegalIngredientException("Ingredient " + ingredient.getName() + " is not defined");
 	}
 	

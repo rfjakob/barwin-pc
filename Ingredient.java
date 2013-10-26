@@ -57,4 +57,12 @@ public class Ingredient implements Serializable {
 	public void setArduinoOutputLine(int arduinoOutputLine) {
 		this.arduinoOutputLine = arduinoOutputLine;
 	}
+	
+	public boolean equals(Ingredient ingredient) {
+		if (this.getName().equals(ingredient.getName()) & this.getPricePer(1) == ingredient.getPricePer(1) & this.getArduinoOutputLine() == ingredient.getArduinoOutputLine()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

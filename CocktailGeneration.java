@@ -128,26 +128,6 @@ public class CocktailGeneration implements Serializable {
 //		
 //		return nextGen;
 //	}
-
-	/*
-	 * applies elitism to the generation - some random cocktails are replaced with the
-	 * best cocktails from the previous generation
-	 * @param elitism number of cocktails to be replaced
-	 * @param cocktailGeneration the previous cocktail generation
-	 */
-	public void applyElitism(int elitism, CocktailGeneration cocktailGeneration) {
-		if (elitism < 0 || elitism > getPopulationSize()) {
-			throw new IllegalArgumentException("Invalid number of elite-Cocktails (" + elitism + ")!");
-		}
-		
-		// rank
-		Cocktail[] previousCocktails = rankCocktails();
-		
-		// now we have the previous cocktails ranked. Now replace <elitism> cocktails in the current population
-		for (int i = 0; i < elitism; i++) {
-			population[i] = previousCocktails[i].copy();
-		}
-	}
 	
 	public Cocktail[] rankCocktails() {
 		int[] otherRandomOrder = generateRandomPopulationOrder();

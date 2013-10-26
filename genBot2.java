@@ -41,15 +41,15 @@ public class genBot2 {
 		
 			System.out.println("Enter generation size - shouldn't be too low. Bigger generations make the algorithm slower (especially in reality, when the cocktails need to be evaluated by humans), too small generations reduce possibilities of evolution:");
 //			int firstGenerationSize = input.nextInt();
-			int firstGenerationSize = 2;
+			int firstGenerationSize = 20;
 	
 			System.out.println("Enter truncation amount (how many of the worst Cocktails should be truncated in crossover - 2 to 4 suggested, try also something different:");
 //			int truncation = input.nextInt();
-			int truncation = 0;
+			int truncation = 4;
 
 			System.out.println("Enter elitism amount (how many of the best Cocktails should be in the next generation -  I usually take 2, 1 is probably also fine:");
 //			int elitism = input.nextInt();
-			int elitism = 0;
+			int elitism = 3;
 		
 			System.out.println("Enter mutation standard deviation - 0.05 maybe?:");
 //			double mutation = input.nextDouble();
@@ -58,7 +58,7 @@ public class genBot2 {
 			// Set a recombination
 			Recombination mutationCrossover = new MutationAndIntermediateRecombination(0.25, mutation);
 		
-			CocktailGenerationManager manager = new CocktailGenerationManager(firstGenerationSize, truncation, elitism, dbDriverPath, true, fitnessCheck, mutationCrossover, propPath);
+			CocktailGenerationManager manager = new CocktailGenerationManager(firstGenerationSize, truncation, elitism, dbDriverPath, false, fitnessCheck, mutationCrossover, propPath);
 		
 			int generationSize = manager.getPopulationSize();
 		

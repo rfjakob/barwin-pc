@@ -33,7 +33,7 @@ public class DataBaseDriver {
 	}
 		
 	private void setup(String fileName) throws SQLException {
-		connection = DriverManager.getConnection("jdbc:sqlite:"+ fileName);
+		connection = DriverManager.getConnection("jdbc:sqlite:"+ fileName + ".sqlite3");
 	}
 	
 	public void setTimeOut(int timeout) {
@@ -41,7 +41,7 @@ public class DataBaseDriver {
 	}
 	
 	public void reset() throws SQLException {
-		File dbFile = new File(fileName);
+		File dbFile = new File(fileName + ".sqlite3");
 		if (dbFile.exists()) {
 			dbFile.delete();
 		}
