@@ -20,6 +20,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	private IngredientAmount[] ingredientAmounts;
 	private double fitness;
 	private boolean fitnessIsSet;
+	private boolean poured;
 	
 	/*
 	 * Constructor
@@ -52,6 +53,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		}
 		
 		fitnessIsSet = false;
+		poured = false;
 	}
 	
 	/*
@@ -115,6 +117,14 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 
 	public boolean isFitnessSet() {
 		return fitnessIsSet;
+	}
+	
+	public boolean isPoured() {
+		return poured;
+	}
+	
+	public void setPouredTrue() {
+		poured = true;
 	}
 		
 	/*
