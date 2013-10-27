@@ -1,0 +1,14 @@
+@(message: String, manager: genBot2.CocktailGenerationManager, cList: Array[genBot2.Cocktail])
+
+@main("GenBot") {
+	<div class="subheader">Generation Nr.: @manager.getGenerationNumber (Count: @cList.length)</div>
+	<ul class="cocktailList">
+    @for(cocktail <- cList) {
+  		<li class="cocktail">
+  			<span class="name" title="@cocktail">@cocktail</span><br/>
+  			<span class="fitnessIsSet">@cocktail.isFitnessSet</span>
+  			<a class="control" href="/2">CONTROL</a>
+  		</li>
+	} 
+	</ul>
+}

@@ -1,0 +1,24 @@
+h1 {
+    color: red;
+}
+
+body {
+	width: 800px;
+	margin: 30px auto 0px auto;
+}
+
+div.subheader {
+	font-size: 25px;
+}
+
+li.cocktail {
+	background: #FAFAFA;
+	border-left: 8px solid #82B4FF;
+	padding: 5px;
+	margin: 10px 0px;
+	list-style: none;
+}
+
+li.cocktail:hover {
+	border-left: 8px solid #0066FF;
+}

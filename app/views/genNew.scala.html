@@ -1,0 +1,10 @@
+@(message: String, genBot: GenBotWrapper)
+
+@main("GenBot") {
+	<div class="subheader">Generation Nr.: @genBot.manager.getGenerationNumber (Count: @genBot.manager.getCocktailGeneration().getPopulation.length)</div>
+	<ul class="cocktailList">
+    @for(item <- genBot.manager.getCocktailGeneration().getPopulation) {
+    	@cocktail(item)
+	} 
+	</ul>
+}
