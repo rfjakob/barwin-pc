@@ -29,6 +29,8 @@ public class EvolutionAlgorithmManager {
 	private String dbDriverPath;
 	
 	private boolean didJustLoad = false;
+	
+	private String evolutionStackName;
 		
 	/*
 	 * constructor
@@ -36,13 +38,15 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {		
 		Properties props = new Properties();
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
 		props.setProperty("elitism", String.valueOf(elitism));
-		props.setProperty("dbDriverPath", dbDriverPath);
-		
+		if (dbDriverPath != null) {
+			props.setProperty("dbDriverPath", dbDriverPath);
+		}
+			
 		try {
 			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
 		} catch (FileNotFoundException e) {
@@ -55,14 +59,14 @@ public class EvolutionAlgorithmManager {
 		
 		loadProps(propPath);
 		
-		constructRest(fitnessCheck, recombination, dbReset, propPath);
+		constructRest(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
 		loadProps(propPath);
 		
 		try {
-			constructRest(fitnessCheck, recombination, dbReset, propPath);
+			constructRest(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,21 +96,27 @@ public class EvolutionAlgorithmManager {
 		this.dbDriverPath = dbDriverPath;
 	}
 
-	private void constructRest(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
+	private void constructRest(String cocktailStackName, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
+		this.evolutionStackName = cocktailStackName;
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
 		this.propPath = propPath;
 		
-		this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset);
-		
-		if (dbDriver.getLastGenerationNumber() == 0) {
-			genManager = new CocktailGenerationManager(populationSize);
-		} else {
-			genManager = load();
-			didJustLoad = true;
-		}
+		if (dbDriverPath != null) {
+			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset);
 
+		
+			if (dbDriver.getLastGenerationNumber() == 0) {
+				this.genManager = new CocktailGenerationManager(populationSize, cocktailStackName);
+			} else {
+				this.genManager = load();
+				this.didJustLoad = true;
+			}
+		} else {
+			this.genManager = new CocktailGenerationManager(populationSize, cocktailStackName);
+		}
+		
 	}
 		
 	/*
@@ -120,7 +130,9 @@ public class EvolutionAlgorithmManager {
 		if (didJustLoad) {
 			didJustLoad = false;
 		} else {
-			save();			
+			if (dbDriver != null) {
+				save();
+			}
 		}
 		
 		// load poperties - they may have been updated
@@ -175,8 +187,8 @@ public class EvolutionAlgorithmManager {
 	 * checks the fitness for the whole cocktail generation
 	 */
 	public void evaluate() {
-		if (genManager.getCocktailGeneration().hasNextRandomCocktail()) {
-			genManager.getCocktailGeneration().getNextRandomCocktail().setFitness(fitnessCheck);
+		if (genManager.getCocktailGeneration().hasNextRandomNamedCocktail()) {
+			genManager.getCocktailGeneration().getNextRandomNamedCocktail(evolutionStackName, getGenManager().getGenerationNumber()).getCocktail().setFitness(fitnessCheck);
 		}
 	}
 

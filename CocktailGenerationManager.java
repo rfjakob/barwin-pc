@@ -9,15 +9,17 @@ public class CocktailGenerationManager implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int generationNumber;
 	private CocktailGeneration cocktailGeneration;
+	private final String cocktailStackName;
 
-	public CocktailGenerationManager(int initialPopulationSize) {
+	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName) {
 		this.generationNumber = 0;
 		
 		Cocktail[] cocktails = new Cocktail[initialPopulationSize];
 		for (int i = 0; i < initialPopulationSize; i++) {
 			cocktails[i] = generateRandomCocktail();
 		}
-		cocktailGeneration = new CocktailGeneration(cocktails);
+		this.cocktailGeneration = new CocktailGeneration(cocktails);
+		this.cocktailStackName = cocktailStackName;
 	}
 	
 	/*
@@ -48,6 +50,10 @@ public class CocktailGenerationManager implements Serializable {
 		Cocktail cocktail = new Cocktail(cocktailIngredients);
 		
 		return cocktail;
+	}
+	
+	public String getCocktailStackName() {
+		return cocktailStackName;
 	}
 	
 	public void increaseGenerationNumber() {
