@@ -1,11 +1,25 @@
-h1 {
-    color: red;
-}
+
 
 body {
 	width: 800px;
 	margin: 30px auto 0px auto;
 }
+
+.clear {
+	clear: both;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+.transition {
+	transition: all 0.3s linear;
+}
+
 
 div.subheader {
 	font-size: 25px;
@@ -13,12 +27,35 @@ div.subheader {
 
 li.cocktail {
 	background: #FAFAFA;
-	border-left: 8px solid #82B4FF;
+	border: 1px solid #82B4FF;
+	border-left: 12px solid #82B4FF;
 	padding: 5px;
 	margin: 10px 0px;
 	list-style: none;
 }
 
 li.cocktail:hover {
-	border-left: 8px solid #0066FF;
+	background: #F4F4F4;
+	border-color: #0066FF;
+}
+
+li.cocktail div.id {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+li.cocktail div.ingredients {
+	font-size: 14px;
+}
+
+li.cocktail div.ingredients span.iName {
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+
+li.cocktail div.ingredients span.iAmount {
+	display: inline-block;
+	width: 100px;
+	
 }

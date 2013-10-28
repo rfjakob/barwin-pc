@@ -3,8 +3,8 @@
 @main("GenBot") {
 	<div class="subheader">Generation Nr.: @genBot.manager.getGenerationNumber (Count: @genBot.manager.getCocktailGeneration().getPopulation.length)</div>
 	<ul class="cocktailList">
-    @for(item <- genBot.manager.getCocktailGeneration().getPopulation) {
-    	@cocktail(item)
+    @for(i <- 0 until genBot.manager.getCocktailGeneration().getPopulation().size) {
+    	@cocktail(i, genBot.manager.getCocktailGeneration().getPopulation()(i), genBot: GenBotWrapper)
 	} 
 	</ul>
 }
