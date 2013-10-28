@@ -31,6 +31,8 @@ public class EvolutionAlgorithmManager {
 	private boolean didJustLoad = false;
 	
 	private String evolutionStackName;
+	
+	private boolean[] booleanAllowedIngredients;
 		
 	/*
 	 * constructor
@@ -38,7 +40,19 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {		
+		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
+		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
+		
+		for (int i = 0; i < possibleIngredients.length; i++) {
+			this.booleanAllowedIngredients[i] = false;
+			for (int j = 0; j < allowedIngredients.length; j++) {
+				if (possibleIngredients[i].equals(allowedIngredients[j])) {
+					this.booleanAllowedIngredients[i] = true;
+				}
+			}
+		}
+		
 		Properties props = new Properties();
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
@@ -46,6 +60,7 @@ public class EvolutionAlgorithmManager {
 		if (dbDriverPath != null) {
 			props.setProperty("dbDriverPath", dbDriverPath);
 		}
+		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
 			
 		try {
 			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
@@ -86,14 +101,21 @@ public class EvolutionAlgorithmManager {
 		}
 		
 		System.out.println(props.getProperty("populationSize"));
-		updateProps(Integer.parseInt(props.getProperty("populationSize")), Integer.parseInt(props.getProperty("truncation")), Integer.parseInt(props.getProperty("elitism")), props.getProperty("dbDriverPath"));
+		updateProps(
+				Integer.parseInt(props.getProperty("populationSize")), 
+				Integer.parseInt(props.getProperty("truncation")), 
+				Integer.parseInt(props.getProperty("elitism")), 
+				props.getProperty("dbDriverPath"),
+				props.getProperty("booleanAllowedIngredients")
+				);
 	}
 	
-	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath) {
+	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath, String booleanAllowedIngredientsString) {
 		this.populationSize = populationSize;
 		this.truncation = truncation;
 		this.elitism = elitism;
 		this.dbDriverPath = dbDriverPath;
+		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
 	}
 
 	private void constructRest(String cocktailStackName, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
@@ -147,7 +169,7 @@ public class EvolutionAlgorithmManager {
 		CocktailGeneration nextGeneration = truncation(truncation, genManager.getCocktailGeneration());
 
 		// Crossover & Mutation
-		nextGeneration = recombination.recombine(nextGeneration, populationSize);
+		nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
 
 		// Elitism
 		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
@@ -252,5 +274,40 @@ public class EvolutionAlgorithmManager {
 	
 	public CocktailGenerationManager getGenManager() {
 		return genManager;
+	}
+	
+	public boolean[] getBooleanAllowedIngredients() {
+		return booleanAllowedIngredients;
+	}
+	
+	public String booleanAllowedIngrediensToString() {
+		String retString = "";
+		
+		for (int i = 0; i < getBooleanAllowedIngredients().length; i++) {
+			if (getBooleanAllowedIngredients()[i]) {
+				retString += "1";
+			} else {
+				retString += "0";
+			}
+		}
+		
+		return retString;
+	}
+	
+	public boolean[] readBooleanAllowedIngredients(String allowedIngredients) {
+		boolean[] retBoolean = new boolean[allowedIngredients.length()];
+		char[] allowedChars = allowedIngredients.toCharArray();
+		
+		for (int i = 0; i < retBoolean.length; i++) {
+			if (allowedChars[i] == '0') {
+				retBoolean[i] = false;
+			} else if (allowedChars[i] == '1') {
+				retBoolean[i] = true;
+			} else {
+				throw new IllegalArgumentException("Argument was neither 1 nor 0!");
+			}
+		}
+		
+		return retBoolean;
 	}
 }

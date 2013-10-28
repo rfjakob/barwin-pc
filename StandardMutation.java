@@ -6,6 +6,10 @@ public class StandardMutation implements Recombination {
 	
 	private double stdDeviation;
 
+	public StandardMutation(double stdDeviation) {
+		this.stdDeviation = stdDeviation;
+	}
+
 	public double getStdDeviation() {
 		if (stdDeviation < 0) {
 			throw new IllegalArgumentException("stdDeviation must be greater than 0 (" + stdDeviation + "was specified)!");
@@ -19,10 +23,6 @@ public class StandardMutation implements Recombination {
 		}
 		this.stdDeviation = stdDeviation;
 	}
-
-	public StandardMutation(double stdDeviation) {
-		this.stdDeviation = stdDeviation;
-	}
 	
 	/*
 	 * Mutates the cocktail. An ingredient is randomly chosen and then changed
@@ -33,7 +33,7 @@ public class StandardMutation implements Recombination {
 	 * @param stdDeviation the standard deviation
 	 * @return A mutated Cocktail
 	 */
-	public Cocktail mutate(double stdDeviation, Cocktail cocktail) {
+	public Cocktail mutate(double stdDeviation, Cocktail cocktail, boolean[] booleanAllowedIngredients) {
 		if (stdDeviation < 0) {
 			throw new IllegalArgumentException("stdDeviation must be greater than 0 (" + stdDeviation + "was specified)!");
 		}
@@ -48,38 +48,43 @@ public class StandardMutation implements Recombination {
 		// mutate amount by probability 1/n
 		Random rnd = new Random();
 		for (int i = 0; i < amounts.length; i++) {
-			if (rnd.nextDouble() >=  (1 - (1 / amounts.length))) {
-				double mutatedIngredient = amounts[i];
+			if (booleanAllowedIngredients[i]) {
+				if (rnd.nextDouble() >=  (1 - (1 / booleanAllowedIngredients.length))) {
+					double mutatedIngredient = amounts[i];
 				
-				double change = rnd.nextGaussian() * stdDeviation;
+					double change = rnd.nextGaussian() * stdDeviation;
 				
-				// Make sure the bounds are not violated
-				if (change + mutatedIngredient < 0) {
-					change = mutatedIngredient * (-1);
-				} else if (change + mutatedIngredient > 1) {
-					change = 1 - mutatedIngredient;
-				}
+					// Make sure the bounds are not violated
+					if (change + mutatedIngredient < 0) {
+						change = mutatedIngredient * (-1);
+					} else if (change + mutatedIngredient > 1) {
+						change = 1 - mutatedIngredient;
+					}
 				
-				// change the amount of the specific ingredient
-				amounts[i] = mutatedIngredient + change;
+					// change the amount of the specific ingredient
+					amounts[i] = mutatedIngredient + change;
 				
-				// now change the other amounts
-				double changeOthers = (change / (IngredientArray.getInstance().getNumberOfIngredients() - 1)) * (-1);
+					// now change the other amounts
+					double changeOthers = (change / (booleanAllowedIngredients.length - 1)) * (-1);
 				
-				for (int j = 0; j < IngredientArray.getInstance().getNumberOfIngredients(); j++) {
-					if (j != i) {
-						amounts[j] = amounts[j] + changeOthers;
+					for (int j = 0; j < IngredientArray.getInstance().getNumberOfIngredients(); j++) {
+						if (booleanAllowedIngredients[j]) {
+							if (j != i) {
+								amounts[j] = amounts[j] + changeOthers;
 						
-						// this is not very elegant, but i found no better solution
-						if (amounts[j] < 0) {
-							amounts[j] = 0;
-						} else if (amounts[j] > 1) {
-							amounts[j] = 1;
+								// this is not very elegant, but i found no better solution
+								if (amounts[j] < 0) {
+									amounts[j] = 0;
+								} else if (amounts[j] > 1) {
+									amounts[j] = 1;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		return new Cocktail(amounts);
 	}
 	
@@ -92,12 +97,12 @@ public class StandardMutation implements Recombination {
 	 * class)
 	 */
 	
-	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize) {
+	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) {
 		Cocktail[] newCocktails = new Cocktail[newPopulationSize];
 		int[] randomOrder = population.generateRandomPopulationOrder();
 		
 		for (int i = 0; i < newPopulationSize; i++) {
-			newCocktails[i] = mutate(stdDeviation, population.getCocktail(randomOrder[i]));
+			newCocktails[i] = mutate(stdDeviation, population.getCocktail(randomOrder[i]), booleanAllowedIngredients);
 		}
 		
 		return new CocktailGeneration(newCocktails);
@@ -105,8 +110,8 @@ public class StandardMutation implements Recombination {
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize) throws FitnessNotSetException {
-		return mutateCocktails(population, newPopulationSize);
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException {
+		return mutateCocktails(population, newPopulationSize, booleanAllowedIngredients);
 	}
 
 }

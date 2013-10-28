@@ -1,16 +1,11 @@
 package genBot2;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.RemoteServer;
-import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.Random;
 import java.util.Scanner;
 
-public class genBot2 {
+public class genBot2_old1 {
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
@@ -79,17 +74,23 @@ public class genBot2 {
 				} catch (IOException e) {
 				  e.printStackTrace();
 				}
+			
 			try {
-				LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
+//				while (manager.getCocktailGeneration().getMeanFitness() < -1 * Math.abs(target)) {
+				while (true) {
+					evoManager.evolve();
+					for (int i = 0; i < evoManager.getGenManager().getCurrentPopulationSize(); i++) {
+						evoManager.evaluate();
+					}
+					
+					System.out.println("Mean: " + evoManager.getGenManager().meanFitnessToString() + ", ");
+					System.out.print("Best: " + evoManager.getGenManager().bestFitnessToString());
+				}
 				
-				RMIImpl rmiImpl = new RMIImpl(evoManager.getGenManager().getCocktailGeneration());
-				RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
-				RemoteServer.setLog(System.out);
-				
-				Registry registry = LocateRegistry.getRegistry();
-			    registry.rebind( "rmiImpl", stub );
-
-			} catch (RemoteException e) {
+//				System.out.println("The mean Cocktail is: " + manager.meanFitnessToString());
+//				System.out.println("The best Cocktail is: " + manager.getCocktailGeneration().getBestCocktail().toString());
+//				System.out.println("The ref. Cocktail is: " + referenceCocktail.toString());
+			} catch (FitnessNotSetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

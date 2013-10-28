@@ -125,7 +125,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize) throws FitnessNotSetException {
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException {
 		return allCrossovers(population, newPopulationSize);
 	}
 
