@@ -9,17 +9,28 @@ import play.mvc.*;
 import views.html.*;
 import models.*;
 
+import java.rmi.*;
+
 
 public class Application extends Controller {
+	private static RMIInterface rmiConnect() {
+		RMIInterface genBotRMI = null;
+		try {
+			genBotRMI = (RMIInterface) Naming.lookup("//127.0.0.1/rmiImpl");
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+		}
+		return genBotRMI;		
+	}
 
     public static Result index() {
-    	
+    	return ok("a");
     	// Load GenBotWrapper
-        GenBotWrapper genBot = (GenBotWrapper) Cache.get("genBot");
+        //GenBotWrapper genBot = (GenBotWrapper) Cache.get("genBot");
         
         //genBot = new GenBotWrapper();
         // If not exist create new one
-        if(genBot == null) {
+        /*if(genBot == null) {
         	genBot = new GenBotWrapper();
 	    	genBot.init();
         }
@@ -35,8 +46,23 @@ public class Application extends Controller {
         Cache.set("genBot", genBot); 
         //return ok(gen.render("afe", genBot.manager, cList));
         return ok(genNew.render("afe", genBot));
-        //return ok("a");
-        
+        //return ok("a");   */
+    }
+    
+    public static Result indexRMI() {
+    	// Load GenBotWrapper
+    	RMIInterface genBotRMI = rmiConnect();
+    	if(genBotRMI == null) {
+    		return ok("ERROR");
+    	} else {
+    		
+    		try {
+    			Cocktail[] population = genBotRMI.getPopulation();
+    			return ok("length:" + population.length);
+    		} catch (Exception e) {
+    			return ok("ERROR2");
+    		}
+    	}
     }
 
     public static Result generation(Long id) {
