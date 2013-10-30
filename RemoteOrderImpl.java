@@ -5,33 +5,50 @@ import java.sql.SQLException;
 
 public class RemoteOrderImpl implements RemoteOrderInterface {
 	
-	private EvolutionAlgorithmManager evolutionAlgorithmManager;
+	private EvolutionStackContainer evolutionStackController;
 
-	public RemoteOrderImpl(EvolutionAlgorithmManager evolutionAlgorithmManager) {
-		this.evolutionAlgorithmManager = evolutionAlgorithmManager;
+	public RemoteOrderImpl() {
+		this.evolutionStackController = EvolutionStackContainer.getInstance();
 	}
 
 	@Override
-	public CocktailWithName[] getNamedPopulation() throws RemoteException {
-		return evolutionAlgorithmManager.getGenManager().getNamedCocktailGeneration();
+	public CocktailWithName[] getNamedPopulation(String evolutionStackName) throws RemoteException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager().getNamedCocktailGeneration();
 	}
 
 	@Override
-	public void setCocktailFitness(String name, double fitnessInput) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
-		evolutionAlgorithmManager.setFitness(name, fitnessInput);
+	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
+		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);
+		evoAlgMngr.setFitness(name, fitnessInput);
 		
-		if (evolutionAlgorithmManager.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
-			evolutionAlgorithmManager.evolve();
+		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
+			evoAlgMngr.evolve();
 		}
 	}
 
 	@Override
-	public boolean canEvolve() throws RemoteException {
-		return evolutionAlgorithmManager.canEvolve();
+	public boolean canEvolve(String evolutionStackName) throws RemoteException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).canEvolve();
 	}
 
 	@Override
-	public void evolve() throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
-		evolutionAlgorithmManager.evolve();
+	public void evolve(String evolutionStackName) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).evolve();
+	}
+
+	@Override
+	public void generateEvolutionStack(String evolutionStackName, CheckFitness fitnessCheck,
+			Recombination recombination, boolean dbReset, String propPath)
+			throws RemoteException, SQLException {
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
+	}
+
+	@Override
+	public void generateEvolutionStack(String evolutionStackName,
+			Ingredient[] allowedIngredients, int populationSize,
+			int truncation, int elitism, String dbDriverPath, boolean dbReset,
+			CheckFitness fitnessCheck, Recombination recombination,
+			String propPath) throws RemoteException, SQLException {
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, propPath);
 	}
 }

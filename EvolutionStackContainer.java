@@ -33,7 +33,7 @@ public class EvolutionStackContainer {
 		return evolutionStackContainer;
 	}
 	
-	public EvolutionAlgorithmManager getAllowedIngredients(String name) {
+	public EvolutionAlgorithmManager getEvolutionAlgorithmManager(String name) {
 		if (evolutionMap.containsKey(name)) {
 			return evolutionMap.get(name);
 		} else {

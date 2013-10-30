@@ -82,7 +82,7 @@ public class genBot2 {
 			try {
 				LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
 				
-				RemoteOrderImpl rmiImpl = new RemoteOrderImpl(evoManager);
+				RemoteOrderImpl rmiImpl = new RemoteOrderImpl();
 				RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
 				RemoteServer.setLog(System.out);
 				
