@@ -65,11 +65,11 @@ public class genBot2 {
 		
 			EvolutionAlgorithmManager evoManager = new EvolutionAlgorithmManager("Mischmasch", IngredientArray.getInstance().getAllIngredients(), firstGenerationSize, truncation, elitism, null, true, fitnessCheck, mutationCrossover, propPath);
 		
-			int generationSize = evoManager.getGenManager().getCurrentPopulationSize();
+//			int generationSize = evoManager.getGenManager().getCurrentPopulationSize();
 		
-			for (int i = 0; i < generationSize; i++) {
-				evoManager.evaluate();
-			}
+//			for (int i = 0; i < generationSize; i++) {
+//				evoManager.evaluate();
+//			}
 		
 			System.out.println("First Generation:");
 			System.out.println(evoManager.getGenManager().randomToString());
@@ -82,8 +82,8 @@ public class genBot2 {
 			try {
 				LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
 				
-				RMIImpl rmiImpl = new RMIImpl(evoManager.getGenManager().getCocktailGeneration());
-				RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
+				RemoteOrderImpl rmiImpl = new RemoteOrderImpl(evoManager);
+				RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
 				RemoteServer.setLog(System.out);
 				
 				Registry registry = LocateRegistry.getRegistry();

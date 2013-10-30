@@ -9,7 +9,7 @@ public class CocktailGenerationManager implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int generationNumber;
 	private CocktailGeneration cocktailGeneration;
-	private final String cocktailStackName;
+	private final String evolutionStackName;
 
 	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName) {
 		this.generationNumber = 0;
@@ -19,7 +19,7 @@ public class CocktailGenerationManager implements Serializable {
 			cocktails[i] = generateRandomCocktail();
 		}
 		this.cocktailGeneration = new CocktailGeneration(cocktails);
-		this.cocktailStackName = cocktailStackName;
+		this.evolutionStackName = cocktailStackName;
 	}
 	
 	/*
@@ -52,8 +52,8 @@ public class CocktailGenerationManager implements Serializable {
 		return cocktail;
 	}
 	
-	public String getCocktailStackName() {
-		return cocktailStackName;
+	public String getEvolutionStackName() {
+		return evolutionStackName;
 	}
 	
 	public void increaseGenerationNumber() {
@@ -74,6 +74,21 @@ public class CocktailGenerationManager implements Serializable {
 	
 	public CocktailGeneration getCocktailGeneration() {
 		return cocktailGeneration;
+	}
+	
+	public CocktailWithName[] getNamedCocktailGeneration() {
+		return getNamedCocktailGeneration();
+	}
+	
+	public Cocktail getCocktailByName(String name) {
+		CocktailWithName[] namedCocktails = getNamedCocktailGeneration();
+		
+		for (int i = 0; i < namedCocktails.length; i++) {
+			if (namedCocktails[i].getName().equals(name)) {
+				return namedCocktails[i].getCocktail();
+			}
+		}
+		throw new IllegalArgumentException("No Cocktail with name " + name);
 	}
 	
 	public String meanFitnessToString() throws FitnessNotSetException {
@@ -100,5 +115,12 @@ public class CocktailGenerationManager implements Serializable {
 		
 		return out;
 	}
-
+	
+	public CocktailWithName[] getRatedNamedCocktailGeneration() {
+		return getCocktailGeneration().getRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
+	}
+	
+	public CocktailWithName[] getUnRatedNamedCocktailGeneration() {
+		return getCocktailGeneration().getUnRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
+	}
 }

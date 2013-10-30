@@ -63,7 +63,7 @@ public class genBot2_old1 {
 			int generationSize = evoManager.getGenManager().getCurrentPopulationSize();
 		
 			for (int i = 0; i < generationSize; i++) {
-				evoManager.evaluate();
+//				evoManager.evaluate();
 			}
 		
 			System.out.println("First Generation:");
@@ -78,9 +78,9 @@ public class genBot2_old1 {
 			try {
 //				while (manager.getCocktailGeneration().getMeanFitness() < -1 * Math.abs(target)) {
 				while (true) {
-					evoManager.evolve();
+//					evoManager.evolve();
 					for (int i = 0; i < evoManager.getGenManager().getCurrentPopulationSize(); i++) {
-						evoManager.evaluate();
+//						evoManager.evaluate();
 					}
 					
 					System.out.println("Mean: " + evoManager.getGenManager().meanFitnessToString() + ", ");

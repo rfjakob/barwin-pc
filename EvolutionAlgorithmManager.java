@@ -140,6 +140,14 @@ public class EvolutionAlgorithmManager {
 		}
 		
 	}
+	
+	public boolean canEvolve() {
+		if (getGenManager().getCocktailGeneration().getRankedPopulation().length <= (truncation + elitism)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 		
 	/*
 	 * Evolves a cocktail generation with a specified stdDeviation and elitism. First
@@ -148,7 +156,7 @@ public class EvolutionAlgorithmManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public void evolve() throws FitnessNotSetException, SQLException {
+	public void evolve() throws SQLException, NotEnoughRatedCocktailsException {
 		if (didJustLoad) {
 			didJustLoad = false;
 		} else {
@@ -157,19 +165,35 @@ public class EvolutionAlgorithmManager {
 			}
 		}
 		
-		// load poperties - they may have been updated
+		// load properties - they may have been updated
 		loadProps(propPath);
 		
 		genManager.increaseGenerationNumber();
 		
-		// Clone current generation
-		// CocktailGeneration nextGeneration = cocktailGeneration.clone();
+		// reduce generation to the rated cocktails
+		Cocktail[] ratedCocktails = getGenManager().getCocktailGeneration().getRankedPopulation();
 		
+		for (int i = 0; i < ratedCocktails.length; i++) {
+			ratedCocktails[i] = ratedCocktails[i];
+		}
+
+		// throw an exception if not enough cocktails are rated
+		if (!canEvolve()) {
+			throw new NotEnoughRatedCocktailsException("Only " + ratedCocktails.length + " cocktails are rated. As " + truncation + " cocktails should be truncated and the best " + elitism + "cocktails should be copied to the next generation we would need at least " + (truncation + elitism + 1) + " rated cocktails.");
+		}
+
+		CocktailGeneration nextGeneration = new CocktailGeneration(ratedCocktails);
+
 		// Truncation
-		CocktailGeneration nextGeneration = truncation(truncation, genManager.getCocktailGeneration());
+		nextGeneration = truncation(truncation, genManager.getCocktailGeneration());
 
 		// Crossover & Mutation
-		nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
+		try {
+			nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
+		} catch (FitnessNotSetException e) {
+			// This should really not happen!
+			e.printStackTrace();
+		}
 
 		// Elitism
 		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
@@ -208,11 +232,11 @@ public class EvolutionAlgorithmManager {
 	/*
 	 * checks the fitness for the whole cocktail generation
 	 */
-	public void evaluate() {
-		if (genManager.getCocktailGeneration().hasNextRandomNamedCocktail()) {
-			genManager.getCocktailGeneration().getNextRandomNamedCocktail(evolutionStackName, getGenManager().getGenerationNumber()).getCocktail().setFitness(fitnessCheck);
-		}
-	}
+//	public void evaluate() {
+//		if (genManager.getCocktailGeneration().hasNextRandomNamedCocktail()) {
+//			genManager.getCocktailGeneration().getNextRandomNamedCocktail(evolutionStackName, getGenManager().getGenerationNumber()).getCocktail().setFitness(fitnessCheck);
+//		}
+//	}
 
 	/*
 	 * applies truncation to the generation - the worst cocktails are removed from the
@@ -309,5 +333,15 @@ public class EvolutionAlgorithmManager {
 		}
 		
 		return retBoolean;
+	}
+	
+	public void setFitness(String name, double fitnessInput) {
+		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, fitnessInput);
+	}
+	
+	public void pour(String name) {
+// TODO Implement this method
+//		getGenManager().getCocktailByName(name).pour;
+		getGenManager().getCocktailByName(name).setPouredTrue();
 	}
 }
