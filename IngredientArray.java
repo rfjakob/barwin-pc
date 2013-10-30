@@ -37,6 +37,7 @@ public class IngredientArray {
 		}
 		return ingredientArray;
 	}
+	
 	/*
 	 * Returns just the Array of Ingredients, not the whole class 
 	 * IngredientArray. This method is just here to avoid too long

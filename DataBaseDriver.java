@@ -24,11 +24,11 @@ public class DataBaseDriver {
 		setup(fileName);
 	}
 	
-	public DataBaseDriver(String fileName, boolean reset) throws SQLException {
+	public DataBaseDriver(String fileName, boolean reset, String evolutionStackName) throws SQLException {
 		this(fileName);
 		
 		if (reset) {
-			reset();
+			reset(evolutionStackName);
 		}
 	}
 		
@@ -40,7 +40,7 @@ public class DataBaseDriver {
 		this.timeout = timeout;
 	}
 	
-	public void reset() throws SQLException {
+	public void reset(String evolutionStackName) throws SQLException {
 		File dbFile = new File(fileName + ".sqlite3");
 		if (dbFile.exists()) {
 			dbFile.delete();
@@ -51,7 +51,7 @@ public class DataBaseDriver {
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(timeout);
 
-		statement.executeUpdate("create table cocktailgeneration("
+		statement.executeUpdate("create table " + evolutionStackName + "("
 				+ "number integer primary key, "
 				+ "time datetime default current_timestamp, "
 				+ "generationManager blob"
@@ -60,11 +60,12 @@ public class DataBaseDriver {
 		statement.close();
 	}
 	
-	public void insert(int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+	public void insert(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
 		try {
-			PreparedStatement statement = connection.prepareStatement("insert into cocktailgeneration (number, generationManager) values (?, ?)");
-			statement.setObject(1, generationNumber);
-			statement.setObject(2, serialize(generationManager));
+			PreparedStatement statement = connection.prepareStatement("insert into ? (number, generationManager) values (?, ?)");
+			statement.setObject(1, evolutionStackName);
+			statement.setObject(2, generationNumber);
+			statement.setObject(3, serialize(generationManager));
 		
 			statement.execute();
 		} catch (SQLException | IOException e) {
@@ -72,12 +73,13 @@ public class DataBaseDriver {
 		}
 	}
 	
-	public CocktailGenerationManager select(int generationNumber) throws SQLException {
+	public CocktailGenerationManager select(String evolutionStackName, int generationNumber) throws SQLException {
 		PreparedStatement statement;
 		try {
-			statement = connection.prepareStatement("select generationManager from cocktailgeneration where number=?");
+			statement = connection.prepareStatement("select generationManager from ? where number=?");
 		
-			statement.setObject(1, generationNumber);
+			statement.setObject(1, evolutionStackName);
+			statement.setObject(2, generationNumber);
 		
 			ResultSet rs = statement.executeQuery();
 				
@@ -96,8 +98,10 @@ public class DataBaseDriver {
 		return null;
 	}
 	
-	public int getLastGenerationNumber() throws SQLException {
-		PreparedStatement statement = connection.prepareStatement("select max(number) from cocktailgeneration");
+	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
+		PreparedStatement statement = connection.prepareStatement("select max(number) from ?");
+		
+		statement.setObject(1, evolutionStackName);
 		
 		ResultSet rs = statement.executeQuery();
 		

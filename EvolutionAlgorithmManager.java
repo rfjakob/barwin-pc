@@ -126,10 +126,10 @@ public class EvolutionAlgorithmManager {
 		this.propPath = propPath;
 		
 		if (dbDriverPath != null) {
-			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset);
+			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset, evolutionStackName);
 
 		
-			if (dbDriver.getLastGenerationNumber() == 0) {
+			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
 				this.genManager = new CocktailGenerationManager(populationSize, cocktailStackName);
 			} else {
 				this.genManager = load();
@@ -202,11 +202,11 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {
-		return load(dbDriver.getLastGenerationNumber());
+		return load(dbDriver.getLastGenerationNumber(evolutionStackName));
 	}
 	
 	public CocktailGenerationManager load(int number) throws SQLException {
-		return dbDriver.select(number);
+		return dbDriver.select(evolutionStackName, number);
 	}
 	
 	public void loadFromDB(int number) throws SQLException {
@@ -226,7 +226,7 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void doSave(int generationNumber, CocktailGenerationManager cocktailGenerationManager) throws SQLException {
-		dbDriver.insert(generationNumber, cocktailGenerationManager);
+		dbDriver.insert(evolutionStackName, generationNumber, cocktailGenerationManager);
 	}
 	
 	/*
