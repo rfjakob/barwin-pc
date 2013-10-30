@@ -56,4 +56,12 @@ public class EvolutionStackContainer {
 		
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}
+	
+	public String[] listEvolutionStacks() {
+		return (String[]) evolutionMap.keySet().toArray();
+	}
+	
+	public boolean containsEvolutionStack(String name) {
+		return evolutionMap.containsKey(name);
+	}
 }

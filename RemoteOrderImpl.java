@@ -51,4 +51,14 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			String propPath) throws RemoteException, SQLException {
 		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, propPath);
 	}
+
+	@Override
+	public String[] listEvolutionStacks() throws RemoteException {
+		return evolutionStackController.listEvolutionStacks();
+	}
+
+	@Override
+	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException {
+		return evolutionStackController.containsEvolutionStack(evolutionStackName);
+	}
 }
