@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<!-- Configuration of the Ant build system to generate a Jar file --> 
+<project name="genBotSerial" default="CreateJar">
+	<target name="CreateJar" description="Create Jar file">
+		<jar jarfile="genBotSerial.jar" basedir=".." includes="genBotSerial/*.class">
+			<manifest>
+		    	<attribute name="Main-Class" value="genBotSerial.Serial"/>
+		    </manifest>
+		</jar>
+	</target>
+</project>
