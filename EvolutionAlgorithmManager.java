@@ -88,7 +88,7 @@ public class EvolutionAlgorithmManager {
 		}
 	}
 	
-	private void loadProps(String propPath) {
+	private void loadProps(String propPath) throws NumberFormatException, SQLException {
 		Properties props = new Properties();
 		try {
 			props.load(new FileInputStream(propPath + ".properties"));
@@ -110,12 +110,16 @@ public class EvolutionAlgorithmManager {
 				);
 	}
 	
-	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath, String booleanAllowedIngredientsString) {
+	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
 		this.populationSize = populationSize;
 		this.truncation = truncation;
 		this.elitism = elitism;
-		this.dbDriverPath = dbDriverPath;
 		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
+		if (!dbDriverPath.equals(this.dbDriverPath)) {
+			this.dbDriverPath = dbDriverPath;
+			
+			accessDB(dbDriverPath, true);
+		}
 	}
 
 	private void constructRest(String cocktailStackName, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
@@ -125,20 +129,23 @@ public class EvolutionAlgorithmManager {
 		
 		this.propPath = propPath;
 		
+		accessDB(dbDriverPath, dbReset);		
+	}
+	
+	private void accessDB(String dbDriverPath, boolean dbReset) throws SQLException {
 		if (dbDriverPath != null) {
 			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset, evolutionStackName);
 
 		
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
-				this.genManager = new CocktailGenerationManager(populationSize, cocktailStackName);
+				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName);
 			} else {
 				this.genManager = load();
 				this.didJustLoad = true;
 			}
 		} else {
-			this.genManager = new CocktailGenerationManager(populationSize, cocktailStackName);
+			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName);
 		}
-		
 	}
 	
 	public boolean canEvolve() {

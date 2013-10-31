@@ -40,7 +40,12 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName, CheckFitness fitnessCheck,
 			Recombination recombination, boolean dbReset, String propPath)
 			throws RemoteException, SQLException {
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
+		//TODO fitnessCheck is now hardcoded - it would be better as a String argument
+		//TODO fitnessCheck is now hardcoded - it would be better as a String argument
+		CheckFitness wasZahlst = new EfficientCocktail();
+		Recombination fortpflanzung = new MutationAndIntermediateRecombination(0.25, 0.005);
+
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, wasZahlst, fortpflanzung, dbReset, propPath);
 	}
 
 	@Override

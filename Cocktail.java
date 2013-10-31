@@ -156,6 +156,15 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	public Cocktail copy() {
 		return new Cocktail(getAmountsAsDouble());
 	}
+	
+	public double getCosts() {
+		double costs = 0;
+		for (int i = 0; i < IngredientArray.getInstance().getNumberOfIngredients(); i++) {
+			costs += getIngredientAmounts()[i].getAmountPrice();
+		}
+		
+		return costs;
+	}
 
 	public String toString() {
 			String out = "";
