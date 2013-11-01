@@ -54,6 +54,7 @@ public class EvolutionAlgorithmManager {
 		}
 		
 		Properties props = new Properties();
+		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
 		props.setProperty("elitism", String.valueOf(elitism));
@@ -74,14 +75,14 @@ public class EvolutionAlgorithmManager {
 		
 		loadProps(propPath);
 		
-		constructRest(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
+		constructRest(fitnessCheck, recombination, dbReset, propPath);
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
 		loadProps(propPath);
 		
 		try {
-			constructRest(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
+			constructRest(fitnessCheck, recombination, dbReset, propPath);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,6 +103,7 @@ public class EvolutionAlgorithmManager {
 		
 		System.out.println(props.getProperty("populationSize"));
 		updateProps(
+				props.getProperty("evolutionStackName"),
 				Integer.parseInt(props.getProperty("populationSize")), 
 				Integer.parseInt(props.getProperty("truncation")), 
 				Integer.parseInt(props.getProperty("elitism")), 
@@ -110,7 +112,8 @@ public class EvolutionAlgorithmManager {
 				);
 	}
 	
-	private void updateProps(int populationSize, int truncation, int elitism, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
+	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
+		this.evolutionStackName = evolutionStackName;
 		this.populationSize = populationSize;
 		this.truncation = truncation;
 		this.elitism = elitism;
@@ -122,8 +125,7 @@ public class EvolutionAlgorithmManager {
 		}
 	}
 
-	private void constructRest(String cocktailStackName, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
-		this.evolutionStackName = cocktailStackName;
+	private void constructRest(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		

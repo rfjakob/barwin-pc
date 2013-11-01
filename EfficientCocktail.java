@@ -1,7 +1,5 @@
 package genBot2;
 
-import java.util.Random;
-
 public class EfficientCocktail implements CheckFitness {
 	
 	public EfficientCocktail() {

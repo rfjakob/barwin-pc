@@ -99,9 +99,7 @@ public class DataBaseDriver {
 	}
 	
 	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
-		PreparedStatement statement = connection.prepareStatement("select max(number) from ?");
-		
-		statement.setObject(1, evolutionStackName);
+		PreparedStatement statement = connection.prepareStatement("select max(number) from " + evolutionStackName);
 		
 		ResultSet rs = statement.executeQuery();
 		

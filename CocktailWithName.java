@@ -1,6 +1,8 @@
 package genBot2;
 
-public class CocktailWithName {
+import java.io.Serializable;
+
+public class CocktailWithName implements Serializable {
 	
 	private final String evolutionStackName;
 	private final int generationNumber;

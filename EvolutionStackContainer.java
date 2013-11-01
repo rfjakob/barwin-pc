@@ -58,7 +58,9 @@ public class EvolutionStackContainer {
 	}
 	
 	public String[] listEvolutionStacks() {
-		return (String[]) evolutionMap.keySet().toArray();
+		String[] keys = (String[])(evolutionMap.keySet().toArray(new String[evolutionMap.size()]));
+
+		return keys;
 	}
 	
 	public boolean containsEvolutionStack(String name) {

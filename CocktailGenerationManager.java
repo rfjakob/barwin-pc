@@ -77,7 +77,7 @@ public class CocktailGenerationManager implements Serializable {
 	}
 	
 	public CocktailWithName[] getNamedCocktailGeneration() {
-		return getNamedCocktailGeneration();
+		return getCocktailGeneration().getNamedPopulation(getEvolutionStackName(), getGenerationNumber());
 	}
 	
 	public Cocktail getCocktailByName(String name) {

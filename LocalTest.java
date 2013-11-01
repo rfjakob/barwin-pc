@@ -1,12 +1,9 @@
 package genBot2;
 
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.sql.SQLException;
 
-public class RMISimpleClient {
+public class LocalTest {
 
 	public static void main(String[] args) {
 		CheckFitness wasZahlst = new EfficientCocktail();
@@ -14,37 +11,31 @@ public class RMISimpleClient {
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
 		
+		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl();
+		
 		try {
-			Registry registry = LocateRegistry.getRegistry();
-			
-			RemoteOrderInterface remoteOrderImpl = (RemoteOrderInterface) registry.lookup("rmiImpl");
-			
-			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, null, null, "eigenschaften");
-			
+			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, wasZahlst, fortpflanzung, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
 			System.out.println(evolutionStacks.length);
 			System.out.println(evolutionStacks[0]);
 			
-			System.out.println(remoteOrderImpl.listEvolutionStacks()[0]);
-
 			CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
 			
-//			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], cocktails[0].getName(), 10);
+			System.out.println(namedCocktails[1].getName());
 			
-			System.out.println(remoteOrderImpl.canEvolve(evolutionStacks[0]));
+			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], namedCocktails[1].getName(), 10);
 			
-		} catch (RemoteException e) {
+			System.out.println(remoteOrderImpl.canEvolve("testStack"));
+		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
+			e1.printStackTrace();
+		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
+			e1.printStackTrace();
+		} catch (NotEnoughRatedCocktailsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 }
