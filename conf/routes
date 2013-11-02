@@ -4,7 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET     /rmi                        controllers.Application.indexRMI()
+POST    /generate                   controllers.Application.generate()
+GET     /serial                     controllers.Application.serialTest()
 GET     /:id                        controllers.Application.generation(id: Long)
 POST    /setFitness                 controllers.Application.setFitness()
 
