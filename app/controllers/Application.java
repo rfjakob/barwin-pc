@@ -1,9 +1,12 @@
 package controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import genBot2.*;
 import genBotSerial.*;
+import play.libs.Json;
 //import play.*;
 //import play.cache.Cache;
 import play.mvc.*;
@@ -12,6 +15,9 @@ import views.html.*;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.jmx.snmp.Timestamp;
 
 public class Application extends Controller {
 	private static SerialRMIInterface genBotSerialRMIConnect() throws Exception {
@@ -32,31 +38,15 @@ public class Application extends Controller {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
-			// for (String name: genBotRMI.listEvolutionStacks())
-			// System.out.println(name);
+			for (String name: genBotRMI.listEvolutionStacks())
+				System.out.println(name);
 
 			return ok(index.render(genBotRMI.listEvolutionStacks(), genBotRMI,
 					alleZutaten));
 		} catch (Exception e) {
+			System.out.println("EXCEPION " + e.getMessage());
 			return error(e);
 		}
-		// Load GenBotWrapper
-		// GenBotWrapper genBot = (GenBotWrapper) Cache.get("genBot");
-
-		// genBot = new GenBotWrapper();
-		// If not exist create new one
-		/*
-		 * if(genBot == null) { genBot = new GenBotWrapper(); genBot.init(); }
-		 * 
-		 * try { genBot.manager.evolve(); } catch (FitnessNotSetException e) {
-		 * e.printStackTrace(); } //genBot.manager.getGenerationNumber()()
-		 * //Cocktail[] cList =
-		 * genBot.manager.getCocktailGeneration().getPopulation();
-		 * 
-		 * Cache.set("genBot", genBot); //return ok(gen.render("afe",
-		 * genBot.manager, cList)); return ok(genNew.render("afe", genBot));
-		 * //return ok("a");
-		 */
 	}
 
 	public static Result generate() {
@@ -74,8 +64,8 @@ public class Application extends Controller {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			String str = ""; // genBotRMI.toString();
 			System.out.println(parameters.get("name")[0]);
-			String name = "adsf adf";
-			//String name = parameters.get("name")[0];
+			//String name = "adsf adf";
+			String name = parameters.get("name")[0];
 			genBotRMI.generateEvolutionStack(name, erlaubteZutaten, 10, 3, 2,
 					"datenbank", true, null, null, "eigenschaften");
 
@@ -91,15 +81,44 @@ public class Application extends Controller {
 
 	}
 
-	public static Result serialTest() {
-		try {
-			SerialRMIInterface serial = genBotSerialRMIConnect();
-			String test = serial.read();
-			return ok("length:" + test);
-		} catch (Exception e) {
-			return ok("ERROR2");
-		}
+	public static Result serial() {
+		return ok(serial.render());
+	}
 
+	public static Result serialWrite() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		try {
+			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
+			ObjectNode result = Json.newObject();
+			String text = parameters.get("text")[0] + "\r\n";
+			serialRMI.write(text);
+			result.put("valid", true);
+			//Timestamp timestamp = new Timestamp(new Date().getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			result.put("timestamp", sdf.format(new Date().getTime()));
+			result.put("string", text);
+			return ok(result);
+		} catch (Exception e) {
+			System.out.println("EXCEPION " + e.getMessage());
+			return error(e);
+		}
+	}
+
+	public static Result serialRead() {
+		try {
+			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
+			ObjectNode result = Json.newObject();
+			String str = serialRMI.read();
+			result.put("valid", true);
+			//Timestamp timestamp = new Timestamp(new Date().getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			result.put("timestamp", sdf.format(new Date().getTime()));
+			result.put("string", str/*.replaceAll("\\r", "")*/);
+			return ok(result);
+		} catch (Exception e) {
+			System.out.println("EXCEPION " + e.getMessage());
+			return error(e);
+		}
 	}
 
 	public static Result generation(Long id) {
@@ -111,6 +130,15 @@ public class Application extends Controller {
 	public static Result setFitness() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+
+			//genBotRMI.setCocktailFitness();
+
+		} catch (Exception e) {
+			System.out.println("EXCEPION " + e.getMessage());
+			return error(e);
+		}
 		return ok(parameters.get("fitness")[0]);
 	}
 }

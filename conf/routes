@@ -5,7 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index()
 POST    /generate                   controllers.Application.generate()
-GET     /serial                     controllers.Application.serialTest()
+GET     /serial                     controllers.Application.serial()
+POST    /serial/write               controllers.Application.serialWrite()
+GET     /serial/read                controllers.Application.serialRead()
 GET     /:id                        controllers.Application.generation(id: Long)
 POST    /setFitness                 controllers.Application.setFitness()
 

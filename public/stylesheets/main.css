@@ -1,6 +1,6 @@
 body {
 	width: 800px;
-	margin: 30px auto 0px auto;
+	margin: 80px auto 0px auto;
 	background-color: #FEFEFE;
 }
 
@@ -10,6 +10,10 @@ body {
 
 .left {
 	float: left;
+}
+
+.hidden {
+	display: none;
 }
 
 .right {
@@ -66,4 +70,15 @@ li.cocktail div.ingredients span.iAmount {
 #createForm {
 	margin: 20px;	
 }
+
+.alert {
+	width: 800px;
+	margin: auto;
+	top: 10px;
+	position: fixed;	
+}
+
+
+#serialCode {
+	height: 400px;
 }
