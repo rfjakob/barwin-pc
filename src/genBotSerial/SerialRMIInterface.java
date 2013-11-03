@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface SerialRMIInterface extends Remote {
 
-	public String write() throws RemoteException;
+	public void write(String str) throws RemoteException;
 	public String read() throws RemoteException;
 
 }

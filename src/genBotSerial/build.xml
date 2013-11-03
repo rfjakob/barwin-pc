@@ -8,4 +8,5 @@
 		    </manifest>
 		</jar>
 	</target>
+	<copy file="genBotSerial.jar" todir="../../../genBotWI/lib"/>
 </project>
