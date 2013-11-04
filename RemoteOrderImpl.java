@@ -57,18 +57,28 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			recombination = new IntermediateRecombination(0.25);
 		}
 		// variableArea is hard coded... but it should be 0.25
-		CheckFitness wasZahlst = new EfficientCocktail();
-		Recombination fortpflanzung = new MutationAndIntermediateRecombination(0.25, 0.005);
 
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, wasZahlst, fortpflanzung, dbReset, propPath);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
 	}
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, int populationSize,
 			int truncation, int elitism, String dbDriverPath, boolean dbReset,
-			CheckFitness fitnessCheck, Recombination recombination, double stdDeviation,
+			String fitnessCheckName, String recombinationName, double stdDeviation,
 			String propPath) throws RemoteException, SQLException {
+		CheckFitness fitnessCheck = new EfficientCocktail();
+		if (!fitnessCheckName.equals("EfficientCocktail")) {
+			fitnessCheck = null;
+		}
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation);
+		if (recombinationName.equals("StandardMutation")) {
+			recombination = new StandardMutation(stdDeviation);
+		} else if (recombinationName.equals("IntermediateRecombination")) {
+			recombination = new IntermediateRecombination(0.25);
+		}
+		// variableArea is hard coded... but it should be 0.25
+		
 		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, stdDeviation, propPath);
 	}
 

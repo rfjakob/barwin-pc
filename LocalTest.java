@@ -6,15 +6,13 @@ import java.sql.SQLException;
 public class LocalTest {
 
 	public static void main(String[] args) {
-		CheckFitness wasZahlst = new EfficientCocktail();
-		Recombination fortpflanzung = new MutationAndIntermediateRecombination(0.25, 0.005);
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
 		
 		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl();
 		
 		try {
-			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, wasZahlst, fortpflanzung, 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
 			System.out.println(evolutionStacks.length);
 			System.out.println(evolutionStacks[0]);
