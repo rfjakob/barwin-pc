@@ -81,4 +81,6 @@ li.cocktail div.ingredients span.iAmount {
 
 #serialCode {
 	height: 400px;
+	font-family:monospace;
+	font-size: 8px;
 }

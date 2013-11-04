@@ -21,11 +21,11 @@ import com.sun.jmx.snmp.Timestamp;
 
 public class Application extends Controller {
 	private static SerialRMIInterface genBotSerialRMIConnect() throws Exception {
-		return (SerialRMIInterface) Naming.lookup("//127.0.0.1/genBotSerial");
+		return (SerialRMIInterface) Naming.lookup("//127.0.0.1:12121/genBotSerial");
 	}
 
 	private static RemoteOrderInterface genBotRMIConnect() throws Exception {
-		return (RemoteOrderInterface) Naming.lookup("//127.0.0.1/rmiImpl");
+		return (RemoteOrderInterface) Naming.lookup("//127.0.0.1:12122/rmiImpl");
 	}
 
 	private static Result error(Exception e) {
@@ -96,7 +96,7 @@ public class Application extends Controller {
 			//Timestamp timestamp = new Timestamp(new Date().getTime());
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			result.put("timestamp", sdf.format(new Date().getTime()));
-			result.put("string", text);
+			result.put("string", text.replaceAll("\\r\\n", "\\\\r\\\\n"));
 			return ok(result);
 		} catch (Exception e) {
 			System.out.println("EXCEPION " + e.getMessage());
@@ -113,7 +113,10 @@ public class Application extends Controller {
 			//Timestamp timestamp = new Timestamp(new Date().getTime());
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			result.put("timestamp", sdf.format(new Date().getTime()));
-			result.put("string", str/*.replaceAll("\\r", "")*/);
+			if(str.length() > 0)
+				result.put("string", str.replaceAll("\\r\\n", "\\\\r\\\\n"));
+			else
+				result.put("string", "");
 			return ok(result);
 		} catch (Exception e) {
 			System.out.println("EXCEPION " + e.getMessage());

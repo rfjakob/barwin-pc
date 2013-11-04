@@ -8,15 +8,21 @@ gb = {
 		$("body").prepend(t)
 		window.setTimeout(function() {
 			t.alert('close');
-		}, 6000);
+		}, 4000);
 	},
 	addSerialLine: function(data) {
 		var str = '';
 		if(data.type == "write")
-			str = '>>> '
+			str = 'W - '
 		if(data.type == "read")
-			str = '<<< '
-		$('#serialCode').val(str + data.timestamp + " " + data.string + $('#serialCode').val());
+			str = 'R - '
+		$('#serialCode').val(str + data.timestamp + " '" + data.string + "'\n" + $('#serialCode').val());
+	},
+	clearSerialLine: function() {
+		$('#serialCode').val('');
+	},
+	stdActions: function(data) {
+		
 	}
 }
 $(function() {
@@ -46,17 +52,24 @@ $(function() {
 		});
 	})
 
-	$('#serialForm button').click(function(e) {
+	$('#serialForm button.send').click(function(e) {
 		e.preventDefault()
 		$.post("/serial/write", $("#serialForm").serialize(), function(data) {
-			data.type = "write"
-			gb.addSerialLine(data);
-			gb.message({
-				text : "Sent",
-				type : "success"
-			});
-			
+			if(data.valid) {
+				data.type = "write"
+				gb.addSerialLine(data);
+				gb.message({
+					text : "'" + data.string + "' Sent",
+					type : "success"
+				});
+			}
+			gb.stdActions(data);
 		});
+	})
+
+	$('#serialForm button.clear').click(function(e) {
+		e.preventDefault()
+		gb.clearSerialLine()
 	})
 
 	if ($('#serialContainer').length > 0) {
