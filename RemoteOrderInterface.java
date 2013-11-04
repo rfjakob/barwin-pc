@@ -15,7 +15,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void evolve(String evolutionStackName) throws RemoteException, SQLException, NotEnoughRatedCocktailsException;
 	
-	public void generateEvolutionStack(String evolutionStackName, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws RemoteException, SQLException;
+	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName, String recombinationName, boolean dbReset, String propPath, double stdDeviation) throws RemoteException, SQLException;
 	
 	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath)  throws RemoteException, SQLException;
 	

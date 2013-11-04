@@ -43,11 +43,20 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void generateEvolutionStack(String evolutionStackName, CheckFitness fitnessCheck,
-			Recombination recombination, boolean dbReset, String propPath)
+	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
+			String recombinationName, boolean dbReset, String propPath, double stdDeviation)
 			throws RemoteException, SQLException {
-		//TODO fitnessCheck is now hardcoded - it would be better as a String argument
-		//TODO fitnessCheck is now hardcoded - it would be better as a String argument
+		CheckFitness fitnessCheck = new EfficientCocktail();
+		if (!fitnessCheckName.equals("EfficientCocktail")) {
+			fitnessCheck = null;
+		}
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation);
+		if (recombinationName.equals("StandardMutation")) {
+			recombination = new StandardMutation(stdDeviation);
+		} else if (recombinationName.equals("IntermediateRecombination")) {
+			recombination = new IntermediateRecombination(0.25);
+		}
+		// variableArea is hard coded... but it should be 0.25
 		CheckFitness wasZahlst = new EfficientCocktail();
 		Recombination fortpflanzung = new MutationAndIntermediateRecombination(0.25, 0.005);
 
