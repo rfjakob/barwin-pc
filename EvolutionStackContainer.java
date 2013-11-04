@@ -45,9 +45,9 @@ public class EvolutionStackContainer {
 		evolutionMap.put(name, evoAlgMngr);
 	}
 
-	public void addEvolutionAlgorithmManager(String name, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, String propPath) throws SQLException {
-		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, propPath);
-		
+	public void addEvolutionAlgorithmManager(String name, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {
+		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, stdDeviation, propPath);
+
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}
 	

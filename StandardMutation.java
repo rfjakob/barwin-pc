@@ -114,4 +114,14 @@ public class StandardMutation implements Recombination {
 		return mutateCocktails(population, newPopulationSize, booleanAllowedIngredients);
 	}
 
+	@Override
+	public double getMutationStdDeviation() {
+		return stdDeviation;
+	}
+
+	@Override
+	public void setMutationStdDeviation(double stdDeviation) {
+		this.stdDeviation = stdDeviation;
+	}
+
 }

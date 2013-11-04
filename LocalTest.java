@@ -14,7 +14,7 @@ public class LocalTest {
 		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl();
 		
 		try {
-			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, wasZahlst, fortpflanzung, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, wasZahlst, fortpflanzung, 0.001, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
 			System.out.println(evolutionStacks.length);
 			System.out.println(evolutionStacks[0]);

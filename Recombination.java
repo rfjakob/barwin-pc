@@ -7,4 +7,8 @@ public interface Recombination {
  * @param newPopulationSize the resulting cocktailpopulation's size
  */
 	public CocktailGeneration recombine(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException;
+	
+	public double getMutationStdDeviation();
+	
+	public void setMutationStdDeviation(double stdDeviation);
 }

@@ -129,4 +129,15 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 		return allCrossovers(population, newPopulationSize);
 	}
 
+	@Override
+	public double getMutationStdDeviation() {
+		// just a placeholder
+		return 0;
+	}
+
+	@Override
+	public void setMutationStdDeviation(double stdDeviation) {
+		// just a placeholder
+	}
+
 }

@@ -20,4 +20,14 @@ public class MutationAndIntermediateRecombination implements Recombination {
 		return nextGeneration;
 	}
 
+	@Override
+	public double getMutationStdDeviation() {
+		return mutation.getStdDeviation();
+	}
+
+	@Override
+	public void setMutationStdDeviation(double stdDeviation) {
+		mutation.setMutationStdDeviation(stdDeviation);
+	}
+
 }

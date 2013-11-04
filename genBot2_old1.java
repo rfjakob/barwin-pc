@@ -58,7 +58,7 @@ public class genBot2_old1 {
 			// Set a recombination
 			Recombination mutationCrossover = new MutationAndIntermediateRecombination(0.25, mutation);
 		
-			EvolutionAlgorithmManager evoManager = new EvolutionAlgorithmManager("Mischmasch", IngredientArray.getInstance().getAllIngredients(), firstGenerationSize, truncation, elitism, null, true, fitnessCheck, mutationCrossover, propPath);
+			EvolutionAlgorithmManager evoManager = new EvolutionAlgorithmManager("Mischmasch", IngredientArray.getInstance().getAllIngredients(), firstGenerationSize, truncation, elitism, null, true, fitnessCheck, mutationCrossover, 0.001, propPath);
 		
 			int generationSize = evoManager.getGenManager().getCurrentPopulationSize();
 		
