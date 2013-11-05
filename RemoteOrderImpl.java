@@ -1,18 +1,13 @@
 package genBot2;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.Properties;
 
 public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	private EvolutionStackContainer evolutionStackController;
-	private Scanner scanner;
-	private PrintWriter out;
-
 	public RemoteOrderImpl() {
 		this.evolutionStackController = EvolutionStackContainer.getInstance();
 	}
@@ -93,15 +88,21 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public String getProps(String evolutionStackName) throws RemoteException, FileNotFoundException {
-		scanner = new Scanner(new File(evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getPropFile()));
-		return scanner.useDelimiter("\\Z").next();
+	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).loadProps();
 	}
 
 	@Override
-	public void setProps(String evolutionStackName, String props)
-			throws RemoteException, FileNotFoundException {
-		out = new PrintWriter(evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getPropFile());
-		out.println(props);
+	public void setProps(String evolutionStackName, int populationSize,
+			int truncation, int elitism, double stdDeviation,
+			String dbDriverPath, String booleanAllowedIngredientsString)
+			throws RemoteException {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngredientsString);
+	}
+
+	@Override
+	public void queueCocktail(String evolutionStackName, String cocktailName)
+			throws RemoteException {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).queue(cocktailName);
 	}
 }

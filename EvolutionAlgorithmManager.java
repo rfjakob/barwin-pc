@@ -55,34 +55,15 @@ public class EvolutionAlgorithmManager {
 			}
 		}
 		
-		Properties props = new Properties();
-		props.setProperty("evolutionStackName", evolutionStackName);
-		props.setProperty("populationSize", String.valueOf(populationSize));
-		props.setProperty("truncation", String.valueOf(truncation));
-		props.setProperty("elitism", String.valueOf(elitism));
-		props.setProperty("stdDeviation", String.valueOf(stdDeviation));
-		if (dbDriverPath != null) {
-			props.setProperty("dbDriverPath", dbDriverPath);
-		}
-		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
-			
-		try {
-			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngrediensToString());
 		
-		loadProps(propPath);
+		convertProps();
 		
 		constructRest(fitnessCheck, recombination, dbReset, propPath);
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
-		loadProps(propPath);
+		convertProps();
 		
 		try {
 			constructRest(fitnessCheck, recombination, dbReset, propPath);
@@ -92,7 +73,7 @@ public class EvolutionAlgorithmManager {
 		}
 	}
 	
-	private void loadProps(String propPath) throws NumberFormatException, SQLException {
+	public Properties loadProps() {
 		Properties props = new Properties();
 		try {
 			props.load(new FileInputStream(propPath + ".properties"));
@@ -103,6 +84,12 @@ public class EvolutionAlgorithmManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return props;
+	}
+	
+	private void convertProps() throws NumberFormatException, SQLException {
+		Properties props = loadProps();
 		
 //		System.out.println(props.getProperty("populationSize"));
 		updateProps(
@@ -182,7 +169,7 @@ public class EvolutionAlgorithmManager {
 		}
 		
 		// load properties - they may have been updated
-		loadProps(propPath);
+		convertProps();
 		
 		genManager.increaseGenerationNumber();
 		
@@ -363,13 +350,32 @@ public class EvolutionAlgorithmManager {
 		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, fitnessInput);
 	}
 	
-	public void pour(String name) {
+	public void queue(String name) {
 // TODO Implement this method
 //		getGenManager().getCocktailByName(name).pour;
-		getGenManager().getCocktailByName(name).setPouredTrue();
+		getGenManager().getCocktailByName(name).setQueued(true);
 	}
-
-	public String getPropFile() {
-		return propPath + ".properties";
+	
+	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) {
+		Properties props = new Properties();
+		props.setProperty("evolutionStackName", evolutionStackName);
+		props.setProperty("populationSize", String.valueOf(populationSize));
+		props.setProperty("truncation", String.valueOf(truncation));
+		props.setProperty("elitism", String.valueOf(elitism));
+		props.setProperty("stdDeviation", String.valueOf(stdDeviation));
+		if (dbDriverPath != null) {
+			props.setProperty("dbDriverPath", dbDriverPath);
+		}
+		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
+			
+		try {
+			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

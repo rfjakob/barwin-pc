@@ -21,6 +21,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	private double fitness;
 	private boolean fitnessIsSet;
 	private boolean poured;
+	private boolean queued;
 	
 	/*
 	 * Constructor
@@ -52,8 +53,9 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			ingredientAmounts[i] = new IngredientAmount(ingredients[i], amount[i] / sum);
 		}
 		
-		fitnessIsSet = false;
-		poured = false;
+		this.fitnessIsSet = false;
+		this.poured = false;
+		this.queued = false;
 	}
 	
 	/*
@@ -125,6 +127,14 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	
 	public void setPouredTrue() {
 		poured = true;
+	}
+	
+	public boolean isQueued() {
+		return queued;
+	}
+	
+	public void setQueued(boolean bool) {
+		this.queued = bool;
 	}
 		
 	/*

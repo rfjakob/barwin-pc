@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public interface RemoteOrderInterface extends Remote {
 
@@ -23,7 +24,9 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
 	
-	public String getProps(String evolutionStackName) throws RemoteException, FileNotFoundException;
+	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException;
 	
-	public void setProps(String evolutionStackName, String props) throws RemoteException, FileNotFoundException;
+	public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
+	
+	public void queueCocktail(String evolutionStackName, String cocktailName) throws RemoteException;
 }

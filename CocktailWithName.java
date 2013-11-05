@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class CocktailWithName implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String evolutionStackName;
 	private final int generationNumber;
 	private final int cocktailNumber;
