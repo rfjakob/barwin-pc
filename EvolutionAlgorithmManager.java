@@ -301,7 +301,7 @@ public class EvolutionAlgorithmManager {
 		
 		// now we have the previous cocktails ranked. Now replace <elitism> cocktails in the current population
 		for (int i = 0; i < elitism; i++) {
-			newPopulation[randomOrder[i]] = oldCocktails[i].copy();
+			newPopulation[randomOrder[i]] = oldCocktails[i].copyElite();
 		}
 		
 		return new CocktailGeneration(newPopulation);

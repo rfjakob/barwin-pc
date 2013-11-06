@@ -22,6 +22,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	private boolean fitnessIsSet;
 	private boolean poured;
 	private boolean queued;
+	private boolean eliteCocktail;
 	
 	/*
 	 * Constructor
@@ -56,6 +57,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		this.fitnessIsSet = false;
 		this.poured = false;
 		this.queued = false;
+		this.eliteCocktail = false;
 	}
 	
 	/*
@@ -161,6 +163,21 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			amounts[i] = getAmount(ingredients.getAllIngredients()[i]);
 		}
 		return(amounts);
+	}
+	
+	public boolean isEliteCocktail() {
+		return eliteCocktail;
+	}
+	
+	public void setEliteCocktailTrue() {
+		this.eliteCocktail = true;
+	}
+	
+	public Cocktail copyElite() {
+		Cocktail retCocktail = copy();
+		retCocktail.setEliteCocktailTrue();
+		
+		return retCocktail;
 	}
 	
 	public Cocktail copy() {
