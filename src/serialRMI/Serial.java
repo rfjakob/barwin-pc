@@ -17,7 +17,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 //import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 //import java.util.List;
 import java.util.Properties;
 
@@ -26,24 +28,42 @@ public class Serial implements SerialRMIInterface {
 	static int portRate = 9600;
 	static boolean rmiRegistry = true;
 	static int rmiRegistryPort = Registry.REGISTRY_PORT;
+	static String rmiServiceName = "serial";
 	static boolean connected = false;
 	static InputStream in;
 	static OutputStream out;
 	static BufferedWriter file;
+	static boolean logging = false;
 
 	public static void main(String[] args) throws Exception {	    
 		try {
+			readProps();
 			Registry registry;
-			if(rmiRegistry)
+			if(rmiRegistry) {
+				System.out.println("Starting RMI registry on port " + rmiRegistryPort);
 				registry = LocateRegistry.createRegistry(rmiRegistryPort);
-			else
+			} else {
+				System.out.println("Using running RMI registry");
 				registry = LocateRegistry.getRegistry();
+			}
 			
 			Serial rmiImpl = new Serial();
 			SerialRMIInterface stub = (SerialRMIInterface) UnicastRemoteObject
 					.exportObject(rmiImpl, 0);
 			// RemoteServer.setLog(System.out);
-			registry.rebind("serial", stub);
+			System.out.println("Starting RMI service " + rmiServiceName);
+			registry.rebind(rmiServiceName, stub);
+			
+			if(logging) {
+				try {
+					String fileName = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+					System.out.println("Opening file '" + "log/" + fileName + ".txt' for logging");
+				    FileWriter fstream = new FileWriter("log/" + fileName + ".txt", true);
+				    file = new BufferedWriter(fstream);
+				} catch (Exception e) {
+					System.out.println("Error while trying to open log file " + e.getMessage());
+				}
+			}
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -56,8 +76,15 @@ public class Serial implements SerialRMIInterface {
 	    String fileName = "serialRMI.config";
 	    InputStream is = new FileInputStream(fileName);
 	    prop.load(is);
-	    rmiRegistry = Boolean.getBoolean(prop.getProperty("rmiRegistry"));
-	    rmiRegistryPort = Integer.getInteger(prop.getProperty("rmiRegistryPort"));
+	    is.close();
+	    if(prop.containsKey("rmiRegistry"))
+	    	rmiRegistry 	= Boolean.parseBoolean(prop.getProperty("rmiRegistry"));
+	    if(prop.containsKey("rmiRegistryPort"))
+	    	rmiRegistryPort = Integer.parseInt(prop.getProperty("rmiRegistryPort"));
+	    if(prop.containsKey("rmiServiceName"))
+	    	rmiServiceName = prop.getProperty("rmiServiceName");
+	    if(prop.containsKey("logging"))
+	    	logging = Boolean.parseBoolean(prop.getProperty("logging"));
 	}
 
 	@Override
@@ -81,16 +108,6 @@ public class Serial implements SerialRMIInterface {
 			// (new Thread(new SerialReader(in))).start();
 			// (new Thread(new SerialWriter(out))).start();
 			connected = true;
-
-			try {
-				// new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date()));
-			    FileWriter fstream = new FileWriter("log/out.txt", true); //true tells to append data.
-			    file = new BufferedWriter(fstream);
-			    file.write("\nsue");
-			    file.close();
-			} catch (Exception e) {
-				System.out.println("ERROR " + e.getMessage());
-			}
 		}
 	}
 
@@ -98,18 +115,19 @@ public class Serial implements SerialRMIInterface {
 	public void write(String str) throws RemoteException, Exception {
 		if(!connected)
 			throw new Exception("Not connected!");
-		// System.out.println("SENDING '" + str. + "'...");
+		
 		OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {
 			writer.write(str);
 			writer.flush();
+			log(str, 1);
 			file.write(str);
 			file.flush();
 		} catch (IOException e) {
 			System.out.println("Serial::write()");
 			System.out.println("   - IOException occured: " + e.getMessage());
 			System.out.println("   - Setting status to not connected");
-			connected = false;
+			disconnect();
 			//e.printStackTrace();
 		}
 	}
@@ -130,14 +148,37 @@ public class Serial implements SerialRMIInterface {
 			System.out.println("Serial::read()");
 			System.out.println("   - IOException occured: " + e.getMessage());
 			System.out.println("   - Setting status to not connected");
-			connected = false;
+			disconnect();
 			//e.printStackTrace();
 		}
-		file.write(str);
-		file.flush();
+		log(str, 0);
 		return str;
 	}
 
+	private static void log(String str, int i) {
+		if(!logging)
+			return;
+		String output = "";
+		if(i == 0)
+			output += "W ";
+		else if(i== 1)
+			output += "R ";	
+		
+		output += new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SS").format(new Date()) + " ";
+		output += "'" + str + "'\n";
+		try {
+			file.write(output);
+			file.flush();
+		} catch (IOException e) {
+			System.out.println("Error while writing to log file");
+			System.out.println("   - IOException occured: " + e.getMessage());
+		}
+	}
+
+	public void disconnect() {
+		connected = false;
+	}
+	
 	@Override
 	public boolean isConnected() throws RemoteException {
 		return connected;
