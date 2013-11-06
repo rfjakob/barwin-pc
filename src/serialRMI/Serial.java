@@ -1,4 +1,4 @@
-package genBotSerial;
+package serialRMI;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -16,7 +16,7 @@ import java.rmi.registry.Registry;
 //import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.List;
+//import java.util.List;
 
 public class Serial implements SerialRMIInterface {
 	// static String portName = "/dev/ttyACM0";

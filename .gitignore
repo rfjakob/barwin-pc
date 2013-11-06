@@ -22,6 +22,7 @@ target/
 *.war
 *.ear
 *.db
+*.xml
  
 ######################
 # Windows

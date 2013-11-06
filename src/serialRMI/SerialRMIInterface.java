@@ -1,4 +1,4 @@
-package genBotSerial;
+package serialRMI;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

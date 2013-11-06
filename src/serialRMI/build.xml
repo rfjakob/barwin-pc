@@ -2,11 +2,11 @@
 <!-- Configuration of the Ant build system to generate a Jar file --> 
 <project name="genBotSerial" default="CreateJar">
 	<target name="CreateJar" description="Create Jar file">
-		<jar jarfile="genBotSerial.jar" basedir=".." includes="genBotSerial/*.class">
+		<jar jarfile="serialRMI.jar" basedir=".." includes="serialRMI/*.class">
 			<manifest>
-		    	<attribute name="Main-Class" value="genBotSerial.Serial"/>
+		    	<attribute name="Main-Class" value="serialRMI.Serial"/>
 		    </manifest>
 		</jar>
-		<copy file="genBotSerial.jar" todir="../../../genBotWI/lib"/>
+		<copy file="serialRMI.jar" todir="../../../genBotWI/lib"/>
 	</target>
 </project>
