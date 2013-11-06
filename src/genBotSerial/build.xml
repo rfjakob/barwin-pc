@@ -7,6 +7,6 @@
 		    	<attribute name="Main-Class" value="genBotSerial.Serial"/>
 		    </manifest>
 		</jar>
+		<copy file="genBotSerial.jar" todir="../../../genBotWI/lib"/>
 	</target>
-	<copy file="genBotSerial.jar" todir="../../../genBotWI/lib"/>
 </project>
