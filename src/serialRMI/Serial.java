@@ -4,6 +4,8 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,41 +19,51 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 //import java.util.List;
+import java.util.Properties;
 
 public class Serial implements SerialRMIInterface {
-	// static String portName = "/dev/ttyACM0";
 	static String portName = "/dev/ttyUSB0";
 	static int portRate = 9600;
-	static int rmiPort = 12121;
+	static boolean rmiRegistry = true;
+	static int rmiRegistryPort = Registry.REGISTRY_PORT;
 	static boolean connected = false;
 	static InputStream in;
 	static OutputStream out;
 	static BufferedWriter file;
 
-	public static void main(String[] args) throws Exception {
-		/*
-		 * try { connect(portName); } catch(Exception e) { e.printStackTrace();
-		 * }
-		 */
-
+	public static void main(String[] args) throws Exception {	    
 		try {
-			// LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-			Registry registry = LocateRegistry.createRegistry(rmiPort);
+			Registry registry;
+			if(rmiRegistry)
+				registry = LocateRegistry.createRegistry(rmiRegistryPort);
+			else
+				registry = LocateRegistry.getRegistry();
+			
 			Serial rmiImpl = new Serial();
 			SerialRMIInterface stub = (SerialRMIInterface) UnicastRemoteObject
 					.exportObject(rmiImpl, 0);
 			// RemoteServer.setLog(System.out);
-			registry.rebind("genBotSerial", stub);
+			registry.rebind("serial", stub);
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+	}
+	
+	public static void readProps() throws Exception {
+		Properties prop = new Properties();
+	    String fileName = "serialRMI.config";
+	    InputStream is = new FileInputStream(fileName);
+	    prop.load(is);
+	    rmiRegistry = Boolean.getBoolean(prop.getProperty("rmiRegistry"));
+	    rmiRegistryPort = Integer.getInteger(prop.getProperty("rmiRegistryPort"));
 	}
 
 	@Override
-	public void connect(String portName) throws RemoteException, Exception {
+	public void connect(String portNameT) throws RemoteException, Exception {
+		if(portNameT == null)
+			portName = portNameT;
 		CommPortIdentifier portIdentifier = CommPortIdentifier
 				.getPortIdentifier(portName);
 		if (portIdentifier.isCurrentlyOwned()) {
@@ -143,7 +155,6 @@ public class Serial implements SerialRMIInterface {
 			//System.out.println(portIdentifier.getName());
 		}
 		String[] portListA = new String[portList.size()];
-		
 		return portList.toArray(portListA);
 	}
 
