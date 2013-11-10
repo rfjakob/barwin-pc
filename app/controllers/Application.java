@@ -1,11 +1,12 @@
 package controllers;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
 import genBot2.*;
-import genBotSerial.*;
+import serialRMI.*;
 import play.libs.Json;
 //import play.*;
 //import play.cache.Cache;
@@ -17,21 +18,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.sun.jmx.snmp.Timestamp;
 
-public class Application extends Controller {
-	private static SerialRMIInterface genBotSerialRMIConnect() throws Exception {
-		return (SerialRMIInterface) Naming.lookup("//127.0.0.1:12121/genBotSerial");
-	}
+public class Application extends GenBotController {
 
 	private static RemoteOrderInterface genBotRMIConnect() throws Exception {
 		return (RemoteOrderInterface) Naming.lookup("//127.0.0.1:12122/rmiImpl");
 	}
-
-	private static Result error(Exception e) {
-		return ok(error.render(e));
-	}
-
+	
 	public static Result index() {
 		Ingredient[] alleZutaten = IngredientArray.getInstance()
 				.getAllIngredients();
@@ -44,7 +37,6 @@ public class Application extends Controller {
 			return ok(index.render(genBotRMI.listEvolutionStacks(), genBotRMI,
 					alleZutaten));
 		} catch (Exception e) {
-			System.out.println("EXCEPION " + e.getMessage());
 			return error(e);
 		}
 	}
@@ -67,62 +59,20 @@ public class Application extends Controller {
 			//String name = "adsf adf";
 			String name = parameters.get("name")[0];
 			genBotRMI.generateEvolutionStack(name, erlaubteZutaten, 10, 3, 2,
-					"datenbank", true, null, null, "eigenschaften");
-
+					"datenbank", true, null, null, 0.2, "eigenschaften");
+		           // generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, String fitnessCheckName, String recombinationName, double stdDeviation, String propPath)  throws RemoteException, SQLException;
+			
 			String[] list = genBotRMI.listEvolutionStacks();
 			for (int i = 0; i < list.length; i++)
 				str += list[i];
 			// return ok(list.toString());
 			return ok(str);
 		} catch (Exception e) {
-			System.out.println("EXCEPION " + e.getMessage());
 			return error(e);
 		}
 
 	}
 
-	public static Result serial() {
-		return ok(serial.render());
-	}
-
-	public static Result serialWrite() {
-		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
-		try {
-			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
-			ObjectNode result = Json.newObject();
-			String text = parameters.get("text")[0] + "\r\n";
-			serialRMI.write(text);
-			result.put("valid", true);
-			//Timestamp timestamp = new Timestamp(new Date().getTime());
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			result.put("timestamp", sdf.format(new Date().getTime()));
-			result.put("string", text.replaceAll("\\r\\n", "\\\\r\\\\n"));
-			return ok(result);
-		} catch (Exception e) {
-			System.out.println("EXCEPION " + e.getMessage());
-			return error(e);
-		}
-	}
-
-	public static Result serialRead() {
-		try {
-			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
-			ObjectNode result = Json.newObject();
-			String str = serialRMI.read();
-			result.put("valid", true);
-			//Timestamp timestamp = new Timestamp(new Date().getTime());
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			result.put("timestamp", sdf.format(new Date().getTime()));
-			if(str.length() > 0)
-				result.put("string", str.replaceAll("\\r\\n", "\\\\r\\\\n"));
-			else
-				result.put("string", "");
-			return ok(result);
-		} catch (Exception e) {
-			System.out.println("EXCEPION " + e.getMessage());
-			return error(e);
-		}
-	}
 
 	public static Result generation(Long id) {
 		// return ok(index.render("Your new application is ready."));
@@ -139,7 +89,6 @@ public class Application extends Controller {
 			//genBotRMI.setCocktailFitness();
 
 		} catch (Exception e) {
-			System.out.println("EXCEPION " + e.getMessage());
 			return error(e);
 		}
 		return ok(parameters.get("fitness")[0]);

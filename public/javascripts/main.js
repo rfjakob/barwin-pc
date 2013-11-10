@@ -1,8 +1,10 @@
 gb = {
 	message: function(m) {
+		 $(".alertHeader").hide()
 		var t = $(".alert.template").clone()
 		t.removeClass("hidden")
 		t.removeClass("template")
+		t.addClass('alertHeader')
 		t.addClass('alert-' + m.type)
 		t.children(".message").html(m.text)
 		$("body").prepend(t)
@@ -77,9 +79,16 @@ $(function() {
 			$.ajax({
 				url : '/serial/read',
 				success : function(data) {
-					if(data.string.length > 0) {
-						data.type = "read"
-						gb.addSerialLine(data);
+					if(data.valid) {
+						if(data.string.length > 0) {
+							data.type = "read"
+							gb.addSerialLine(data);
+						}
+					} else {
+						gb.message({
+							text: data.error,
+							type: "danger"
+						});
 					}
 				},
 				complete : function() {
