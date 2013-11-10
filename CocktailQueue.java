@@ -1,5 +1,6 @@
 package genBot2;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CocktailQueue {
@@ -33,5 +34,18 @@ public class CocktailQueue {
 	public void pourAndRemoveFirstCocktail() {
 		queue.getFirst();
 		queue.removeFirst();
+	}
+	
+	public void deleteCocktail(CocktailWithName cocktail) {
+		Iterator<CocktailWithName> queueIt = queue.iterator();
+
+		while (queueIt.hasNext()) {
+			CocktailWithName curCocktail = queueIt.next();
+			
+			if (curCocktail.getName().equals(cocktail.getName())) {
+				queue.remove(curCocktail);
+				break;
+			}
+		}
 	}
 }
