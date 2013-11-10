@@ -1,0 +1,3 @@
+grant codeBase "./genBotSerial.jar" {
+    permission java.security.AllPermission;
+};
