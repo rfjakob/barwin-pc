@@ -5,7 +5,7 @@ import gnu.io.SerialPort;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+//import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Properties;
 
 public class Serial implements SerialRMIInterface {
-	static String portName = "/dev/ttyUSB0";
+	//static String portName = "/dev/ttyUSB0";
 	static int portRate = 9600;
 	static boolean rmiRegistry = true;
 	static int rmiRegistryPort = Registry.REGISTRY_PORT;
@@ -88,9 +88,8 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
-	public void connect(String portNameT) throws RemoteException, Exception {
-		if(portNameT == null)
-			portName = portNameT;
+	public void connect(String portName) throws RemoteException, Exception {
+		System.out.println("Connecting to serial port " + portName);
 		CommPortIdentifier portIdentifier = CommPortIdentifier
 				.getPortIdentifier(portName);
 		if (portIdentifier.isCurrentlyOwned()) {
@@ -105,6 +104,7 @@ public class Serial implements SerialRMIInterface {
 			in = serialPort.getInputStream();
 			out = serialPort.getOutputStream();
 
+			log("Connected to port " + portName, 2);
 			// (new Thread(new SerialReader(in))).start();
 			// (new Thread(new SerialWriter(out))).start();
 			connected = true;
@@ -121,12 +121,10 @@ public class Serial implements SerialRMIInterface {
 			writer.write(str);
 			writer.flush();
 			log(str, 1);
-			file.write(str);
-			file.flush();
 		} catch (IOException e) {
-			System.out.println("Serial::write()");
-			System.out.println("   - IOException occured: " + e.getMessage());
-			System.out.println("   - Setting status to not connected");
+			System.err.println("Serial::write()");
+			System.err.println("   - IOException occured: " + e.getMessage());
+			System.err.println("   - Setting status to not connected");
 			disconnect();
 			//e.printStackTrace();
 		}
@@ -145,13 +143,14 @@ public class Serial implements SerialRMIInterface {
 				str += (char) c;
 			}
 		} catch (IOException e) {
-			System.out.println("Serial::read()");
-			System.out.println("   - IOException occured: " + e.getMessage());
-			System.out.println("   - Setting status to not connected");
+			System.err.println("Serial::read()");
+			System.err.println("   - IOException occured: " + e.getMessage());
+			System.err.println("   - Setting status to not connected");
 			disconnect();
 			//e.printStackTrace();
 		}
-		log(str, 0);
+		if(str.length() > 0)
+			log(str, 0);
 		return str;
 	}
 
@@ -159,19 +158,28 @@ public class Serial implements SerialRMIInterface {
 		if(!logging)
 			return;
 		String output = "";
-		if(i == 0)
-			output += "W ";
-		else if(i== 1)
-			output += "R ";	
+		switch(i) {
+			case 0:
+				output += "R ";
+			break;
+			case 1:
+				output += "W ";
+			break;
+			case 2:
+				output += "--- ";
+			break;
+		}
+		output += new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS").format(new Date()) + " ";
 		
-		output += new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SS").format(new Date()) + " ";
-		output += "'" + str + "'\n";
+		if(i == 0 || i == 1)
+			str = "'" + str.replaceAll("\\r\\n", "\\\\r\\\\n") + "'";
+		output +=  str + "\n";
 		try {
 			file.write(output);
 			file.flush();
 		} catch (IOException e) {
-			System.out.println("Error while writing to log file");
-			System.out.println("   - IOException occured: " + e.getMessage());
+			System.err.println("Error while writing to log file");
+			System.err.println("   - IOException occured: " + e.getMessage());
 		}
 	}
 
