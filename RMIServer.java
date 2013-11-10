@@ -23,6 +23,8 @@ public class RMIServer {
 		}
 
 		try {
+			System.setProperty("java.rmi.server.hostname", "10.20.30.160");
+			
 			LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
 
 			RemoteOrderImpl rmiImpl = new RemoteOrderImpl();

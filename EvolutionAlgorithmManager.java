@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.AllPermission;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -134,13 +135,13 @@ public class EvolutionAlgorithmManager {
 
 		
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
-				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName);
+				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
 			} else {
 				this.genManager = load();
 				this.didJustLoad = true;
 			}
 		} else {
-			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName);
+			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
 		}
 	}
 	

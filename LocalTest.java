@@ -19,11 +19,16 @@ public class LocalTest {
 			
 			CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
 			
+			for (int i = 0; i < namedCocktails.length; i++) {
+				System.out.println(namedCocktails[i].getCocktail().toString());
+			}
+			
 			System.out.println(namedCocktails[1].getName());
 			
 			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], namedCocktails[1].getName(), 10);
 			
 			System.out.println(remoteOrderImpl.canEvolve("testStack"));
+			
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

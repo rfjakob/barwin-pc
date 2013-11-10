@@ -11,12 +11,12 @@ public class CocktailGenerationManager implements Serializable {
 	private CocktailGeneration cocktailGeneration;
 	private final String evolutionStackName;
 
-	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName) {
+	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients) {
 		this.generationNumber = 0;
 		
 		Cocktail[] cocktails = new Cocktail[initialPopulationSize];
 		for (int i = 0; i < initialPopulationSize; i++) {
-			cocktails[i] = generateRandomCocktail();
+			cocktails[i] = generateRandomCocktail(booleanAllowedIngredients);
 		}
 		this.cocktailGeneration = new CocktailGeneration(cocktails);
 		this.evolutionStackName = cocktailStackName;
@@ -26,25 +26,44 @@ public class CocktailGenerationManager implements Serializable {
 	 * generates a random cocktail
 	 * @return a random cocktail
 	 */
-	private Cocktail generateRandomCocktail() {
+	private Cocktail generateRandomCocktail(boolean[] booleanAllowedIngredients) {
 		int ingredientNumber = IngredientArray.getInstance().getNumberOfIngredients();
 		
-		double[] ingredientShare = new double[ingredientNumber + 1];
+		int numberOfAllowedIngredients = 0;
+		for (int i = 0; i < booleanAllowedIngredients.length; i++) {
+			if (booleanAllowedIngredients[i]) {
+				numberOfAllowedIngredients++;
+			}
+		}
+		
+		double[] allowedIngredientShare = new double[numberOfAllowedIngredients + 1];
 		
 		Random rnd = new Random();
 		
-		for (int i = 0; i < ingredientShare.length - 2; i++) {
-			ingredientShare[i] = rnd.nextDouble();
+		for (int i = 0; i < allowedIngredientShare.length - 2; i++) {
+			allowedIngredientShare[i] = rnd.nextDouble();
 		}
-		ingredientShare[ingredientShare.length - 2] = 0;
-		ingredientShare[ingredientShare.length - 1] = 1;
+		allowedIngredientShare[allowedIngredientShare.length - 2] = 0;
+		allowedIngredientShare[allowedIngredientShare.length - 1] = 1;
 		
-		Arrays.sort(ingredientShare);
+		Arrays.sort(allowedIngredientShare);
 		
-		double[] cocktailIngredients = new double[ingredientShare.length - 1];
+		double[] allowedCocktailIngredients = new double[allowedIngredientShare.length - 1];
+		
+		for (int i = 0; i < allowedCocktailIngredients.length; i++) {
+			allowedCocktailIngredients[i] = allowedIngredientShare[i + 1] - allowedIngredientShare[i];
+		}
+		
+		double[] cocktailIngredients = new double[ingredientNumber];
+		int iAllowedCocktailIngredients = 0;
 		
 		for (int i = 0; i < cocktailIngredients.length; i++) {
-			cocktailIngredients[i] = ingredientShare[i + 1] - ingredientShare[i];
+			if (booleanAllowedIngredients[i]) {
+				cocktailIngredients[i] = allowedCocktailIngredients[iAllowedCocktailIngredients];
+				iAllowedCocktailIngredients++;
+			} else {
+				cocktailIngredients[i] = 0;
+			}
 		}
 		
 		Cocktail cocktail = new Cocktail(cocktailIngredients);
