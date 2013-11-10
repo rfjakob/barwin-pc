@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index()
 POST    /generate                   controllers.Application.generate()
 GET     /serial                     controllers.Serial.index()
+POST    /serial/setRMI             	controllers.Serial.setRMIServer()
 POST    /serial/connect             controllers.Serial.connect()
 POST    /serial/write               controllers.Serial.write()
 GET     /serial/read                controllers.Serial.read()

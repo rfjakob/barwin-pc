@@ -42,11 +42,15 @@ public class Serial extends GenBotController {
 		}
 	}
 	
-	public static Result connect() {
+	public static Result setRMIServer() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 		if(parameters.containsKey("rmiServer"))
 			session("serialRMIServer", parameters.get("rmiServer")[0]);
-		
+		return redirect("/serial");
+	}
+	
+	public static Result connect() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 		try {
 			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
 			serialRMI.connect(parameters.get("port")[0]);
