@@ -11,6 +11,12 @@ public class LocalTest {
 		
 		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl();
 		
+		CocktailQueue queue = new CocktailQueue();
+		
+		QueueManager queueManager = new QueueManager(queue);
+		
+		queueManager.start();
+		
 		try {
 			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
@@ -28,6 +34,12 @@ public class LocalTest {
 			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], namedCocktails[1].getName(), 10);
 			
 			System.out.println(remoteOrderImpl.canEvolve("testStack"));
+			
+			// now test the queue
+			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[1].getName());
+
+			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[3].getName());
+			System.out.println("Now finished!");
 			
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block

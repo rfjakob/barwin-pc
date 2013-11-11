@@ -2,26 +2,40 @@ package genBot2;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class CocktailQueue {
+public class CocktailQueue extends Thread {
 	
 	private LinkedList<CocktailWithName> queue;
-	
-	public CocktailQueue(SerialRemoteInterface arduino) {
+	final Lock lock;
+		
+	public CocktailQueue() {
+		
+		// boooohhh!!!
+		setDaemon(true);
+		
 		this.queue = new LinkedList<CocktailWithName>();
+		this.lock = new ReentrantLock();
 	}
 	
 	public void addCocktail(CocktailWithName cocktail) {
+		cocktail.getCocktail().setQueued(true);
+		
+		lock.lock();
+		
 		queue.addLast(cocktail);
+		
+		lock.unlock();
 	}
 	
 	public void addCocktail(String evolutionAlgorithmManager, String cocktailName) {
-		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getRatedNamedCocktailGeneration();
+		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getNamedCocktailGeneration();
 		boolean cocktailFound = false;
 		
 		for (int i = 0; i < cocktails.length; i++) {
 			if (cocktails[i].getName().equals(cocktailName)) {
-				queue.addLast(cocktails[i]);
+				addCocktail(cocktails[i]);
 				cocktailFound = true;
 			}
 		}
@@ -31,9 +45,16 @@ public class CocktailQueue {
 		}
 	}
 	
-	public void pourAndRemoveFirstCocktail() {
-		queue.getFirst();
+	public CocktailWithName getAndRemoveFirstCocktail() {
+		CocktailWithName retCocktail =  queue.getFirst();
+		
+		lock.lock();
+	
 		queue.removeFirst();
+		
+		lock.unlock();
+		
+		return retCocktail;
 	}
 	
 	public void deleteCocktail(CocktailWithName cocktail) {
@@ -43,9 +64,33 @@ public class CocktailQueue {
 			CocktailWithName curCocktail = queueIt.next();
 			
 			if (curCocktail.getName().equals(cocktail.getName())) {
-				queue.remove(curCocktail);
-				break;
+				lock.lock();
+				
+				curCocktail.getCocktail().setQueued(false);
+				queueIt.remove();
+				
+				lock.unlock();
 			}
 		}
+	}
+	
+	public void deleteCocktail(String evolutionAlgorithmManager, String cocktailName) {
+		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getRatedNamedCocktailGeneration();
+		boolean cocktailFound = false;
+		
+		for (int i = 0; i < cocktails.length; i++) {
+			if (cocktails[i].getName().equals(cocktailName)) {
+				deleteCocktail(cocktails[i]);
+				cocktailFound = true;
+			}
+		}
+		
+		if (cocktailFound == false) {
+			throw new IllegalArgumentException(cocktailName + "not found in " + evolutionAlgorithmManager + "!");
+		}
+	}
+	
+	public boolean isEmpty() {
+		return queue.isEmpty();
 	}
 }
