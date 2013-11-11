@@ -33,7 +33,7 @@ $(function() {
 		// alert(fitnessI.val());
 		$.post('/setFitness', {
 			'fitness' : fitnessI.val(),
-			'id' : fitnessI.attr("data-id")
+			'name' : fitnessI.attr("data-name")
 		}, function(data) {
 			window.alert(data);
 		});
@@ -77,8 +77,8 @@ $(function() {
 	if ($('#serialContainer').length > 0) {
 		(function readSerial() {
 			$.ajax({
-				url : '/serial/read',
-				success : function(data) {
+				url: 		'/serial/read',
+				success: 	function(data) {
 					if(data.valid) {
 						if(data.string.length > 0) {
 							data.type = "read"

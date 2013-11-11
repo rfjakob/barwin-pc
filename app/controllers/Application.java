@@ -1,28 +1,24 @@
 package controllers;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+
 import java.util.Map;
 
 import genBot2.*;
-import serialRMI.*;
-import play.libs.Json;
+//import play.libs.Json;
 //import play.*;
 //import play.cache.Cache;
 import play.mvc.*;
 import views.html.*;
 
 import java.rmi.*;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Application extends GenBotController {
 
 	private static RemoteOrderInterface genBotRMIConnect() throws Exception {
-		return (RemoteOrderInterface) Naming.lookup("//127.0.0.1:12122/rmiImpl");
+		return (RemoteOrderInterface) Naming.lookup("rmi://10.20.30.160/rmiImpl");
+		//return (RemoteOrderInterface) Naming.lookup("rmi://127.0.0.1/rmiImpl");
+		
 	}
 	
 	public static Result index() {
@@ -44,35 +40,25 @@ public class Application extends GenBotController {
 	public static Result generate() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 
-		CheckFitness wasZahlst = new EfficientCocktail();
-		Recombination fortpflanzung = new MutationAndIntermediateRecombination(
-				0.25, 0.005);
-		Ingredient[] alleZutaten = IngredientArray.getInstance()
-				.getAllIngredients();
-		Ingredient[] erlaubteZutaten = { alleZutaten[2], alleZutaten[3],
-				alleZutaten[4] };
+		Ingredient[] allIngredients = IngredientArray.getInstance().getAllIngredients();
+		
+		Ingredient[] selectedIngredients = new Ingredient[parameters.get("ingredients").length];
+		for(int i = 0; i < parameters.get("ingredients").length; i++) {
+			System.out.println(parameters.get("ingredients")[i] + " " + allIngredients[Integer.parseInt(parameters.get("ingredients")[i])].getName());
+			selectedIngredients[i] = allIngredients[Integer.parseInt(parameters.get("ingredients")[i])];
+		}
+
 
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			String str = ""; // genBotRMI.toString();
-			System.out.println(parameters.get("name")[0]);
-			//String name = "adsf adf";
 			String name = parameters.get("name")[0];
-			genBotRMI.generateEvolutionStack(name, erlaubteZutaten, 10, 3, 2,
-					"datenbank", true, null, null, 0.2, "eigenschaften");
-		           // generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, String fitnessCheckName, String recombinationName, double stdDeviation, String propPath)  throws RemoteException, SQLException;
-			
-			String[] list = genBotRMI.listEvolutionStacks();
-			for (int i = 0; i < list.length; i++)
-				str += list[i];
-			// return ok(list.toString());
-			return ok(str);
+			genBotRMI.generateEvolutionStack(name, selectedIngredients);
+			return ok();
 		} catch (Exception e) {
-			return error(e);
+			return errorAjax(e);
 		}
 
 	}
-
 
 	public static Result generation(Long id) {
 		// return ok(index.render("Your new application is ready."));
@@ -82,12 +68,12 @@ public class Application extends GenBotController {
 
 	public static Result setFitness() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
-
+		String name = parameters.get("name")[0];
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-
-			//genBotRMI.setCocktailFitness();
-
+			String[] nameA = name.split("-");
+			System.out.println("setFitness(" + nameA[0] + ", " + name + ", " + parameters.get("fitness")[0] + ")");
+			genBotRMI.setCocktailFitness(nameA[0], name, Double.parseDouble(parameters.get("fitness")[0]));
 		} catch (Exception e) {
 			return error(e);
 		}

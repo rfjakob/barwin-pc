@@ -18,7 +18,7 @@ import models.GenBotProtocol;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Serial extends GenBotController {
-	private static String serialRMIServer = "//127.0.0.1:12121/serial";
+	private static String serialRMIServer = "rmi://127.0.0.1:12121/serial";
 	private static SerialRMIInterface genBotSerialRMIConnect() throws Exception {
 		return (SerialRMIInterface) Naming.lookup(session("serialRMIServer"));
 	}

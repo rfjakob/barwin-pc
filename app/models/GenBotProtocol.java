@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableMap;
 
 public class GenBotProtocol {
 	static GenBotProtocol instance;
-	static final Integer cBootles = 1;
+	static final Integer cBottles = 1;
 	
 	static final Map<String, Integer> commands = ImmutableMap.<String, Integer>builder()
 			.put("READY"			,  0)
-			.put("POUR"				,  cBootles)
+			.put("POUR"				,  cBottles)
 		    .put("DEBUG"			, -1)
-		    .put("ENJOY"			,  cBootles)
+		    .put("ENJOY"			,  cBottles)
 		    .put("WAITING_FOR_CUP"	,  0)
 		    .put("ERROR"			, -1)
 		    .put("START_POURING"	,  1)
