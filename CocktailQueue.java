@@ -5,16 +5,12 @@ import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class CocktailQueue extends Thread {
+public class CocktailQueue {
 	
 	private LinkedList<CocktailWithName> queue;
 	final Lock lock;
 		
 	public CocktailQueue() {
-		
-		// boooohhh!!!
-		setDaemon(true);
-		
 		this.queue = new LinkedList<CocktailWithName>();
 		this.lock = new ReentrantLock();
 	}
