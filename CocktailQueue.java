@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CocktailQueue {
 	
 	private LinkedList<CocktailWithName> queue;
-	final Lock lock;
+	private final Lock lock;
 		
 	public CocktailQueue() {
 		this.queue = new LinkedList<CocktailWithName>();

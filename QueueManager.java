@@ -21,7 +21,12 @@ public class QueueManager extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			processQueue();
+			try {
+				processQueue();
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

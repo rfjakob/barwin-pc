@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.AllPermission;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -349,6 +348,10 @@ public class EvolutionAlgorithmManager {
 	
 	public void setFitness(String name, double fitnessInput) {
 		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, fitnessInput);
+	}
+	
+	public CocktailGenerationManager getOldGeneration(int generationNumber) throws SQLException {
+		return dbDriver.select(evolutionStackName, generationNumber);
 	}
 	
 	public void queue(String name) {

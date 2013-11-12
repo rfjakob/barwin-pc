@@ -112,4 +112,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).queue(cocktailName);
 	}
+
+	@Override
+	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber);
+	}
 }
