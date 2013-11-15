@@ -13,6 +13,8 @@ import views.html.*;
 
 import java.rmi.*;
 
+import models.ArduinoProtocolException;
+import models.GenBotMessage;
 import models.GenBotProtocol;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -77,7 +79,7 @@ public class Serial extends GenBotController {
 		}
 	}
 
-	public static Result read() {
+	public static Result read() throws ArduinoProtocolException {
 		try {
 			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
 			ObjectNode result = Json.newObject();
@@ -89,7 +91,7 @@ public class Serial extends GenBotController {
 				result.put("string", str.replaceAll("\\r\\n", "\\\\r\\\\n"));
 				
 				//GenBotProtocol.getInstance().read(str);
-				for (GenBotProtocol.Message m: GenBotProtocol.getInstance().read(str)) {
+				for (GenBotMessage m: GenBotProtocol.getInstance().read(str)) {
 					System.out.println("Command: " + m.command);
 				}
 			} else {
