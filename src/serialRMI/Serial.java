@@ -28,7 +28,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class Serial implements SerialRMIInterface {
-	//static String portName = "/dev/ttyUSB0";
 	static int portRate = 9600;
 	static boolean rmiRegistry = true;
 	static int rmiRegistryPort = Registry.REGISTRY_PORT;
@@ -39,11 +38,14 @@ public class Serial implements SerialRMIInterface {
 	static OutputStream out;
 	static BufferedWriter file;
 	static boolean logging = false;
-
+	
+	private String readBuffer = "";
+	
 	public static void main(String[] args) throws Exception {	    
 		try {
 			readProps();
 			Registry registry;
+			
 			if(rmiRegistry) {
 				System.out.println("Starting RMI registry on port " + rmiRegistryPort);
 				registry = LocateRegistry.createRegistry(rmiRegistryPort);
@@ -88,6 +90,11 @@ public class Serial implements SerialRMIInterface {
 			// RemoteServer.setLog(System.out);
 			System.out.println("Starting RMI service '" + rmiServiceName + "'");
 			registry.rebind(rmiServiceName, stub);
+			
+			System.out.print("Available serial ports:");
+			for(String port: stub.getSerialPorts())
+				System.out.print(" " + port);
+			System.out.println();
 			
 			if(logging) {
 				try {
@@ -171,14 +178,17 @@ public class Serial implements SerialRMIInterface {
 	public String read() throws RemoteException, Exception {
 		if(!connected)
 			throw new Exception("Not connected!");
-		String str = "";
+		String str = readBuffer;
 		try {
 			InputStreamReader reader = new InputStreamReader(in);
 			int available = in.available();
+			//System.out.print("read");
 			while (available-- > 0) {
 				int c = reader.read();
 				str += (char) c;
+				//System.out.print((char) c);
 			}
+			//System.out.println();
 		} catch (IOException e) {
 			System.err.println("Serial::read()");
 			System.err.println("   - IOException occured: " + e.getMessage());
@@ -186,8 +196,27 @@ public class Serial implements SerialRMIInterface {
 			disconnect();
 			//e.printStackTrace();
 		}
+		
+		int i = str.lastIndexOf("\r\n");
+		
+		if(i == -1) {
+			readBuffer = str;
+			return "";
+		}
+			
+		
+		if(i != str.length() - 2) {
+			readBuffer = str.substring(i + 2);
+			//System.out.println("NO NEWLINE, REMEMBER: " + readBuffer);
+			str = str.substring(0, i + 2);
+			return "";
+		} else {
+			readBuffer = "";
+		}
+		
 		if(str.length() > 0)
 			log(str, 0);
+		
 		return str;
 	}
 
@@ -243,44 +272,4 @@ public class Serial implements SerialRMIInterface {
 		String[] portListA = new String[portList.size()];
 		return portList.toArray(portListA);
 	}
-
-	// public static class SerialReader implements Runnable {
-	// InputStream in;
-	//
-	// public SerialReader(InputStream in) {
-	// this.in = in;
-	// }
-	//
-	// public void run () {
-	// byte[] buffer = new byte[1024];
-	// int len = -1;
-	// try {
-	// while (( len = this.in.read(buffer)) > -1) {
-	// System.out.print(new String(buffer,0,len));
-	// }
-	// } catch(IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	//
-	// public static class SerialWriter implements Runnable {
-	// OutputStream out;
-	//
-	// public SerialWriter(OutputStream out) {
-	// this.out = out;
-	// }
-	//
-	// public void run () {
-	// try {
-	// int c = 0;
-	// while((c = System.in.read()) > -1) {
-	// this.out.write(c);
-	// }
-	// } catch(IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-
 }
