@@ -4,24 +4,25 @@ package controllers;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import genBot2.*;
+import play.libs.Json;
 //import play.libs.Json;
 //import play.*;
 //import play.cache.Cache;
 import play.mvc.*;
 import views.html.*;
 
-import java.rmi.*;
-
 public class Application extends GenBotController {
-
-	private static RemoteOrderInterface genBotRMIConnect() throws Exception {
-		return (RemoteOrderInterface) Naming.lookup("rmi://10.20.30.160/rmiImpl");
-		//return (RemoteOrderInterface) Naming.lookup("rmi://127.0.0.1/rmiImpl");
-		
-	}
 	
 	public static Result index() {
+		return population(null);
+	}
+	
+	public static Result population(String gen) {
+		if(gen != null)
+			System.out.println(gen);
 		Ingredient[] alleZutaten = IngredientArray.getInstance()
 				.getAllIngredients();
 		try {
@@ -48,7 +49,6 @@ public class Application extends GenBotController {
 			selectedIngredients[i] = allIngredients[Integer.parseInt(parameters.get("ingredients")[i])];
 		}
 
-
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			String name = parameters.get("name")[0];
@@ -57,6 +57,24 @@ public class Application extends GenBotController {
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
+	}
+	
+	public static Result pour() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		String name = parameters.get("name")[0];
+		String[] nameA = name.split("-");
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			
+			genBotRMI.queueCocktail(nameA[0], name);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+		ObjectNode result = Json.newObject();
+		result.put("valid", true);
+		result.put("message", "Cocktail queued");
+		
+		return ok(result);
 
 	}
 
@@ -72,11 +90,14 @@ public class Application extends GenBotController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			String[] nameA = name.split("-");
-			System.out.println("setFitness(" + nameA[0] + ", " + name + ", " + parameters.get("fitness")[0] + ")");
+			//System.out.println("setFitness(" + nameA[0] + ", " + name + ", " + parameters.get("fitness")[0] + ")");
 			genBotRMI.setCocktailFitness(nameA[0], name, Double.parseDouble(parameters.get("fitness")[0]));
 		} catch (Exception e) {
-			return error(e);
+			return errorAjax(e);
 		}
-		return ok(parameters.get("fitness")[0]);
+		ObjectNode result = Json.newObject();
+		result.put("valid", true);
+		result.put("message", "Fitness set");
+		return ok(result);
 	}
 }

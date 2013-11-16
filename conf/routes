@@ -5,13 +5,15 @@
 # Home page
 GET     /                           controllers.Application.index()
 POST    /generate                   controllers.Application.generate()
-GET     /serial                     controllers.Serial.index()
-POST    /serial/setRMI             	controllers.Serial.setRMIServer()
+POST    /pour                   	controllers.Application.pour()
+GET     /serial                		controllers.Serial.index()
+POST    /serial/setRMI        		controllers.Serial.setRMIServer()
 POST    /serial/connect             controllers.Serial.connect()
 POST    /serial/write               controllers.Serial.write()
 GET     /serial/read                controllers.Serial.read()
 GET     /:id                        controllers.Application.generation(id: Long)
 POST    /setFitness                 controllers.Application.setFitness()
+GET		/population/:name			controllers.Application.population(name: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

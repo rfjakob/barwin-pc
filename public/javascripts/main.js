@@ -1,6 +1,6 @@
 gb = {
 	message: function(m) {
-		 $(".alertHeader").hide()
+		$(".alertHeader").hide()
 		var t = $(".alert.template").clone()
 		t.removeClass("hidden")
 		t.removeClass("template")
@@ -24,18 +24,37 @@ gb = {
 		$('#serialCode').val('');
 	},
 	stdActions: function(data) {
+		var type = "success"
+		if(data.valid) {
+			
+		} else {
+			type: "danger"
+		}
 		
+		if(data.message) {
+			gb.message({
+				text: data.message,
+				type: type
+			});
+		}
 	}
 }
 $(function() {
 	$("input.fitnessB").click(function() {
 		var fitnessI = $(this).prev("input.fitnessI");
-		// alert(fitnessI.val());
 		$.post('/setFitness', {
 			'fitness' : fitnessI.val(),
-			'name' : fitnessI.attr("data-name")
+			'name' : fitnessI.parents(".cocktail").attr("data-name")
 		}, function(data) {
-			window.alert(data);
+			gb.stdActions(data);
+		});
+	});
+	
+	$("input.pourB").click(function() {
+		$.post('/pour', {
+			'name' : $(this).parents(".cocktail").attr("data-name")
+		}, function(data) {
+			gb.stdActions(data);
 		});
 	});
 
@@ -84,12 +103,8 @@ $(function() {
 							data.type = "read"
 							gb.addSerialLine(data);
 						}
-					} else {
-						gb.message({
-							text: data.error,
-							type: "danger"
-						});
 					}
+					gb.stdActions(data);
 				},
 				complete : function() {
 					setTimeout(readSerial, 1000);

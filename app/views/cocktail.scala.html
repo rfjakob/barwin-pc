@@ -1,14 +1,17 @@
 @(item: genBot2.CocktailWithName, ingredients: Array[genBot2.Ingredient])
-<li class="cocktail transition">
+<li class="cocktail transition" data-name="@item.getName">
 	<div class="id left">@item.getCocktailNumber</div>
 	<div class="ingredients left">
 	@for(ingredient <- ingredients) {
+		@if(item.getCocktail.getAmount(ingredient.getName) > 0 ) {
     	<span class="iName">@ingredient.getName</span>
     	<span class="iAmount">@{"%1.2f".format(Math.round(item.getCocktail.getAmount(ingredient.getName)*100).toFloat/100)}</span><br/>
+		}
 	} 
 	</div>
+	<input class="pourB" type="button" value="Pour" />
 	<span class="fitnessIsSet">@item.getCocktail.isFitnessSet</span>
-	<input data-name="@item.getName" class="fitnessI" type="text" name="fitness" />
+	<input class="fitnessI" type="text" name="fitness" />
 	<input class="fitnessB" type="button" value="Set" />
 	<div class="clear"></div>
 </li>

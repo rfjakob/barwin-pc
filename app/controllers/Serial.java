@@ -1,5 +1,7 @@
 package controllers;
 
+import genBot2.ArduinoProtocolException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -12,10 +14,6 @@ import play.mvc.*;
 import views.html.*;
 
 import java.rmi.*;
-
-import models.ArduinoProtocolException;
-import models.GenBotMessage;
-import models.GenBotProtocol;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -90,10 +88,10 @@ public class Serial extends GenBotController {
 			if(str.length() > 0) {
 				result.put("string", str.replaceAll("\\r\\n", "\\\\r\\\\n"));
 				
-				//GenBotProtocol.getInstance().read(str);
+				/*GenBotProtocol.getInstance().read(str);
 				for (GenBotMessage m: GenBotProtocol.getInstance().read(str)) {
 					System.out.println("Command: " + m.command);
-				}
+				}*/
 			} else {
 				result.put("string", "");
 			}
