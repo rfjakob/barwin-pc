@@ -8,8 +8,11 @@ import java.util.Properties;
 public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	private EvolutionStackContainer evolutionStackController;
-	public RemoteOrderImpl() {
+	private QueueManager queueManager;
+	
+	public RemoteOrderImpl(QueueManager queueManager) {
 		this.evolutionStackController = EvolutionStackContainer.getInstance();
+		this.queueManager = queueManager;
 	}
 
 	@Override
@@ -110,11 +113,17 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public void queueCocktail(String evolutionStackName, String cocktailName)
 			throws RemoteException {
-		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).queue(cocktailName);
+		//evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).queue(cocktailName);
+		queueManager.getQueue().addCocktail(evolutionStackName, cocktailName);
 	}
 
 	@Override
 	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException {
 		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber);
 	}
+/*
+	@Override
+	public CocktailQueue getQueue() throws RemoteException {
+		return queueManager.getQueue();
+	}*/
 }

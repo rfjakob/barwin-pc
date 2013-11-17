@@ -1,42 +1,30 @@
 package genBot2;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
 public class RMIServer {
-
-	public static void main(String[] args) {
-
-		System.out.println("Starting the genetic bot.\n\n(Keep in mind decimal points are localized (auf deutsch: Beistrich))\n");
-
-		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
-		double[] referenceAmounts = new double[ingredients.length];
-
-		Random rnd = new Random();
-
-		for (int i = 0; i < ingredients.length; i++) {
-			referenceAmounts[i] = rnd.nextDouble();
-		}
-
+	public static void main(String[] args) {		
+		QueueManager queueManager;
+		CocktailQueue queue = new CocktailQueue();
 		try {
-			System.setProperty("java.rmi.server.hostname", "10.20.30.160");
+			//queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
+			queueManager = new QueueManager(queue, "rmi://10.20.30.190:12121/serial", "/dev/ttyUSB0", 250);
 			
+			queueManager.start();
+			
+			//System.setProperty("java.rmi.server.hostname", "10.20.30.160");
 			LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
-
-			RemoteOrderImpl rmiImpl = new RemoteOrderImpl();
+			RemoteOrderImpl rmiImpl = new RemoteOrderImpl(queueManager);
 			RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
-			RemoteServer.setLog(System.out);
-
 			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind( "rmiImpl", stub );
-
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//RemoteServer.setLog(System.out);
+			registry.rebind( "genBot", stub );
+	
+		} catch (Exception e2) {
+			e2.printStackTrace();
 		}
+	
 	}
 }

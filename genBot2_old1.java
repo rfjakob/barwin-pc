@@ -12,6 +12,7 @@ public class genBot2_old1 {
 		
 		System.out.println("Starting the genetic bot.\n\n(Keep in mind decimal points are localized (auf deutsch: Beistrich))\n");
 		
+		
 		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
 		double[] referenceAmounts = new double[ingredients.length];
 		

@@ -30,7 +30,7 @@ public class GenBotMessage {
 		for (int i = 0; i < args.length; i++)
 			raw += " " + args[i];
 		
-		raw += "\r\n";
+		raw += " \r\n";
 	}
 	public String command;
 	public String raw;
