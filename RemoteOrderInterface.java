@@ -30,9 +30,15 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
 	
+	public void queueCocktail(CocktailWithName cocktail) throws RemoteException;
+	
 	public void queueCocktail(String evolutionStackName, String cocktailName) throws RemoteException;
 	
-	//public CocktailQueue getQueue() throws RemoteException;
+	public void deleteCocktailFromQueue(String cocktailName) throws RemoteException;
+	
+	public void reorderQueue(String cocktailNameList[]) throws RemoteException;
+	
+	public CocktailQueue getQueue() throws RemoteException;
 
 	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException;
 }

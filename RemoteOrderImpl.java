@@ -118,12 +118,27 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
+	public void queueCocktail(CocktailWithName cocktail) throws RemoteException {
+		queueManager.getQueue().addCocktail(cocktail);	
+	}
+
+	@Override
+	public void deleteCocktailFromQueue(String cocktailName) throws RemoteException {
+		queueManager.getQueue().deleteCocktail(cocktailName);
+	}
+	
+	@Override
+	public void reorderQueue(String cocktailNameList[]) throws RemoteException {
+		queueManager.getQueue().reorder(cocktailNameList);
+	}
+
+	@Override
 	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException {
 		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber);
 	}
-/*
+
 	@Override
 	public CocktailQueue getQueue() throws RemoteException {
 		return queueManager.getQueue();
-	}*/
+	}
 }
