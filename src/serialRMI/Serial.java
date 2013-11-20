@@ -1,7 +1,10 @@
 package serialRMI;
 
 import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -132,21 +135,40 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
-	public void connect(String portName) throws RemoteException, Exception {
+	public void connect(String portName) throws RemoteException, SerialRMIException {
 		System.out.println("Connecting to serial port " + portName);
-		CommPortIdentifier portIdentifier = CommPortIdentifier
-				.getPortIdentifier(portName);
+		CommPortIdentifier portIdentifier;
+		try {
+			portIdentifier = CommPortIdentifier
+					.getPortIdentifier(portName);
+		} catch (NoSuchPortException e) {
+			throw new SerialRMIException(e);
+		}
 		if (portIdentifier.isCurrentlyOwned()) {
 			System.out.println("Error: Port is currently in use");
 		} else {
-			SerialPort serialPort = (SerialPort) portIdentifier.open("blup",
-					2000);
-			serialPort.setSerialPortParams(portRate, SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			SerialPort serialPort;
+			try {
+				serialPort = (SerialPort) portIdentifier.open("blup",
+						2000);
+			} catch (PortInUseException e) {
+				throw new SerialRMIException(e);
+			}
+			try {
+				serialPort.setSerialPortParams(portRate, SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			} catch (UnsupportedCommOperationException e) {
+				throw new SerialRMIException(e);
+			}
 			// serialPort.setDTR(false);
 
-			in = serialPort.getInputStream();
-			out = serialPort.getOutputStream();
+			try {
+				in = serialPort.getInputStream();
+				out = serialPort.getOutputStream();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			log("Connected to port " + portName, 2);
 			// (new Thread(new SerialReader(in))).start();
@@ -156,9 +178,9 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
-	public void write(String str) throws RemoteException, Exception {
+	public void write(String str) throws RemoteException, SerialRMIException {
 		if(!connected)
-			throw new Exception("Not connected!");
+			throw new SerialRMIException("Not connected!");
 		
 		OutputStreamWriter writer = new OutputStreamWriter(out);
 		try {
@@ -175,14 +197,14 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
-	public void writeLine(String str) throws RemoteException, Exception {
+	public void writeLine(String str) throws RemoteException, SerialRMIException {
 		write(str + "\r\n");
 		log(str, 4);
 	}
 	@Override
-	public String read() throws Exception {
+	public String read() throws SerialRMIException {
 		if(!connected)
-			throw new Exception("Not connected!");
+			throw new SerialRMIException("Not connected!");
 		
 		String str = "";
 		try {
@@ -205,7 +227,7 @@ public class Serial implements SerialRMIInterface {
 		return str;
 	}
 	
-	public String[] readLines() throws RemoteException, Exception {
+	public String[] readLines() throws RemoteException, SerialRMIException {
 		//System.out.println("readLines()");
 		String read = read().replaceAll("\\r", "");
 		if(read.isEmpty())
