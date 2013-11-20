@@ -37,7 +37,7 @@ public class Serial implements SerialRMIInterface {
 	static InputStream in;
 	static OutputStream out;
 	static BufferedWriter file;
-	static boolean logging = false;
+	static String logging = "";
 	
 	private String readBuffer = "";
 	
@@ -96,9 +96,9 @@ public class Serial implements SerialRMIInterface {
 				System.out.print(" " + port);
 			System.out.println();
 			
-			if(logging) {
+			if(!logging.isEmpty()) {
 				try {
-					String fileName = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new Date());
+					String fileName = new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date());
 					System.out.println("Opening file '" + "log/" + fileName + ".txt' for logging");
 				    FileWriter fstream = new FileWriter("log/" + fileName + ".txt", true);
 				    file = new BufferedWriter(fstream);
@@ -126,9 +126,9 @@ public class Serial implements SerialRMIInterface {
 	    if(prop.containsKey("rmiRegistryPort"))
 	    	rmiRegistryPort = Integer.parseInt(prop.getProperty("rmiRegistryPort"));
 	    if(prop.containsKey("rmiServiceName"))
-	    	rmiServiceName = prop.getProperty("rmiServiceName");
+	    	rmiServiceName 	= prop.getProperty("rmiServiceName");
 	    if(prop.containsKey("logging"))
-	    	logging = Boolean.parseBoolean(prop.getProperty("logging"));
+	    	logging 		= prop.getProperty("logging");
 	}
 
 	@Override
@@ -175,43 +175,28 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
-	public String read() throws RemoteException, Exception {
+	public void writeLine(String str) throws RemoteException, Exception {
+		write(str + "\r\n");
+		log(str, 4);
+	}
+	@Override
+	public String read() throws Exception {
 		if(!connected)
 			throw new Exception("Not connected!");
-		String str = readBuffer;
+		
+		String str = "";
 		try {
 			InputStreamReader reader = new InputStreamReader(in);
 			int available = in.available();
-			//System.out.print("read");
 			while (available-- > 0) {
 				int c = reader.read();
 				str += (char) c;
-				//System.out.print((char) c);
 			}
-			//System.out.println();
 		} catch (IOException e) {
 			System.err.println("Serial::read()");
 			System.err.println("   - IOException occured: " + e.getMessage());
 			System.err.println("   - Setting status to not connected");
 			disconnect();
-			//e.printStackTrace();
-		}
-		
-		int i = str.lastIndexOf("\r\n");
-		
-		if(i == -1) {
-			readBuffer = str;
-			return "";
-		}
-			
-		
-		if(i != str.length() - 2) {
-			readBuffer = str.substring(i + 2);
-			//System.out.println("NO NEWLINE, REMEMBER: " + readBuffer);
-			str = str.substring(0, i + 2);
-			return "";
-		} else {
-			readBuffer = "";
 		}
 		
 		if(str.length() > 0)
@@ -219,26 +204,74 @@ public class Serial implements SerialRMIInterface {
 		
 		return str;
 	}
+	
+	public String[] readLines() throws RemoteException, Exception {
+		//System.out.println("readLines()");
+		String read = read().replaceAll("\\r", "");
+		if(read.isEmpty())
+			return new String[0];
+		
+		//System.out.println("read '" + read.replaceAll("\\n", "\\\\n") + "' (in buffer '" + readBuffer + "')");
+		String str = readBuffer + read; 
+		
+		int i = str.lastIndexOf("\n");
+		
+		
+		//System.out.println("index: " + i + "  str length: " + str.length());
+		// NO NEWLINE FOUND
+		if(i == -1) {
+			readBuffer = str;
+			//System.out.println("NO NEWLINE, REMEMBER: " + readBuffer);
+			return new String[0];
+		}
+		
+		
+		// NEWLINE FOUND BUT NOT AT THE END
+		if(i != str.length() - 1) {
+			readBuffer = str.substring(i + 1);
+			//System.out.println("NO NEWLINE AT END, REMEMBER: " + readBuffer);
+			str = str.substring(0, i);
+		} else {
+			readBuffer = "";
+		}
+		
+		String[] sA = str.split("\\n");
+		//System.out.println("Trying to convert: " + str.replaceAll("\\n", "\\\\n") + " (l: " + sA.length + ")");
+		for (int j = 0; j < sA.length; j++)
+			log(sA[j], 3);
+		
+		return sA;
+	}
 
 	private static void log(String str, int i) {
-		if(!logging)
+		if(logging.isEmpty())
 			return;
+		if(logging.equals("line") && (i == 0 || i == 1)  || logging.equals("raw") && (i == 3 || i == 4))
+			return;
+			
 		String output = "";
 		switch(i) {
 			case 0:
-				output += "R ";
+				output += "R  ";
+			break;
+			case 3:
+				output += "RL ";
 			break;
 			case 1:
-				output += "W ";
+				output += "W  ";
+			break;
+			case 4:
+				output += "WL ";
 			break;
 			case 2:
-				output += "--- ";
+				output += "-- ";
 			break;
 		}
 		output += new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS").format(new Date()) + " ";
 		
-		if(i == 0 || i == 1)
-			str = "'" + str.replaceAll("\\r\\n", "\\\\r\\\\n") + "'";
+		if(i != 2) {
+			str = "'" + str.replaceAll("\\n", "\\\\n").replaceAll("\\r", "\\\\r") + "'";
+		}
 		output +=  str + "\n";
 		try {
 			file.write(output);
@@ -259,6 +292,7 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public String[] getSerialPorts() throws RemoteException {
 		//System.out.println("getSerialPorts()");
 		ArrayList<String> portList = new ArrayList<String>();
