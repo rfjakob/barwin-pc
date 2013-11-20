@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
 
@@ -69,11 +70,11 @@ public class QueueManager extends Thread {
 	private void processSerialInput() {
 		GenBotMessage[] message;
 		try {
-			String s = serial.read();
-			if(s.isEmpty())
+			String[] sA = serial.readLines();
+			if(sA.length == 0)
 				return;
 			
-			message = protocol.read(s);
+			message = protocol.read(sA);
 			
 			for (GenBotMessage me : message) {
 				//System.out.println("GOT COMMANT " + me.raw);
@@ -113,7 +114,7 @@ public class QueueManager extends Thread {
 		
 		String codedPourCocktail = codePour(pourCocktail);
 		System.out.println("WRITING POUR");
-		serial.write(codedPourCocktail);
+		serial.writeLine(codedPourCocktail);
 		
 		pourCocktail.setQueued(false);
 		pourCocktail.setPouring(true); // .setPouredTrue();

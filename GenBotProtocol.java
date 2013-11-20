@@ -26,12 +26,10 @@ public class GenBotProtocol {
 		return instance;
 	}
 
-	public GenBotMessage[] read(String s) throws ArduinoProtocolException{
-		String[] sca = s.split("\\r\\n");
-		GenBotMessage[] ma = new GenBotMessage[sca.length];
-		for (int i = 0; i < sca.length; i++) {
-			ma[i] = new GenBotMessage(sca[i]);
-		}
+	public GenBotMessage[] read(String[] sA) throws ArduinoProtocolException{
+		GenBotMessage[] ma = new GenBotMessage[sA.length];
+		for (int i = 0; i < sA.length; i++)
+			ma[i] = new GenBotMessage(sA[i]);
 		return ma;
 	}
 

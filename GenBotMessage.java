@@ -18,7 +18,7 @@ public class GenBotMessage {
 				for (int i = 1; i < a.length; i++)
 					args[i-1] = Integer.parseInt(a[i]);
 		}
-		raw += "\r\n";
+		raw += " ";
 	}
 
 	public GenBotMessage(String command, int[] args) {
@@ -30,7 +30,7 @@ public class GenBotMessage {
 		for (int i = 0; i < args.length; i++)
 			raw += " " + args[i];
 		
-		raw += " \r\n";
+		raw += " ";
 	}
 	public String command;
 	public String raw;
