@@ -36,7 +36,7 @@ public class QueueManager extends Thread {
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 		
 		this.serial = (SerialRMIInterface) Naming.lookup(server);
-		serial.connect(portName);
+		//serial.connect(portName);
 		
 		this.status = Status.unknown;
 	}
@@ -68,13 +68,14 @@ public class QueueManager extends Thread {
 	}
 	
 	private void processSerialInput() {
-		GenBotMessage[] message;
+		
 		try {
-			String[] sA = serial.readLines();
+			String[] sA = {new String("READY")};
+			//String[] sA = serial.readLines();
 			if(sA.length == 0)
 				return;
-			
-			message = protocol.read(sA);
+
+			GenBotMessage[] message = protocol.read(sA);
 			
 			for (GenBotMessage me : message) {
 				//System.out.println("GOT COMMANT " + me.raw);
@@ -94,9 +95,6 @@ public class QueueManager extends Thread {
 					break;
 				}
 			}
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,13 +112,13 @@ public class QueueManager extends Thread {
 		
 		String codedPourCocktail = codePour(pourCocktail);
 		System.out.println("WRITING POUR");
-		serial.writeLine(codedPourCocktail);
+		//serial.writeLine(codedPourCocktail);
 		
 		pourCocktail.setQueued(false);
 		pourCocktail.setPouring(true); // .setPouredTrue();
 		status = Status.waitingForWaitingForCup;
 	}
-
+	
 	private String codePour(Cocktail pourCocktail) {
 		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
 		
