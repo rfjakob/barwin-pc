@@ -22,7 +22,9 @@ public class IngredientArray {
 				new Ingredient("Orange Juice", 1.20, 1, 1),
 				new Ingredient("Grenadine", 3.50, 0.5, 2),
 				new Ingredient("Vodka", 15.0, 0.75, 3),
-				//new Ingredient("Whiskey", 20.0, 0.75, 4)
+				new Ingredient("Whiskey", 20.0, 0.75, 4),
+				new Ingredient("Club Mate", 2.0, 0.5, 5),
+				new Ingredient("Rum", 20.0, 0.75, 6)
 		};
 	}
 	

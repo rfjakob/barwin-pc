@@ -1,6 +1,6 @@
 package genBot2;
 
-public class FitnessNotSetException extends Exception {
+public class FitnessNotSetException extends Throwable {
 
 	/**
 	 * 

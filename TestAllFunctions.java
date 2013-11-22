@@ -1,26 +1,26 @@
 package genBot2;
 
-import java.rmi.RemoteException;
-import java.sql.SQLException;
+public class TestAllFunctions {
 
-public class LocalTest {
-
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
-		Ingredient[] erlaubteZutaten = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
-		
-		CocktailQueue queue = new CocktailQueue();
+		Ingredient[] erlaubteZutaten1 = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
+		Ingredient[] erlaubteZutaten2 = {alleZutaten[0], alleZutaten[3], alleZutaten[4], alleZutaten[5], alleZutaten[6]};
+//		Ingredient[] erlaubteZutaten3 = alleZutaten;
+	}
+}
+
+/*		CocktailQueue queue = new CocktailQueue();
 		
 		QueueManager queueManager;
 		
-		queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
-		queueManager.start();
-
-		
-		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
-		
 		try {
-			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
+			queueManager.start();
+			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
+			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
 			System.out.println(evolutionStacks.length);
 			System.out.println(evolutionStacks[0]);
@@ -41,7 +41,6 @@ public class LocalTest {
 			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[1].getName());
 			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[0].getName());
 			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[5].getName());
-
 			try {
 				Thread.sleep(50000);
 				queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[3].getName());
@@ -50,19 +49,17 @@ public class LocalTest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			System.out.println("Now finished!");
-			
-		} catch (RemoteException e1) {
+		} catch (RemoteException | SerialRMIException e2) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e2.printStackTrace();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (NotEnoughRatedCocktailsException e) {
+		} catch (NotEnoughRatedCocktailsException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-	}
 
-}
+			
+			System.out.println("Now finished!");
+	*/
