@@ -57,6 +57,9 @@ public class CocktailQueue implements Serializable {
 		
 		return retCocktail;
 	}
+	public LinkedList<CocktailWithName> getLinkedList() {
+		return queue;
+	}
 	
 	public void deleteCocktail(CocktailWithName cocktail) {
 		Iterator<CocktailWithName> queueIt = queue.iterator();

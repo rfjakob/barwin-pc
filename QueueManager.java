@@ -1,17 +1,11 @@
 package genBot2;
 
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 
 
 
-
-
-
-import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
 
@@ -33,7 +27,7 @@ public class QueueManager extends Thread {
 	
 	private Status status;
 
-	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter) throws RemoteException, SerialRMIException {
+	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter) throws Exception {
 		//setDaemon(true);
 		
 		this.queue = queue;
@@ -41,12 +35,8 @@ public class QueueManager extends Thread {
 		
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 		
-		try {
-			this.serial = (SerialRMIInterface) Naming.lookup(server);
-		} catch (MalformedURLException | NotBoundException e) {
-			throw new SerialRMIException(e);
-		}
-		serial.connect(portName);
+		this.serial = (SerialRMIInterface) Naming.lookup(server);
+		//serial.connect(portName);
 		
 		this.status = Status.unknown;
 	}
@@ -61,31 +51,31 @@ public class QueueManager extends Thread {
 				if(serialIsReady()) {
 					processQueue();
 					//Thread.sleep(200);
-				}				
-			} catch (SerialRMIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (RemoteException e) {
+				}
+				
+				
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 		}
 	}
 	
-	public void processQueue() throws RemoteException, SerialRMIException {
+	public void processQueue() throws RemoteException, Exception {
 		if (!queue.isEmpty()) {
 			pourCocktail();
 		}
 	}
 	
-	private void processSerialInput() throws SerialRMIException {
-		GenBotMessage[] message;
+	private void processSerialInput() {
+		
 		try {
-			String[] sA = serial.readLines();
+			String[] sA = {new String("READY")};
+			//String[] sA = serial.readLines();
 			if(sA.length == 0)
 				return;
-			
-			message = protocol.read(sA);
+
+			GenBotMessage[] message = protocol.read(sA);
 			
 			for (GenBotMessage me : message) {
 				//System.out.println("GOT COMMANT " + me.raw);
@@ -118,20 +108,20 @@ public class QueueManager extends Thread {
 		}
 	}
 
-	public void pourCocktail() throws RemoteException, SerialRMIException {
+	public void pourCocktail() throws RemoteException, Exception {
 		CocktailWithName toBePoured = queue.getAndRemoveFirstCocktail();
 		
 		Cocktail pourCocktail = toBePoured.getCocktail();
 		
 		String codedPourCocktail = codePour(pourCocktail);
 		System.out.println("WRITING POUR");
-		serial.writeLine(codedPourCocktail);
+		//serial.writeLine(codedPourCocktail);
 		
 		pourCocktail.setQueued(false);
 		pourCocktail.setPouring(true); // .setPouredTrue();
 		status = Status.waitingForWaitingForCup;
 	}
-
+	
 	private String codePour(Cocktail pourCocktail) {
 		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
 		
