@@ -9,7 +9,7 @@ public class GenBotProtocol {
 	static final Integer cBottles = 4;
 	
 	static public final Map<String, Integer> commands = ImmutableMap.<String, Integer>builder()
-			.put("READY"			,  0)
+			.put("READY"			,  2)
 			.put("POUR"				,  cBottles)
 		    .put("DEBUG"			, -1)
 		    .put("ENJOY"			,  cBottles)
@@ -17,7 +17,8 @@ public class GenBotProtocol {
 		    .put("ERROR"			, -1)
 		    .put("START_POURING"	,  1)
 		    .put("BOTTLE_REFILL"	,  1)
-		    .put("POURING"			, -1)
+		    .put("POURING"			,  2)
+		    .put("TURN_BOTTLE"		,  2)
 		    .build();
 
 	public static GenBotProtocol getInstance() {

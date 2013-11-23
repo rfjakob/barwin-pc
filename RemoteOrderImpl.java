@@ -84,7 +84,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients) throws RemoteException,
 			SQLException {
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, evolutionStackName + "db", true, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, evolutionStackName + "db", false, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
 	}
 
 	@Override

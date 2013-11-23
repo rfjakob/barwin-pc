@@ -20,6 +20,8 @@ public class QueueManager extends Thread {
 	
 	private int cocktailSizeMilliliter;
 	
+	private CocktailWithName currentlyPouring;
+	
 	private enum Status {
 		unknown,
 		ready,
@@ -42,7 +44,7 @@ public class QueueManager extends Thread {
 		
 		if (!(server.equals("") | portName.equals(""))) {
 			this.serial = (SerialRMIInterface) Naming.lookup(server);
-			serial.connect(portName);
+//			serial.connect(portName);
 		} else {
 			this.serial = null;
 		}
@@ -65,24 +67,24 @@ public class QueueManager extends Thread {
 				}
 				
 				
-			} catch (Exception e) {
+			} catch (Exception | SerialRMIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 		}
 	}
 	
-	public void processQueue() throws RemoteException, Exception {
+	public void processQueue() throws RemoteException, SerialRMIException {
 		if (!queue.isEmpty()) {
 			pourCocktail();
 		}
 	}
 	
-	private void processSerialInput() {
+	private void processSerialInput() throws SerialRMIException {
 		
 		try {
-			String[] sA = {new String("READY")};
-			//String[] sA = serial.readLines();
+			//String[] sA = {new String("READY")};
+			String[] sA = serial.readLines();
 			if(sA.length == 0)
 				return;
 
@@ -93,6 +95,7 @@ public class QueueManager extends Thread {
 				switch (me.command) {
 				case "READY":
 					// THIS IF IS ONLY NEEDED FOR TESTING
+					currentlyPouring = null;
 					if(status != Status.waitingForWaitingForCup)
 						status = Status.ready;
 					break;
@@ -116,14 +119,15 @@ public class QueueManager extends Thread {
 		}
 	}
 
-	public void pourCocktail() throws RemoteException, Exception {
-		CocktailWithName toBePoured = queue.getAndRemoveFirstCocktail();
+	public void pourCocktail() throws RemoteException, SerialRMIException {
+		CocktailWithName toBePoured  = queue.getAndRemoveFirstCocktail();
 		
 		Cocktail pourCocktail = toBePoured.getCocktail();
 		
 		String codedPourCocktail = codePour(pourCocktail);
-		System.out.println("WRITING POUR");
-		//serial.writeLine(codedPourCocktail);
+		//System.out.println("WRITING POUR");
+		serial.writeLine(codedPourCocktail);
+		currentlyPouring = toBePoured;
 		
 		pourCocktail.setQueued(false);
 		pourCocktail.setPouring(true); // .setPouredTrue();
