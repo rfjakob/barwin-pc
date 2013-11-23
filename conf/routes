@@ -3,7 +3,10 @@
 # ~~~~
 
 # Home page
+
 GET     /                           controllers.Application.index()
+GET     /interface		            controllers.UserInterface.index()
+POST    /pourType                 	controllers.UserInterface.pourType()
 POST    /generate                   controllers.Application.generate()
 POST    /pour                   	controllers.Application.pour()
 GET     /serial                		controllers.Serial.index()
@@ -14,6 +17,7 @@ GET     /serial/read                controllers.Serial.read()
 GET     /:id                        controllers.Application.generation(id: Long)
 POST    /setFitness                 controllers.Application.setFitness()
 GET		/population/:name			controllers.Application.population(name: String)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

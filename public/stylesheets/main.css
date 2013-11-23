@@ -84,3 +84,21 @@ li.cocktail div.ingredients span.iAmount {
 	font-family:monospace;
 	font-size: 8px;
 }
+
+ul.uCButtons {
+	text-align: center;
+}
+
+ul.uCButtons li {
+	display: inline-block;
+}
+
+ul.uCButtons .uCButton {
+	display: inline-block;
+	font-size: 20px;
+	width: 200px;
+	text-align: center;
+	margin: 5px;
+	padding: 10px;
+	background-color: #EEE;
+}

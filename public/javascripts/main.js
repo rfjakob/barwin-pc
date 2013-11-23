@@ -72,6 +72,15 @@ $(function() {
 			});
 		});
 	})
+	
+	$('ul.uCButtons a.uCButton').click(function(e) {
+		e.preventDefault()
+		$.post('/pourType', {
+			'name' : $(this).parents("li").attr("data-name")
+		}, function(data) {
+			gb.stdActions(data);
+		});
+	})
 
 	$('#serialForm button.send').click(function(e) {
 		e.preventDefault()
