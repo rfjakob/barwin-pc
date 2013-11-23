@@ -70,10 +70,9 @@ public class DataBaseDriver {
 	
 	public void insert(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
 		try {
-			PreparedStatement statement = connection.prepareStatement("insert into ? (number, generationManager) values (?, ?)");
-			statement.setObject(1, evolutionStackName);
-			statement.setObject(2, generationNumber);
-			statement.setObject(3, serialize(generationManager));
+			PreparedStatement statement = connection.prepareStatement("insert into " + evolutionStackName + " (number, generationManager) values (?, ?)");
+			statement.setObject(1, generationNumber);
+			statement.setObject(2, serialize(generationManager));
 		
 			lock.lock();
 			

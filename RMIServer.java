@@ -12,6 +12,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import serialRMI.SerialRMIException;
+
 
 public class RMIServer {
 	static boolean rmiRegistry = true;
@@ -24,7 +26,7 @@ public class RMIServer {
 	
 	static RemoteOrderImpl rmiImpl;
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception, SerialRMIException {
 		readProps();
 
 		Registry registry;

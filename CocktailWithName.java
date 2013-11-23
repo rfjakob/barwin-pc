@@ -41,4 +41,15 @@ public class CocktailWithName implements Serializable {
 	public Cocktail getCocktail() {
 		return cocktail;
 	}
+	
+	public String toString() {
+		String returnString = 
+			getName() + ": " + 
+			getCocktail().toString() + ", " + 
+			((getCocktail().isEliteCocktail()) ? "Elite" : "Not-Elite") + ", " + 
+			((getCocktail().isPoured()) ? "poured" : "not poured") + ", "+
+			((getCocktail().isFitnessSet()) ? "rated" : "not rated")
+			;
+		return returnString;
+	}
 }

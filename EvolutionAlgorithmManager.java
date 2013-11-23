@@ -55,11 +55,11 @@ public class EvolutionAlgorithmManager {
 			}
 		}
 		
+		constructRest(fitnessCheck, recombination, dbReset, propPath);
+
 		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngrediensToString());
 		
-		convertProps();
-		
-		constructRest(fitnessCheck, recombination, dbReset, propPath);
+		convertProps();		
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {

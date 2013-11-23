@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 import serialRMI.SerialRMIException;
 
@@ -23,35 +24,24 @@ public class TestAllFunctions {
 			queueManager = new QueueManager(queue, "", "", 250);
 			queueManager.start();
 			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
-			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
-			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
-			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
-			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
-			System.out.println(evolutionStacks.length);
-			System.out.println(evolutionStacks[0]);
+			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			
-			CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
+			CocktailWithName[] testStack1 = remoteOrderImpl.getNamedPopulation("testStack1");
+			CocktailWithName[] testStack2 = remoteOrderImpl.getNamedPopulation("testStack2");
+			CocktailWithName[] testStack3 = remoteOrderImpl.getNamedPopulation("testStack3");
 			
-			for (int i = 0; i < namedCocktails.length; i++) {
-				System.out.println(namedCocktails[i].getCocktail().toString());
+			for (int i = 0; i < testStack1.length; i++) {
+				queue.addCocktail("testStack1", testStack1[i].getName());
 			}
 			
-			System.out.println(namedCocktails[1].getName());
+			LinkedList<CocktailWithName> queueContent = queue.getLinkedList();
+			for (CocktailWithName actQueue : queueContent) {
+				remoteOrderImpl.setCocktailFitness("testStack1", actQueue.getName(), 8);
+				System.out.println(actQueue.toString());
+			}
 			
-			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], namedCocktails[1].getName(), 10);
-			
-			System.out.println(remoteOrderImpl.canEvolve("testStack1"));
-			
-			// now test the queue
-			queue.addCocktail("testStack1", remoteOrderImpl.getNamedPopulation("testStack1")[1].getName());
-			queue.addCocktail("testStack2", remoteOrderImpl.getNamedPopulation("testStack2")[0].getName());
-			queue.addCocktail("testStack3", remoteOrderImpl.getNamedPopulation("testStack3")[5].getName());
-			Thread.sleep(5000);
-			queue.addCocktail("testStack1", remoteOrderImpl.getNamedPopulation("testStack1")[3].getName());
-			Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -64,10 +54,10 @@ public class TestAllFunctions {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NotEnoughRatedCocktailsException e) {
+			} catch (SerialRMIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SerialRMIException e) {
+			} catch (NotEnoughRatedCocktailsException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
