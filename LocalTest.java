@@ -3,6 +3,8 @@ package genBot2;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 
+import serialRMI.SerialRMIException;
+
 public class LocalTest {
 
 	public static void main(String[] args) throws Exception {
@@ -13,13 +15,13 @@ public class LocalTest {
 		
 		QueueManager queueManager;
 		
-		queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
-		queueManager.start();
+		try {
+			queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
+			queueManager.start();
 
 		
-		RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
+			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
 		
-		try {
 			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
 			System.out.println(evolutionStacks.length);
@@ -62,7 +64,11 @@ public class LocalTest {
 		} catch (NotEnoughRatedCocktailsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (SerialRMIException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
+
 	}
 
 }

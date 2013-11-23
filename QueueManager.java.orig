@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
@@ -32,20 +33,25 @@ public class QueueManager extends Thread {
 	
 	private Status status;
 
-	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException {
-		setDaemon(true);
+	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter) throws RemoteException, SerialRMIException {
+		//setDaemon(true);
 		
 		this.queue = queue;
 		this.protocol = GenBotProtocol.getInstance();
 		
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 		
-		if (!(server.equals("") | portName.equals(""))) {
+<<<<<<< HEAD
+		try {
 			this.serial = (SerialRMIInterface) Naming.lookup(server);
-			serial.connect(portName);
-		} else {
-			this.serial = null;
+		} catch (MalformedURLException | NotBoundException e) {
+			throw new SerialRMIException(e);
 		}
+		serial.connect(portName);
+=======
+		this.serial = (SerialRMIInterface) Naming.lookup(server);
+		//serial.connect(portName);
+>>>>>>> be620db1e7e4a0a0359722091b4f6f98b8787d3d
 		
 		this.status = Status.unknown;
 	}
@@ -55,31 +61,35 @@ public class QueueManager extends Thread {
 		while (true) {
 			try {
 				//Thread.sleep(200);
-				if (serial != null) {
-					processSerialInput();
-				}
+				processSerialInput();
 
 				if(serialIsReady()) {
 					processQueue();
 					//Thread.sleep(200);
-				}
-				
-				
-			} catch (Exception e) {
+				}				
+			} catch (SerialRMIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 		}
 	}
 	
-	public void processQueue() throws RemoteException, Exception {
+	public void processQueue() throws RemoteException, SerialRMIException {
 		if (!queue.isEmpty()) {
 			pourCocktail();
 		}
 	}
 	
+<<<<<<< HEAD
+	private void processSerialInput() throws SerialRMIException {
+		GenBotMessage[] message;
+=======
 	private void processSerialInput() {
 		
+>>>>>>> be620db1e7e4a0a0359722091b4f6f98b8787d3d
 		try {
 			String[] sA = {new String("READY")};
 			//String[] sA = serial.readLines();
@@ -116,7 +126,7 @@ public class QueueManager extends Thread {
 		}
 	}
 
-	public void pourCocktail() throws RemoteException, Exception {
+	public void pourCocktail() throws RemoteException, SerialRMIException {
 		CocktailWithName toBePoured = queue.getAndRemoveFirstCocktail();
 		
 		Cocktail pourCocktail = toBePoured.getCocktail();

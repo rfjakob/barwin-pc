@@ -1,21 +1,26 @@
 package genBot2;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+
+import serialRMI.SerialRMIException;
+
 public class TestAllFunctions {
 
 	public static void main(String[] args) {
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten1 = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
 		Ingredient[] erlaubteZutaten2 = {alleZutaten[0], alleZutaten[3], alleZutaten[4], alleZutaten[5], alleZutaten[6]};
-//		Ingredient[] erlaubteZutaten3 = alleZutaten;
-	}
-}
+		Ingredient[] erlaubteZutaten3 = alleZutaten;
 
-/*		CocktailQueue queue = new CocktailQueue();
+		CocktailQueue queue = new CocktailQueue();
 		
 		QueueManager queueManager;
 		
 		try {
-			queueManager = new QueueManager(queue, "rmi://127.0.0.1:12121/serial", "/dev/ttyACM0", 250);
+			queueManager = new QueueManager(queue, "", "", 250);
 			queueManager.start();
 			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
@@ -35,31 +40,37 @@ public class TestAllFunctions {
 			
 			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], namedCocktails[1].getName(), 10);
 			
-			System.out.println(remoteOrderImpl.canEvolve("testStack"));
+			System.out.println(remoteOrderImpl.canEvolve("testStack1"));
 			
 			// now test the queue
-			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[1].getName());
-			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[0].getName());
-			queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[5].getName());
-			try {
-				Thread.sleep(50000);
-				queue.addCocktail("testStack", remoteOrderImpl.getNamedPopulation("testStack")[3].getName());
-				Thread.sleep(50000);
+			queue.addCocktail("testStack1", remoteOrderImpl.getNamedPopulation("testStack1")[1].getName());
+			queue.addCocktail("testStack2", remoteOrderImpl.getNamedPopulation("testStack2")[0].getName());
+			queue.addCocktail("testStack3", remoteOrderImpl.getNamedPopulation("testStack3")[5].getName());
+			Thread.sleep(5000);
+			queue.addCocktail("testStack1", remoteOrderImpl.getNamedPopulation("testStack1")[3].getName());
+			Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotEnoughRatedCocktailsException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SerialRMIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (RemoteException | SerialRMIException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotEnoughRatedCocktailsException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-			
 			System.out.println("Now finished!");
-	*/
+	}
+}
