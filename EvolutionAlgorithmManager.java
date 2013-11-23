@@ -91,7 +91,6 @@ public class EvolutionAlgorithmManager {
 	private void convertProps() throws NumberFormatException, SQLException {
 		Properties props = loadProps();
 		
-//		System.out.println(props.getProperty("populationSize"));
 		updateProps(
 				props.getProperty("evolutionStackName"),
 				Integer.parseInt(props.getProperty("populationSize")), 
