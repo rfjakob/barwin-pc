@@ -10,7 +10,11 @@
 	} 
 	</div>
 	<input class="pourB" type="button" value="Pour" />
-	<span class="fitnessIsSet">@item.getCocktail.isFitnessSet</span>
+	@item.getCocktail.hashCode
+	<span class="fitnessIsSet">isFitnessSet?: @item.getCocktail.isFitnessSet</span>
+	<span class="fitnessIsSet">IsQueue?: @item.getCocktail.isQueued</span>
+	<span class="fitnessIsSet">IsPouring?: @item.getCocktail.isPouring</span>
+	<span class="fitnessIsSet">IsPoured?: @item.getCocktail.isPoured</span>
 	<input class="fitnessI" type="text" name="fitness" />
 	<input class="fitnessB" type="button" value="Set" />
 	<div class="clear"></div>

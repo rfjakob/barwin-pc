@@ -1,0 +1,12 @@
+@(genBotRMI: genBot2.RemoteOrderInterface, ingredients: Array[genBot2.Ingredient]) @main("GenBot") {
+<ul class="uCButtons">
+	@for(name <- genBotRMI.listEvolutionStacks) {
+	<li data-name="@name"><a href="#@name" class="uCButton">@name</a></li> 
+	}
+</ul>
+<ul class="uCQueue">
+	@for(c <- genBotRMI.getQueue.getLinkedList) {
+	   	@cocktail(c, ingredients)
+	}
+</ul>
+}

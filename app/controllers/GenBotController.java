@@ -12,7 +12,7 @@ import play.mvc.Result;
 import views.html.error;
 
 public class GenBotController extends Controller {
-	private static String genBotRMIService = "rmi://127.0.0.1/genBot";
+	private static String genBotRMIService = "rmi://127.0.0.1:12122/genBot";
 	protected static Result error(Exception e) {
 		e.printStackTrace();
 		System.out.println("EXCEPION " + e.getMessage() + " (" + e.getClass() + ")");

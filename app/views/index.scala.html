@@ -10,7 +10,7 @@
 	@for(name <- names) {
 	<div class="tab-pane" id="@name">@gen(name, genBotRMI.getNamedPopulation(name), ingredients)</div>
 	}
-	<div class="tab-pane" id="queue">@queue(genBotRMI.getQueue, ingredients)</div>
+	<div class="tab-pane" id="queue"></div>
 	<div class="tab-pane" id="create">@create(ingredients)</div>
 </div>
 }

@@ -28,9 +28,10 @@ public class Application extends GenBotController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
-			for (String name: genBotRMI.listEvolutionStacks())
-				System.out.println(name);
-
+			//for (String name: genBotRMI.listEvolutionStacks())
+			//	System.out.println(name);
+			//genBotRMI.getNamedPopulation("adsf").;
+			
 			return ok(index.render(genBotRMI.listEvolutionStacks(), genBotRMI,
 					alleZutaten));
 		} catch (Exception e) {
@@ -75,7 +76,6 @@ public class Application extends GenBotController {
 		result.put("message", "Cocktail queued");
 		
 		return ok(result);
-
 	}
 
 	public static Result generation(Long id) {
