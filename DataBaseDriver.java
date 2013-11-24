@@ -152,7 +152,9 @@ public class DataBaseDriver {
 	}
 	
 	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
-		PreparedStatement statement = connection.prepareStatement("select max(number) from " + evolutionStackName);
+		
+		// first check if there is a generationnumber
+		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + ")");
 		
 		lock.lock();
 		
@@ -161,10 +163,25 @@ public class DataBaseDriver {
 		lock.unlock();
 		
 		if (rs.next()) {
+			if (rs.getBoolean(1) == false) {
+				return -1;
+			}
+		}
+		
+		// there is a generation number - now give back the number
+		statement = connection.prepareStatement("select max(number) from " + evolutionStackName);
+		
+		lock.lock();
+		
+		rs = statement.executeQuery();
+		
+		lock.unlock();
+		
+		if (rs.next()) {
 			return rs.getInt("max(number)");
 		}
 		
-		return 0;
+		throw new SQLException("An error occured while trying to get the last generationnumber");
 	}
 	
 	private byte[] serialize(CocktailGenerationManager cocktailGenerationManager) throws IOException {

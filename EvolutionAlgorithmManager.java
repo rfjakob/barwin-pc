@@ -138,7 +138,7 @@ public class EvolutionAlgorithmManager {
 			this.dbDriver = DataBaseDriver.getInstance(dbDriverPath);
 			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
 
-			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
+			if (dbDriver.getLastGenerationNumber(evolutionStackName) == -1) {
 				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
 			} else {
 				this.genManager = load();
