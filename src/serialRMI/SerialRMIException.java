@@ -1,6 +1,6 @@
 package serialRMI;
 
-public class SerialRMIException extends Throwable {
+public class SerialRMIException extends Exception {
 
 	/**
 	 * 
