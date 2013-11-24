@@ -238,7 +238,7 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void save() throws SQLException {
-		dbDriver.insert(evolutionStackName, genManager.getGenerationNumber(), genManager);
+		dbDriver.insertOrUpdate(evolutionStackName, genManager.getGenerationNumber(), genManager);
 	}
 		
 	/*
@@ -347,8 +347,9 @@ public class EvolutionAlgorithmManager {
 		return retBoolean;
 	}
 	
-	public void setFitness(String name, double fitnessInput) {
+	public void setFitness(String name, double fitnessInput) throws SQLException {
 		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, fitnessInput);
+		save();
 	}
 	
 	public CocktailGenerationManager getOldGeneration(int generationNumber) throws SQLException {

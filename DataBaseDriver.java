@@ -108,11 +108,35 @@ public class DataBaseDriver {
 		lock.unlock();
 	}
 	
+	public void insertOrUpdate(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+		if (wasGenerationStoredBefore(evolutionStackName, generationNumber)) {
+			update(evolutionStackName, generationNumber, generationManager);
+		} else {
+			insert(evolutionStackName, generationNumber, generationManager);
+		}
+	}
+	
 	public void insert(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
 		try {
 			PreparedStatement statement = connection.prepareStatement("insert into " + evolutionStackName + " (number, generationManager) values (?, ?)");
 			statement.setObject(1, generationNumber);
 			statement.setObject(2, serialize(generationManager));
+		
+			lock.lock();
+			
+			statement.execute();
+			
+			lock.unlock();
+			
+		} catch (SQLException | IOException e) {
+			throw new SQLException("Insertion failed " + e.getMessage());
+		}
+	}
+	
+	public void update(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+		try {
+			PreparedStatement statement = connection.prepareStatement("update " + evolutionStackName + " set generationManager = ? where number = " + generationNumber);
+			statement.setObject(1, serialize(generationManager));
 		
 			lock.lock();
 			
@@ -151,10 +175,8 @@ public class DataBaseDriver {
 		return null;
 	}
 	
-	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
-		
-		// first check if there is a generationnumber
-		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + ")");
+	public boolean wasGenerationStoredBefore(String evolutionStackName, int generationNumber) throws SQLException {
+		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + " where number = " + generationNumber + ")");
 		
 		lock.lock();
 		
@@ -163,17 +185,28 @@ public class DataBaseDriver {
 		lock.unlock();
 		
 		if (rs.next()) {
-			if (rs.getBoolean(1) == false) {
-				return -1;
-			}
+			return rs.getBoolean(1);
+		}
+		
+		throw new SQLException("An error occured while trying check if saved before");
+	}
+	
+	/*
+	 * returns the last generation number or -1 if no generation was saved yet
+	 */
+	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
+		
+		// first check if there is a generationnumber
+		if (!wasGenerationStoredBefore(evolutionStackName, 0)) {
+			return -1;
 		}
 		
 		// there is a generation number - now give back the number
-		statement = connection.prepareStatement("select max(number) from " + evolutionStackName);
+		PreparedStatement statement = connection.prepareStatement("select max(number) from " + evolutionStackName);
 		
 		lock.lock();
 		
-		rs = statement.executeQuery();
+		ResultSet rs = statement.executeQuery();
 		
 		lock.unlock();
 		
