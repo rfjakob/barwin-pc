@@ -23,7 +23,7 @@ public class TestAllFunctions {
 			queueManager.start();
 			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften1");
-			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften2");
+			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften2");
 			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften3");
 
 			CocktailWithName[] testStack1 = remoteOrderImpl.getNamedPopulation("testStack1");
