@@ -22,7 +22,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
-		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);
+		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
+
 		evoAlgMngr.setFitness(name, fitnessInput);
 		
 		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
@@ -42,7 +43,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
-			String recombinationName, boolean dbReset, String propPath, double stdDeviation)
+			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation)
 			throws RemoteException, SQLException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
@@ -56,14 +57,14 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		// variableArea is hard coded... but it should be 0.25
 
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, dbReset, propPath);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, resetDbTable, propPath);
 	}
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, int populationSize,
-			int truncation, int elitism, String dbDriverPath, boolean dbReset,
-			String fitnessCheckName, String recombinationName, double stdDeviation,
+			int truncation, int elitism, String dbDriverPath,
+			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation,
 			String propPath) throws RemoteException, SQLException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
@@ -77,7 +78,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		// variableArea is hard coded... but it should be 0.25
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, stdDeviation, propPath);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, propPath);
 	}
 
 	@Override

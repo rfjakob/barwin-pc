@@ -41,18 +41,18 @@ public class EvolutionStackContainer {
 		}
 	}
 	
-	public void addEvolutionAlgorithmManager(String name, EvolutionAlgorithmManager evoAlgMngr) {
+	private void addEvolutionAlgorithmManager(String name, EvolutionAlgorithmManager evoAlgMngr) {
 		evolutionMap.put(name, evoAlgMngr);
 	}
 
-	public void addEvolutionAlgorithmManager(String name, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {
-		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, dbReset, fitnessCheck, recombination, stdDeviation, propPath);
+	public void addEvolutionAlgorithmManager(String name, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {
+		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, propPath);
 
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}
 	
-	public void addEvolutionAlgorithmManager(String name, CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
-		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(fitnessCheck, recombination, dbReset, propPath);
+	public void addEvolutionAlgorithmManager(String name, CheckFitness fitnessCheck, Recombination recombination, boolean reset, String propPath) throws SQLException {
+		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(fitnessCheck, recombination, reset, propPath);
 		
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}

@@ -42,7 +42,7 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean dbReset, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {		
 		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
 		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
 		
@@ -68,10 +68,10 @@ public class EvolutionAlgorithmManager {
 		
 		convertProps();	
 		
-		accessDB(dbDriverPath, dbReset);
+		accessDB(dbDriverPath, resetDbTable);
 	}
 	
-	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
+	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException {
 		convertProps();
 		
 		try {
@@ -80,7 +80,7 @@ public class EvolutionAlgorithmManager {
 			
 			this.propPath = propPath;
 			
-			accessDB(dbDriverPath, dbReset);
+			accessDB(dbDriverPath, resetDbTable);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,9 +133,10 @@ public class EvolutionAlgorithmManager {
 		setMutationStdDeviation(this.stdDeviation);
 	}
 
-	private void accessDB(String dbDriverPath, boolean dbReset) throws SQLException {
+	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException {
 		if (dbDriverPath != null) {
-			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset, evolutionStackName);
+			this.dbDriver = DataBaseDriver.getInstance(dbDriverPath);
+			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
 
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
 				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
@@ -237,13 +238,9 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void save() throws SQLException {
-		doSave(genManager.getGenerationNumber(), genManager);
+		dbDriver.insert(evolutionStackName, genManager.getGenerationNumber(), genManager);
 	}
-	
-	public void doSave(int generationNumber, CocktailGenerationManager cocktailGenerationManager) throws SQLException {
-		dbDriver.insert(evolutionStackName, generationNumber, cocktailGenerationManager);
-	}
-	
+		
 	/*
 	 * checks the fitness for the whole cocktail generation
 	 */
@@ -384,6 +381,11 @@ public class EvolutionAlgorithmManager {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}		
 	}
+
+	public String getName() {
+		return evolutionStackName;
+	}
+
 }

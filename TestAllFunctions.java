@@ -22,26 +22,26 @@ public class TestAllFunctions {
 			queueManager = new QueueManager(queue, "", "", 250);
 			queueManager.start();
 			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
-			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
-//			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
-//			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften1");
+			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften2");
+			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften3");
 
 			CocktailWithName[] testStack1 = remoteOrderImpl.getNamedPopulation("testStack1");
-//			CocktailWithName[] testStack2 = remoteOrderImpl.getNamedPopulation("testStack2");
-//			CocktailWithName[] testStack3 = remoteOrderImpl.getNamedPopulation("testStack3");
+			CocktailWithName[] testStack2 = remoteOrderImpl.getNamedPopulation("testStack2");
+			CocktailWithName[] testStack3 = remoteOrderImpl.getNamedPopulation("testStack3");
 
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 15; j++) {
-					System.out.println(j);
+//					System.out.println(j);
 					queue.addCocktail("testStack1", remoteOrderImpl.getNamedPopulation("testStack1")[j].getName());
-					System.out.println("Generation " + i);
+//					System.out.println("Generation " + i);
 //				}
 
 //				for (int j = (i + 1) * 15; j < j + 15; j++) {
 					CocktailWithName actQueue = remoteOrderImpl.getNamedPopulation("testStack1")[j];
 					actQueue.getCocktail().setPoured(true);
 					remoteOrderImpl.setCocktailFitness("testStack1", actQueue.getName(), 8);
-					System.out.println(actQueue.toString());
+//					System.out.println(actQueue.toString());
 				}
 			}
 		} catch (MalformedURLException e) {

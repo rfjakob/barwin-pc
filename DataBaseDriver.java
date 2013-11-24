@@ -12,31 +12,70 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DataBaseDriver {
+	
+	private static HashMap<String, DataBaseDriver> files;
 	
 	private int timeout = 20;
 	private String fileName;
 	private Connection connection;
 	private final Lock lock;
 
-	public DataBaseDriver(String fileName) throws SQLException {
+	private DataBaseDriver(String fileName) throws SQLException {
 		this.fileName = fileName;
-		setup(fileName);
+		setupConnection(fileName);
 		this.lock = new ReentrantLock();
 	}
 	
-	public DataBaseDriver(String fileName, boolean reset, String evolutionStackName) throws SQLException {
-		this(fileName);
-				
-		if (reset) {
-			reset(evolutionStackName);
+	public static DataBaseDriver getInstance(String fileName) throws SQLException {
+		if (files == null) {
+			files = new HashMap<String, DataBaseDriver>();
 		}
+		if (!files.containsKey(fileName)) {
+			files.put(fileName, new DataBaseDriver(fileName));
+		}
+		DataBaseDriver retDriver = files.get(fileName);
+		
+		return retDriver;
+	}
+	
+	public void setup(String fileName, boolean resetTable, String evolutionStackName) throws SQLException {
+		// check if the table exists
+		PreparedStatement statement = connection.prepareStatement("SELECT name FROM sqlite_master WHERE type='table' AND name='" + evolutionStackName + "'");
+		
+		lock.lock();
+		
+		ResultSet rs = statement.executeQuery();
+		
+		lock.unlock();
+		
+		if (!rs.next()) {
+				Statement otherStatement = connection.createStatement();
+				otherStatement.setQueryTimeout(timeout);
+
+				lock.lock();
+				
+				otherStatement.executeUpdate("create table " + evolutionStackName + "("
+						+ "number integer primary key, "
+						+ "time datetime default current_timestamp, "
+						+ "generationManager blob"
+						+ ")");
+				
+				otherStatement.close();
+				
+				lock.unlock();
+		}
+				
+		if (resetTable) {
+			resetTable(evolutionStackName);
+		}		
 	}
 		
-	private void setup(String fileName) throws SQLException {
+	private void setupConnection(String fileName) throws SQLException {
 		connection = DriverManager.getConnection("jdbc:sqlite:"+ fileName + ".sqlite3");
 	}
 	
@@ -44,24 +83,25 @@ public class DataBaseDriver {
 		this.timeout = timeout;
 	}
 	
-	public void reset(String evolutionStackName) throws SQLException {
+	/*
+	 * deprecated
+	 */
+	public void resetFile() throws SQLException {
 		File dbFile = new File(fileName + ".sqlite3");
 		if (dbFile.exists()) {
 			dbFile.delete();
 		}
 		
-		setup(fileName);
-
+		setupConnection(fileName);
+	}
+	
+	public void resetTable(String evolutionStackName) throws SQLException {
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(timeout);
 
 		lock.lock();
 		
-		statement.executeUpdate("create table " + evolutionStackName + "("
-				+ "number integer primary key, "
-				+ "time datetime default current_timestamp, "
-				+ "generationManager blob"
-				+ ")");
+		statement.executeUpdate("DELETE FROM " + evolutionStackName);
 		
 		statement.close();
 		
