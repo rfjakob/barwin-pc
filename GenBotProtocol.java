@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class GenBotProtocol {
 	static GenBotProtocol instance;
-	static final Integer cBottles = 4;
+	static final Integer cBottles = 7;
 	
 	static public final Map<String, Integer> commands = ImmutableMap.<String, Integer>builder()
 			.put("READY"			,  2)

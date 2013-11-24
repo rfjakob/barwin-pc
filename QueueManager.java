@@ -44,7 +44,7 @@ public class QueueManager extends Thread {
 		
 		if (!(server.equals("") | portName.equals(""))) {
 			this.serial = (SerialRMIInterface) Naming.lookup(server);
-//			serial.connect(portName);
+			serial.connect(portName);
 		} else {
 			this.serial = null;
 		}
@@ -67,7 +67,7 @@ public class QueueManager extends Thread {
 				}
 				
 				
-			} catch (Exception | SerialRMIException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
@@ -96,7 +96,8 @@ public class QueueManager extends Thread {
 				case "READY":
 					// THIS IF IS ONLY NEEDED FOR TESTING
 					currentlyPouring = null;
-					if(status != Status.waitingForWaitingForCup)
+					System.out.println("weight: " + me.args[0] + " cup: " + me.args[1]);
+					//if(status != Status.waitingForWaitingForCup)
 						status = Status.ready;
 					break;
 				case "WAITING_FOR_CUP":
