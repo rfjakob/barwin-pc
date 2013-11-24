@@ -57,7 +57,7 @@ public class Serial extends GenBotController {
 			return redirect("/serial");
 		} catch (Exception e) {
 			return error(e);
-		}
+		} 
 	}
 
 	public static Result write() {

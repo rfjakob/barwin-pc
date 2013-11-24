@@ -22,5 +22,4 @@ server.pid
 *.iml
 *.eml
 *.dll
-*.so
 *.sqlite3
