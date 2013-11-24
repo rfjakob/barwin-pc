@@ -55,18 +55,32 @@ public class EvolutionAlgorithmManager {
 			}
 		}
 		
-		constructRest(fitnessCheck, recombination, dbReset, propPath);
+		this.fitnessCheck = fitnessCheck;
+		this.recombination = recombination;
+		
+		this.propPath = propPath;
+		
+		if (dbDriverPath != null) {
+			this.dbDriverPath = dbDriverPath;
+		}
 
 		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngrediensToString());
 		
-		convertProps();		
+		convertProps();	
+		
+		accessDB(dbDriverPath, dbReset);
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
 		convertProps();
 		
 		try {
-			constructRest(fitnessCheck, recombination, dbReset, propPath);
+			this.fitnessCheck = fitnessCheck;
+			this.recombination = recombination;
+			
+			this.propPath = propPath;
+			
+			accessDB(dbDriverPath, dbReset);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,7 +123,8 @@ public class EvolutionAlgorithmManager {
 		this.elitism = elitism;
 		this.stdDeviation = stdDeviation;
 		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
-		if (!dbDriverPath.equals(this.dbDriverPath)) {
+		
+		if (!dbDriverPath.equals(this.dbDriverPath) ) {
 			this.dbDriverPath = dbDriverPath;
 			
 			accessDB(dbDriverPath, true);
@@ -118,20 +133,10 @@ public class EvolutionAlgorithmManager {
 		setMutationStdDeviation(this.stdDeviation);
 	}
 
-	private void constructRest(CheckFitness fitnessCheck, Recombination recombination, boolean dbReset, String propPath) throws SQLException {
-		this.fitnessCheck = fitnessCheck;
-		this.recombination = recombination;
-		
-		this.propPath = propPath;
-		
-		accessDB(dbDriverPath, dbReset);		
-	}
-	
 	private void accessDB(String dbDriverPath, boolean dbReset) throws SQLException {
 		if (dbDriverPath != null) {
 			this.dbDriver = new DataBaseDriver(dbDriverPath, dbReset, evolutionStackName);
 
-		
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == 0) {
 				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
 			} else {

@@ -90,7 +90,7 @@ public class CocktailQueue implements Serializable {
 		}
 		
 		if (cocktailFound == false) {
-			throw new IllegalArgumentException(cocktailName + "not found in " + evolutionAlgorithmManager + "!");
+			throw new IllegalArgumentException(cocktailName + " not found in " + evolutionAlgorithmManager + "!");
 		}
 	}
 	

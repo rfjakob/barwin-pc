@@ -30,7 +30,7 @@ public class DataBaseDriver {
 	
 	public DataBaseDriver(String fileName, boolean reset, String evolutionStackName) throws SQLException {
 		this(fileName);
-		
+				
 		if (reset) {
 			reset(evolutionStackName);
 		}
@@ -81,17 +81,14 @@ public class DataBaseDriver {
 			lock.unlock();
 			
 		} catch (SQLException | IOException e) {
-			throw new SQLException("Insertion failed", e);
+			throw new SQLException("Insertion failed " + e.getMessage());
 		}
 	}
 	
 	public CocktailGenerationManager select(String evolutionStackName, int generationNumber) throws SQLException {
 		PreparedStatement statement;
 		try {
-			statement = connection.prepareStatement("select generationManager from ? where number=?");
-		
-			statement.setObject(1, evolutionStackName);
-			statement.setObject(2, generationNumber);
+			statement = connection.prepareStatement("select generationManager from " + evolutionStackName + " where number=" + generationNumber);
 		
 			lock.lock();
 			
@@ -109,7 +106,7 @@ public class DataBaseDriver {
 				return (CocktailGenerationManager) ois.readObject();
 			}
 		} catch (SQLException | IOException | ClassNotFoundException e) {
-			throw new SQLException("select failed", e);
+			throw new SQLException("select failed - " + e.getMessage());
 		}
 		return null;
 	}
