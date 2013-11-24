@@ -15,8 +15,8 @@ The read are implemented so that they are not blocking functions.
 In addition the communication can be logged to a file.
 
 
-configuration file
-============
+Configuration File
+------------------
 Example:
 ``` 
 rmiRegistry=true
@@ -29,3 +29,12 @@ Description of the configuration file options:
 * rmiRegistryPort: the port which is used, if it should create its own registry service
 * rmiInterface: the ip address of the interface will be used to set the address of the backlink of the rmi service
 * logging: options are 'line' and 'raw', in the first case the logging file will be filled with the output of the readLine and writeLine function, in case of raw it will be filled with the output of teh read und write functions, without defining this parameter no logging file will be produced
+
+Dependencies
+------------
+* Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx
+* Debian: sudo apt-get install openjdk-7-jdk librxtx-java
+
+Build
+-----
+Just type "make" to generate serialRMI.jar in the bin directory.
