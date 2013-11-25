@@ -39,6 +39,8 @@ public interface RemoteOrderInterface extends Remote {
 	public void reorderQueue(String cocktailNameList[]) throws RemoteException;
 	
 	public CocktailQueue getQueue() throws RemoteException;
+	
+	public CocktailWithName getCurrentlyPouringCocktail() throws RemoteException;
 
 	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException;
 	

@@ -25,7 +25,7 @@ public class RMISimpleClient {
 			
 			System.out.println(remoteOrderImpl.listEvolutionStacks()[0]);
 
-			CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
+			//CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
 			
 //			remoteOrderImpl.setCocktailFitness(evolutionStacks[0], cocktails[0].getName(), 10);
 			

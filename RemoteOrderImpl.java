@@ -148,6 +148,11 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			String evolutionStackName) throws RemoteException {
 		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager();
 	}
+
+	@Override
+	public CocktailWithName getCurrentlyPouringCocktail() throws RemoteException {
+		return queueManager.getCurrentlyPouringCocktail();
+	}
 	
 	
 }

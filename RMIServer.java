@@ -21,8 +21,8 @@ public class RMIServer {
 	static String rmiServiceName = "genBot";
 	static String rmiInterface = null;
 	
-	static String serialRMIAddress = "rmi://10.20.30.190:12121/serial";
-	static String serialPort = "/dev/ttyUSB0";
+	static String serialRMIAddress = "";
+	static String serialPort = "";
 	
 	static RemoteOrderImpl rmiImpl;
 	

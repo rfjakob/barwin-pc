@@ -42,7 +42,7 @@ public class QueueManager extends Thread {
 		
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 		
-		if (!(server.equals("") | portName.equals(""))) {
+		if (!(server.equals("") || portName.equals(""))) {
 			this.serial = (SerialRMIInterface) Naming.lookup(server);
 			serial.connect(portName);
 		} else {
@@ -60,13 +60,10 @@ public class QueueManager extends Thread {
 				if (serial != null) {
 					processSerialInput();
 				}
-
 				if(serialIsReady()) {
 					processQueue();
 					//Thread.sleep(200);
 				}
-				
-				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -83,8 +80,15 @@ public class QueueManager extends Thread {
 	private void processSerialInput() throws SerialRMIException {
 		
 		try {
+			String[] sA;
 			//String[] sA = {new String("READY")};
-			String[] sA = serial.readLines();
+			if(serial != null) {
+				sA = serial.readLines();
+			} else {
+				String[] sAT = {new String("READY 213 0")};
+				sA = sAT;
+			}
+			
 			if(sA.length == 0)
 				return;
 
@@ -127,7 +131,8 @@ public class QueueManager extends Thread {
 		
 		String codedPourCocktail = codePour(pourCocktail);
 		//System.out.println("WRITING POUR");
-		serial.writeLine(codedPourCocktail);
+		if(serial != null)
+			serial.writeLine(codedPourCocktail);
 		currentlyPouring = toBePoured;
 		
 		pourCocktail.setQueued(false);
@@ -159,4 +164,7 @@ public class QueueManager extends Thread {
 		return queue;
 	}
 
+	public CocktailWithName getCurrentlyPouringCocktail() {
+		return currentlyPouring;
+	}
 }
