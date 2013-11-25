@@ -240,4 +240,21 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	public boolean isPouring() {
 		return pouring;
 	}
+	
+	public void changeAmounts(double[] amounts) {
+		if (amounts.length != ingredientAmounts.length) {
+			throw new IllegalArgumentException("You try to set " + amounts.length + " ingredients but this cocktail has " + ingredientAmounts.length + "ingredients!");
+		}
+		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
+		
+		int sum = 0;
+		
+		for (int i = 0; i < amounts.length; i++) {
+			sum += amounts[i];
+		}
+		
+		for (int i = 0; i < amounts.length; i++) {
+			ingredientAmounts[i] = new IngredientAmount(ingredients[i], amounts[i] / sum);
+		}
+	}
 }
