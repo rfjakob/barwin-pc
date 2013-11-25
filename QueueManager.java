@@ -64,7 +64,10 @@ public class QueueManager extends Thread {
 					processQueue();
 					//Thread.sleep(200);
 				}
-			} catch (Exception e) {
+			} catch (SerialRMIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 

@@ -1,8 +1,10 @@
 package genBot2;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class RemoteOrderImpl implements RemoteOrderInterface {
@@ -85,11 +87,56 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients) throws RemoteException,
 			SQLException {
+		String[] possibleNames = listPossibleEvolutionStacks();
+		boolean containsName = false;
+		
+		for (int i = 0; i < possibleNames.length; i++) {
+			if (possibleNames[i].equals(evolutionStackName)) {
+				containsName = true;
+			}
+		}
+		
+		if (!containsName) {
+			throw new IllegalArgumentException(evolutionStackName + " is not a .properties file in the folder");
+		}
+		
 		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", false, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
+	}
+	
+	@Override
+	public String[] listPossibleEvolutionStacks() throws RemoteException {
+		String path = "evolutionStackSettings/"; // make sure this is the same as in EvolutionAlgorithmManager.java
+		
+		String files;
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+		
+		ArrayList<String> fileNames = new ArrayList<String>();
+		
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				files = listOfFiles[i].getName();
+				
+				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
+					fileNames.add(files);
+				}
+			}
+		}
+		
+		return fileNames.toArray(new String[fileNames.size()]);
 	}
 
 	@Override
-	public String[] listEvolutionStacks() throws RemoteException {
+	public void loadEvolutionStack(String evolutionStackName)
+			throws RemoteException, SQLException {
+		CheckFitness fitnessCheck = new EfficientCocktail();
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, 0.05);
+		
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
+	}
+
+	@Override
+	public String[] listLoadedEvolutionStacks() throws RemoteException {
 		return evolutionStackController.listEvolutionStacks();
 	}
 
@@ -153,6 +200,5 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public CocktailWithName getCurrentlyPouringCocktail() throws RemoteException {
 		return queueManager.getCurrentlyPouringCocktail();
 	}
-	
 	
 }

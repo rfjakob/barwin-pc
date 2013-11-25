@@ -56,7 +56,7 @@ public class EvolutionStackContainer {
 		
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}
-	
+		
 	public String[] listEvolutionStacks() {
 		String[] keys = (String[])(evolutionMap.keySet().toArray(new String[evolutionMap.size()]));
 

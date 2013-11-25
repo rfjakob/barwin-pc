@@ -58,7 +58,7 @@ public class EvolutionAlgorithmManager {
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
-		this.propPath = propPath;
+		this.propPath = "evolutionStackSettings/" + propPath;
 		
 		if (dbDriverPath != null) {
 			this.dbDriverPath = dbDriverPath;
@@ -78,7 +78,7 @@ public class EvolutionAlgorithmManager {
 			this.fitnessCheck = fitnessCheck;
 			this.recombination = recombination;
 			
-			this.propPath = propPath;
+			this.propPath = "evolutionStackSettings/" + propPath;
 			
 			accessDB(dbDriverPath, resetDbTable);
 		} catch (NumberFormatException e) {

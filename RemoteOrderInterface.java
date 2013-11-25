@@ -22,7 +22,11 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, String propPath)  throws RemoteException, SQLException;
 	
-	public String[] listEvolutionStacks() throws RemoteException;
+	public void loadEvolutionStack(String evolutionStackName) throws RemoteException, SQLException;
+	
+	public String[] listPossibleEvolutionStacks() throws RemoteException;
+	
+	public String[] listLoadedEvolutionStacks() throws RemoteException;
 	
 	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
 	
