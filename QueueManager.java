@@ -187,4 +187,12 @@ public class QueueManager extends Thread {
 	public CocktailWithName getCurrentlyPouringCocktail() {
 		return currentlyPouring;
 	}
+	
+	public int getCocktailSizeMilliliter() {
+		return cocktailSizeMilliliter;
+	}
+
+	public void setCocktailSizeMilliliter(int cocktailSizeMilliliter) {
+		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
+	}
 }

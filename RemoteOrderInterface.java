@@ -49,4 +49,8 @@ public interface RemoteOrderInterface extends Remote {
 	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException;
 	
 	public CocktailGenerationManager readGenerationManager(String evolutionStackName) throws RemoteException;
+	
+	public int getCocktailSize() throws RemoteException;
+	
+	public void setCocktailSize(int milliLiters) throws RemoteException;
 }

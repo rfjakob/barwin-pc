@@ -200,5 +200,15 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public CocktailWithName getCurrentlyPouringCocktail() throws RemoteException {
 		return queueManager.getCurrentlyPouringCocktail();
 	}
+
+	@Override
+	public int getCocktailSize() throws RemoteException {
+		return queueManager.getCocktailSizeMilliliter();
+	}
+
+	@Override
+	public void setCocktailSize(int milliLiters) throws RemoteException {
+		queueManager.setCocktailSizeMilliliter(milliLiters);
+	}
 	
 }
