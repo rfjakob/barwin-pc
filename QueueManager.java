@@ -111,6 +111,7 @@ public class QueueManager extends Thread {
 					status = Status.waitingForCup;
 					System.out.println("Wort ma am Becher!");
 				case "ENJOY":
+					finishedPouring(me.args);
 					status = Status.waitingForReady;
 				default:
 					status = Status.unknown;
@@ -134,17 +135,29 @@ public class QueueManager extends Thread {
 		
 		String codedPourCocktail = codePour(pourCocktail);
 		//System.out.println("WRITING POUR");
-		if(serial != null)
+		if (serial != null) {
 			serial.writeLine(codedPourCocktail);
-		currentlyPouring = toBePoured;
+			currentlyPouring = toBePoured;
 		
-		pourCocktail.setQueued(false);
-		pourCocktail.setPouring(true);
-		// finished?
-		// get real values from the arduino
-		// pourCocktail.changeAmounts(amounts);
-		// pourCocktail.setPoured(true);
-		status = Status.waitingForWaitingForCup;
+			pourCocktail.setQueued(false);
+			pourCocktail.setPouring(true);
+			status = Status.waitingForWaitingForCup;
+		}
+	}
+	
+	private void finishedPouring(int[] realValues) {
+		currentlyPouring.getCocktail().setPoured(true);		
+
+		int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length;
+		
+		if (realValues.length == mandatoryLength) {
+			double[] realDoubles = new double[mandatoryLength];
+			for (int i = 0; i < mandatoryLength; i++) {
+				realDoubles[i] = realValues[i];
+				
+				currentlyPouring.getCocktail().changeAmounts(realDoubles);
+			}
+		}
 	}
 	
 	private String codePour(Cocktail pourCocktail) {
