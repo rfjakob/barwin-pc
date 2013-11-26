@@ -139,7 +139,11 @@ public class QueueManager extends Thread {
 		currentlyPouring = toBePoured;
 		
 		pourCocktail.setQueued(false);
-		pourCocktail.setPouring(true); // .setPouredTrue();
+		pourCocktail.setPouring(true);
+		// finished?
+		// get real values from the arduino
+		// pourCocktail.changeAmounts(amounts);
+		// pourCocktail.setPoured(true);
 		status = Status.waitingForWaitingForCup;
 	}
 	
