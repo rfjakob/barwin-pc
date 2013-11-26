@@ -210,5 +210,16 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void setCocktailSize(int milliLiters) throws RemoteException {
 		queueManager.setCocktailSizeMilliliter(milliLiters);
 	}
+
+	@Override
+	public double getMutationStdDeviation(String evolutionStackName) throws RemoteException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getMutationStdDeviation();
+	}
+
+	@Override
+	public void setMutationStdDeviation(String evolutionStackName, double stdDeviation)
+			throws RemoteException {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMutationStdDeviation(stdDeviation);
+	}
 	
 }

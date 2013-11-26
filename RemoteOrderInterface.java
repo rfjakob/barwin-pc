@@ -53,4 +53,8 @@ public interface RemoteOrderInterface extends Remote {
 	public int getCocktailSize() throws RemoteException;
 	
 	public void setCocktailSize(int milliLiters) throws RemoteException;
+	
+	public double getMutationStdDeviation(String evolutionStackName) throws RemoteException;
+	
+	public void setMutationStdDeviation(String evolutionStackName, double stdDeviation) throws RemoteException;
 }
