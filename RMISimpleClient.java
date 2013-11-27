@@ -19,11 +19,11 @@ public class RMISimpleClient {
 			
 			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
 			
-			String[] evolutionStacks = remoteOrderImpl.listEvolutionStacks();
+			String[] evolutionStacks = remoteOrderImpl.listLoadedEvolutionStacks();
 			System.out.println(evolutionStacks.length);
 			System.out.println(evolutionStacks[0]);
 			
-			System.out.println(remoteOrderImpl.listEvolutionStacks()[0]);
+			System.out.println(remoteOrderImpl.listLoadedEvolutionStacks()[0]);
 
 			//CocktailWithName[] namedCocktails = remoteOrderImpl.getNamedPopulation(evolutionStacks[0]);
 			

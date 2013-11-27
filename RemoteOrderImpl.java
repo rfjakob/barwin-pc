@@ -87,20 +87,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients) throws RemoteException,
 			SQLException {
-		String[] possibleNames = listPossibleEvolutionStacks();
-		boolean containsName = false;
 		
-		for (int i = 0; i < possibleNames.length; i++) {
-			if (possibleNames[i].equals(evolutionStackName)) {
-				containsName = true;
-			}
-		}
-		
-		if (!containsName) {
-			throw new IllegalArgumentException(evolutionStackName + " is not a .properties file in the folder");
-		}
-		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", false, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
 	}
 	
 	@Override
@@ -131,6 +119,19 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			throws RemoteException, SQLException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		Recombination recombination = new MutationAndIntermediateRecombination(0.25, 0.05);
+		
+		String[] possibleNames = listPossibleEvolutionStacks();
+		boolean containsName = false;
+		
+		for (int i = 0; i < possibleNames.length; i++) {
+			if (possibleNames[i].equals(evolutionStackName)) {
+				containsName = true;
+			}
+		}
+		
+		if (!containsName) {
+			throw new IllegalArgumentException(evolutionStackName + " is not a .properties file in the folder");
+		}
 		
 		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
 	}
