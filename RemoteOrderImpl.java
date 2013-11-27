@@ -1,7 +1,9 @@
 package genBot2;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +13,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	private EvolutionStackContainer evolutionStackController;
 	private QueueManager queueManager;
+
+	// make sure this is the same as in EvolutionAlgorithmManager.java
+	private String propertiesPath = "evolutionStackSettings/";
 	
 	public RemoteOrderImpl(QueueManager queueManager) {
 		this.evolutionStackController = EvolutionStackContainer.getInstance();
@@ -93,10 +98,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	@Override
 	public String[] listPossibleEvolutionStacks() throws RemoteException {
-		String path = "evolutionStackSettings/"; // make sure this is the same as in EvolutionAlgorithmManager.java
 		
 		String files;
-		File folder = new File(path);
+		File folder = new File(propertiesPath);
 		File[] listOfFiles = folder.listFiles();
 		
 		ArrayList<String> fileNames = new ArrayList<String>();
@@ -117,8 +121,6 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public void loadEvolutionStack(String evolutionStackName)
 			throws RemoteException, SQLException {
-		CheckFitness fitnessCheck = new EfficientCocktail();
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, 0.05);
 		
 		String[] possibleNames = listPossibleEvolutionStacks();
 		boolean containsName = false;
@@ -133,7 +135,14 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			throw new IllegalArgumentException(evolutionStackName + " is not a .properties file in the folder");
 		}
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
+		CheckFitness fitnessCheck = new EfficientCocktail();
+		
+		Properties props = loadProps(evolutionStackName);
+		
+		// variableArea is hard coded... but it should be 0.25
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")));
+		
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, propertiesPath + evolutionStackName);
 	}
 
 	@Override
@@ -221,6 +230,22 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void setMutationStdDeviation(String evolutionStackName, double stdDeviation)
 			throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMutationStdDeviation(stdDeviation);
+	}
+	
+	private Properties loadProps(String propFile) {
+		Properties props = new Properties();
+		
+		try {
+			props.load(new FileInputStream(propertiesPath + propFile + ".properties"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return props;
 	}
 	
 }

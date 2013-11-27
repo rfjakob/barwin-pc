@@ -214,7 +214,7 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void setMutationStdDeviation(double stdDeviation) {
-		this.stdDeviation = stdDeviation;
+		recombination.setMutationStdDeviation(stdDeviation);
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {
