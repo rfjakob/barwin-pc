@@ -23,6 +23,11 @@ gb = {
 	clearSerialLine: function() {
 		$('#serialCode').val('');
 	},
+	refreshStack: function(data) {
+		$('#stackC').html(data.stack)
+		if(data.showTab)
+			$('#stack a[href="#' + data.showTab + '"]').tab('show')
+	},
 	stdActions: function(data) {
 		var type = "success"
 		if(data.valid) {
@@ -40,7 +45,7 @@ gb = {
 	}
 }
 $(function() {
-	$("input.fitnessB").click(function() {
+	$("body").on('click', 'input.fitnessB', function(){
 		var fitnessI = $(this).prev("input.fitnessI");
 		$.post('/setFitness', {
 			'fitness' : fitnessI.val(),
@@ -50,7 +55,7 @@ $(function() {
 		});
 	});
 	
-	$("input.pourB").click(function() {
+	$("body").on('click', 'input.pourB', function(){
 		$.post('/pour', {
 			'name' : $(this).parents(".cocktail").attr("data-name")
 		}, function(data) {
@@ -58,18 +63,32 @@ $(function() {
 		});
 	});
 
-	$('#stacks a.tab').click(function(e) {
+	$('#stack a.tab').click(function(e) {
 		e.preventDefault()
 		$(this).tab('show')
 	})
-
-	$('#createForm button').click(function(e) {
+	
+	$("body").on('click', '#refreshB', function(e){
 		e.preventDefault()
-		$.post("/generate", $("#createForm").serialize(), function() {
-			gb.message({
-				text : "Generated",
-				type : "success"
-			});
+		//if($(".tab-pane.active").length > 0)
+		var tab = $(".tab-pane.active").attr("id")
+			
+		$.get("/stack" , function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				data.showTab = tab;
+				gb.refreshStack(data);
+			}
+		});
+	})
+
+	$("body").on('click', '#createForm button', function(){
+		e.preventDefault()
+		$.post("/generate", $("#createForm").serialize(), function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
 		});
 	})
 	

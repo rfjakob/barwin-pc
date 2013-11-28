@@ -4,6 +4,9 @@
 # except for .gitignore
 !.gitignore
 
+lib/evolutionStackSettings
+lib/log
+
 # Ignore Play! working directory #
 db
 eclipse

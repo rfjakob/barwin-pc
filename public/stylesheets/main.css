@@ -4,6 +4,10 @@ body {
 	background-color: #FEFEFE;
 }
 
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+	background-color: #FEFEFE;
+}
+
 .clear {
 	clear: both;
 }
@@ -101,4 +105,10 @@ ul.uCButtons .uCButton {
 	margin: 5px;
 	padding: 10px;
 	background-color: #EEE;
+}
+
+#refreshB {
+	margin-top: 4px;
+	color: black;
+	
 }
