@@ -112,3 +112,15 @@ ul.uCButtons .uCButton {
 	color: black;
 	
 }
+
+#loadTable thead {
+	font-weight: bold;
+}
+
+#loadTable tr td:last-child {
+	width: 300px;
+}
+
+#loadTable td {
+	vertical-align: middle;
+}

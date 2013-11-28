@@ -35,11 +35,38 @@ public class Admin extends AbstractController {
 	}
 
 	public static Result stack() {
-		Ingredient[] alleZutaten = IngredientArray.getInstance()
-				.getAllIngredients();
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Refreshed");
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
+
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
+	public static Result stackOP() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			String name = parameters.get("name")[0];
+			String action = parameters.get("action")[0];
+			
+			if(action.equals("load")) 
+				genBotRMI.loadEvolutionStack(name);
+			else if(action.equals("remove"))
+				genBotRMI.removeEvolutionStack(name);
+			else if(action.equals("delete"))
+				genBotRMI.deleteEvolutionStack(name);
+			else
+				throw new Exception("Operation " + name + " not implemented");
+			
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
 			result.put("message", "Refreshed");

@@ -82,11 +82,25 @@ $(function() {
 		});
 	})
 
-	$("body").on('click', '#createForm button', function(){
+	$("body").on('click', '#createForm button', function(e){
 		e.preventDefault()
 		$.post("/generate", $("#createForm").serialize(), function(data) {
 			gb.stdActions(data);
 			if(data.valid) {
+				gb.refreshStack(data);
+			}
+		});
+	})
+	
+	$("body").on('click', '#loadTable button', function(e){
+		e.preventDefault()
+		$.post('/stackOP', {
+			'name' 	: $(this).parents("tr").attr("data-name"),
+			'action': $(this).attr("data-action"),
+		}, function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				data.showTab = "_load";
 				gb.refreshStack(data);
 			}
 		});

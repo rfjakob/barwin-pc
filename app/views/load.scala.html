@@ -1,7 +1,21 @@
-@(list: Array[String])
+@(genBotRMI: genBot2.RemoteOrderInterface)
 <h3 class="subheader">Load</h3>
 <div class="stack">
-	@for(str <- list) {
-			@str
-		}
+	<table class="table table-striped" id="loadTable">
+		<thead>
+			<td>Name</td><td>Actions</td>
+		</thead>
+		<tbody>
+			@for(str <- genBotRMI.listPossibleEvolutionStacks) { 
+			<tr data-name="@str">
+				<td>@str</td>
+				<td>
+					<button type="button" data-action="load" class="btn btn-info btn-sm" @if(genBotRMI.isEvolutionStackNameLoaded(str)) { disabled="disabled" }>Load</button>
+					<button type="button" data-action="remove" class="btn btn-warning btn-sm"@if(!genBotRMI.isEvolutionStackNameLoaded(str)) { disabled="disabled" }>Remove</button>
+					<button type="button" data-action="delete" class="btn btn-danger btn-sm"@if(genBotRMI.isEvolutionStackNameLoaded(str)) { disabled="disabled" }>Delete</button>
+				</td>
+			</tr>
+			}
+		</tbody>
+	</table>
 </div>

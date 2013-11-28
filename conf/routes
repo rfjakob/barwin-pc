@@ -6,6 +6,7 @@
 
 GET     /                           controllers.Admin.index()
 GET     /stack		                controllers.Admin.stack()
+POST    /stackOP                 	controllers.Admin.stackOP()
 GET     /interface		            controllers.User.index()
 POST    /pourType                 	controllers.User.pourType()
 POST    /generate                   controllers.Admin.generate()
