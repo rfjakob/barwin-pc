@@ -247,5 +247,63 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		
 		return props;
 	}
+
+	@Override
+	public boolean isEvolutionStackNameLoaded(String evolutionStackName)
+			throws RemoteException {
+		String[] stacks = listLoadedEvolutionStacks();
+		
+		for (int i = 0; i < stacks.length; i++) {
+			if (stacks[i].equals(evolutionStackName)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public void removeEvolutionStack(String evolutionStackName)
+			throws RemoteException {
+		if (isEvolutionStackNameLoaded(evolutionStackName)) {
+			evolutionStackController.remove(evolutionStackName);
+		} else {
+			throw new IllegalArgumentException(evolutionStackName + " is not loaded!");
+		}
+		
+	}
+
+	@Override
+	public void deleteEvolutionStack(DataBaseDriver dbDriver, String evolutionStackName)
+			throws RemoteException, SQLException {
+		
+		// unload stack if it is loaded
+		if (isEvolutionStackNameLoaded(evolutionStackName)) {
+			removeEvolutionStack(evolutionStackName);
+		}
+		
+		// delete from data base
+		dbDriver.delete(evolutionStackName);
+		
+		// delete from directory
+		File f = new File(propertiesPath + evolutionStackName);
+
+	    // Make sure the file or directory exists and isn't write protected
+	    if (!f.exists())
+	      throw new IllegalArgumentException(
+	          "Delete: no such file or directory: " + evolutionStackName);
+
+	    if (!f.canWrite())
+	      throw new IllegalArgumentException("Delete: write protected: "
+	          + evolutionStackName);
+
+	    // If it is a directory, make sure it is empty
+	    if (f.isDirectory()) {
+	      String[] files = f.list();
+	      if (files.length > 0)
+	        throw new IllegalArgumentException(
+	            "Delete: directory not empty: " + evolutionStackName);
+	    }
+	}
 	
 }

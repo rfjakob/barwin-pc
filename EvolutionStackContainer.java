@@ -66,4 +66,8 @@ public class EvolutionStackContainer {
 	public boolean containsEvolutionStack(String name) {
 		return evolutionMap.containsKey(name);
 	}
+
+	public void remove(String evolutionStackName) {
+		evolutionMap.remove(evolutionStackName);
+	}
 }

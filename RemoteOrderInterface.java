@@ -57,4 +57,10 @@ public interface RemoteOrderInterface extends Remote {
 	public double getMutationStdDeviation(String evolutionStackName) throws RemoteException;
 	
 	public void setMutationStdDeviation(String evolutionStackName, double stdDeviation) throws RemoteException;
+	
+	public boolean isEvolutionStackNameLoaded(String evolutionStackName) throws RemoteException;
+	
+	public void removeEvolutionStack(String evolutionStackName) throws RemoteException;
+	
+	public void deleteEvolutionStack(DataBaseDriver dbDriver, String evolutionStackName) throws RemoteException;
 }

@@ -229,4 +229,14 @@ public class DataBaseDriver {
 		return bos.toByteArray();
 	}
 
+	public void delete(String evolutionStackName) throws SQLException {
+		PreparedStatement statement = connection.prepareStatement("drop table if exists " + evolutionStackName);
+		
+		lock.lock();
+		
+		statement.execute();
+		
+		lock.unlock();
+	}
+
 }
