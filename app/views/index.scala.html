@@ -1,16 +1,3 @@
 @(names: Array[String], genBotRMI: genBot2.RemoteOrderInterface, ingredients: Array[genBot2.Ingredient]) @main("GenBot") {
-<ul class="nav nav-tabs" id="stacks">
-	@for(name <- names) {
-	<li><a href="#@name" class="tab" data-toggle="tab">@name</a></li> 
-	}
-	<li><a href="#queue" class="tab" data-toggle="tab">Queue</a></li>
-	<li><a href="#create" class="tab" data-toggle="tab">Create ...</a></li>
-</ul>
-<div class="tab-content">
-	@for(name <- names) {
-	<div class="tab-pane" id="@name">@gen(name, genBotRMI.getNamedPopulation(name), ingredients)</div>
-	}
-	<div class="tab-pane" id="queue"></div>
-	<div class="tab-pane" id="create">@create(ingredients)</div>
-</div>
+	@stack(names, genBotRMI, ingredients)
 }

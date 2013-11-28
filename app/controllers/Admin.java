@@ -14,17 +14,12 @@ import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
 
-public class Application extends GenBotController {
+public class Admin extends AbstractController {
+
+	static Ingredient[] alleZutaten = IngredientArray.getInstance()
+			.getAllIngredients();
 	
 	public static Result index() {
-		return population(null);
-	}
-	
-	public static Result population(String gen) {
-		if(gen != null)
-			System.out.println(gen);
-		Ingredient[] alleZutaten = IngredientArray.getInstance()
-				.getAllIngredients();
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
@@ -32,10 +27,28 @@ public class Application extends GenBotController {
 			//	System.out.println(name);
 			//genBotRMI.getNamedPopulation("adsf").;
 			
-			return ok(index.render(genBotRMI.listEvolutionStacks(), genBotRMI,
+			return ok(index.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
 					alleZutaten));
 		} catch (Exception e) {
 			return error(e);
+		}
+	}
+
+	public static Result stack() {
+		Ingredient[] alleZutaten = IngredientArray.getInstance()
+				.getAllIngredients();
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Refreshed");
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
+
+		} catch (Exception e) {
+			return errorAjax(e);
 		}
 	}
 
@@ -43,10 +56,9 @@ public class Application extends GenBotController {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 
 		Ingredient[] allIngredients = IngredientArray.getInstance().getAllIngredients();
-		
 		Ingredient[] selectedIngredients = new Ingredient[parameters.get("ingredients").length];
 		for(int i = 0; i < parameters.get("ingredients").length; i++) {
-			System.out.println(parameters.get("ingredients")[i] + " " + allIngredients[Integer.parseInt(parameters.get("ingredients")[i])].getName());
+			//System.out.println(parameters.get("ingredients")[i] + " " + allIngredients[Integer.parseInt(parameters.get("ingredients")[i])].getName());
 			selectedIngredients[i] = allIngredients[Integer.parseInt(parameters.get("ingredients")[i])];
 		}
 
@@ -54,7 +66,14 @@ public class Application extends GenBotController {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			String name = parameters.get("name")[0];
 			genBotRMI.generateEvolutionStack(name, selectedIngredients);
-			return ok();
+			
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Created");
+			result.put("showTab", name);
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}

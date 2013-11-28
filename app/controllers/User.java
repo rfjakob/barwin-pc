@@ -14,7 +14,7 @@ import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
 
-public class UserInterface extends GenBotController {
+public class User extends AbstractController {
 	
 	public static Result index() {
 		Ingredient[] alleZutaten = IngredientArray.getInstance()

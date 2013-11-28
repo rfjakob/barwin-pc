@@ -7,7 +7,7 @@ import play.mvc.*;
 import views.html.*;
 
 
-public class Queue extends GenBotController {
+public class Queue extends AbstractController {
 	
 	public static Result index() {
 		Ingredient[] alleZutaten = IngredientArray.getInstance()
@@ -15,10 +15,10 @@ public class Queue extends GenBotController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
-			for (String name: genBotRMI.listEvolutionStacks())
-				System.out.println(name);
+			//for (String name: genBotRMI.listLoadedEvolutionStacks())
+			//	System.out.println(name);
 
-			return ok(index.render(genBotRMI.listEvolutionStacks(), genBotRMI,
+			return ok(index.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
 					alleZutaten));
 		} catch (Exception e) {
 			return error(e);

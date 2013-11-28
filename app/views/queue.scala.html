@@ -1,6 +1,7 @@
-@(cQueue: genBot2.CocktailQueue, ingredients: Array[genBot2.Ingredient])
+@(genBotRMI: genBot2.RemoteOrderInterface, ingredients: Array[genBot2.Ingredient])
 <h3 class="subheader">Queue</h3>
 <div class="stack">
-	
-
+	@for(c <- genBotRMI.getQueue.getLinkedList) {
+	   	@cocktail(c, ingredients)
+	}
 </div>

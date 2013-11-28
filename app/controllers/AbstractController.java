@@ -11,7 +11,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.error;
 
-public class GenBotController extends Controller {
+public abstract class AbstractController extends Controller {
 	private static String genBotRMIService = "rmi://127.0.0.1:12122/genBot";
 	protected static Result error(Exception e) {
 		e.printStackTrace();

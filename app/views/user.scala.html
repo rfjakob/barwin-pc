@@ -1,6 +1,6 @@
 @(genBotRMI: genBot2.RemoteOrderInterface, ingredients: Array[genBot2.Ingredient]) @main("GenBot") {
 <ul class="uCButtons">
-	@for(name <- genBotRMI.listEvolutionStacks) {
+	@for(name <- genBotRMI.listLoadedEvolutionStacks) {
 	<li data-name="@name"><a href="#@name" class="uCButton">@name</a></li> 
 	}
 </ul>
