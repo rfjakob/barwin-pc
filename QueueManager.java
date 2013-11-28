@@ -102,7 +102,7 @@ public class QueueManager extends Thread {
 				switch (me.command) {
 				case "READY":
 					// THIS IF IS ONLY NEEDED FOR TESTING
-					currentlyPouring = null;
+					//currentlyPouring = null;
 					System.out.println("weight: " + me.args[0] + " cup: " + me.args[1]);
 					//if(status != Status.waitingForWaitingForCup)
 						status = Status.ready;
@@ -147,7 +147,7 @@ public class QueueManager extends Thread {
 	
 	private void finishedPouring(int[] realValues) {
 		currentlyPouring.getCocktail().setPoured(true);		
-
+		currentlyPouring.getCocktail().setPouring(false);
 		int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length;
 		
 		if (realValues.length == mandatoryLength) {
@@ -158,6 +158,7 @@ public class QueueManager extends Thread {
 				currentlyPouring.getCocktail().changeAmounts(realDoubles);
 			}
 		}
+		currentlyPouring = null;
 	}
 	
 	private String codePour(Cocktail pourCocktail) {

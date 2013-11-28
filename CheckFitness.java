@@ -6,3 +6,4 @@ public interface CheckFitness {
 	 */
 	public double checkFitness(Cocktail cocktail, double fitnessInput);
 }
+
