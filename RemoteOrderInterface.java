@@ -62,5 +62,5 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void removeEvolutionStack(String evolutionStackName) throws RemoteException;
 	
-	public void deleteEvolutionStack(DataBaseDriver dbDriver, String evolutionStackName) throws RemoteException;
+	public void deleteEvolutionStack(DataBaseDriver dbDriver, String evolutionStackName) throws RemoteException, SQLException;
 }
