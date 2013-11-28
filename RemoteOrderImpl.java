@@ -274,13 +274,19 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void deleteEvolutionStack(DataBaseDriver dbDriver, String evolutionStackName)
+	public void deleteEvolutionStack(String evolutionStackName)
 			throws RemoteException, SQLException {
 		
 		// unload stack if it is loaded
 		if (isEvolutionStackNameLoaded(evolutionStackName)) {
 			removeEvolutionStack(evolutionStackName);
 		}
+		
+		// get the database file
+		Properties props = loadProps(evolutionStackName);
+		String dbFile = props.getProperty("dbDriverPath");
+		
+		DataBaseDriver dbDriver = DataBaseDriver.getInstance(dbFile);
 		
 		// delete from data base
 		dbDriver.delete(evolutionStackName);
