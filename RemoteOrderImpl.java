@@ -93,7 +93,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			Ingredient[] allowedIngredients) throws RemoteException,
 			SQLException {
 		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, evolutionStackName + "props");
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, evolutionStackName);
 	}
 	
 	@Override
@@ -110,7 +110,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 				files = listOfFiles[i].getName();
 				
 				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
-					fileNames.add(files);
+					String files1 = files.substring(0, files.lastIndexOf('.'));
+					fileNames.add(files1);
 				}
 			}
 		}
