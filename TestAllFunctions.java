@@ -9,6 +9,8 @@ import serialRMI.SerialRMIException;
 public class TestAllFunctions {
 
 	public static void main(String[] args) {
+		System.out.println("ok???????");
+		
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten1 = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
 		Ingredient[] erlaubteZutaten2 = {alleZutaten[0], alleZutaten[3], alleZutaten[4], alleZutaten[5], alleZutaten[6]};
@@ -17,14 +19,20 @@ public class TestAllFunctions {
 		CocktailQueue queue = new CocktailQueue();
 
 		QueueManager queueManager;
+		
+		System.out.println("ok??");
 
 		try {
+			System.out.println("Ich fang jetz an");
+			
 			queueManager = new QueueManager(queue, "", "", 250);
 			queueManager.start();
-			RemoteOrderInterface remoteOrderImpl = new RemoteOrderImpl(queueManager);
+			RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			remoteOrderImpl.generateEvolutionStack("testStack1", erlaubteZutaten1, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften1");
 			remoteOrderImpl.generateEvolutionStack("testStack2", erlaubteZutaten2, 15, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften2");
 			remoteOrderImpl.generateEvolutionStack("testStack3", erlaubteZutaten3, 15, 3, 2, "datenbank", false, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften3");
+			
+			remoteOrderImpl.listPossibleEvolutionStacks();
 
 			CocktailWithName[] testStack1 = remoteOrderImpl.getNamedPopulation("testStack1");
 			CocktailWithName[] testStack2 = remoteOrderImpl.getNamedPopulation("testStack2");

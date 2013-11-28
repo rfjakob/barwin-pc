@@ -97,8 +97,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 	@Override
-	public String[] listPossibleEvolutionStacks() throws RemoteException {
-		
+	public String[] listPossibleEvolutionStacks() throws RemoteException {		
 		String files;
 		File folder = new File(propertiesPath);
 		File[] listOfFiles = folder.listFiles();
