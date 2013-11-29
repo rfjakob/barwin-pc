@@ -24,10 +24,12 @@ public class DataBaseDriver {
 	private String fileName;
 	private Connection connection;
 	private final Lock lock;
+	
+	private final String dataBaseFolder = "dataBases/";
 
 	private DataBaseDriver(String fileName) throws SQLException {
-		this.fileName = fileName;
-		setupConnection(fileName);
+		this.fileName = dataBaseFolder + fileName;
+		setupConnection(this.fileName);
 		this.lock = new ReentrantLock();
 	}
 	
@@ -69,6 +71,8 @@ public class DataBaseDriver {
 				
 				lock.unlock();
 		}
+		rs.close();
+		statement.close();
 				
 		if (resetTable) {
 			resetTable(evolutionStackName);
@@ -125,6 +129,7 @@ public class DataBaseDriver {
 			lock.lock();
 			
 			statement.execute();
+			statement.close();
 			
 			lock.unlock();
 			
@@ -141,6 +146,7 @@ public class DataBaseDriver {
 			lock.lock();
 			
 			statement.execute();
+			statement.close();
 			
 			lock.unlock();
 			
@@ -169,6 +175,9 @@ public class DataBaseDriver {
             
 				return (CocktailGenerationManager) ois.readObject();
 			}
+			rs.close();
+			statement.close();
+			
 		} catch (SQLException | IOException | ClassNotFoundException e) {
 			throw new SQLException("select failed - " + e.getMessage());
 		}
@@ -187,6 +196,8 @@ public class DataBaseDriver {
 		if (rs.next()) {
 			return rs.getBoolean(1);
 		}
+		rs.close();
+		statement.close();
 		
 		throw new SQLException("An error occured while trying check if saved before");
 	}
@@ -213,6 +224,8 @@ public class DataBaseDriver {
 		if (rs.next()) {
 			return rs.getInt("max(number)");
 		}
+		rs.close();
+		statement.close();
 		
 		throw new SQLException("An error occured while trying to get the last generationnumber");
 	}
@@ -230,11 +243,18 @@ public class DataBaseDriver {
 	}
 
 	public void delete(String evolutionStackName) throws SQLException {
+		// for some reason I need to close the connection and open it again
+		// I think there is some error in the database implementation, but it seems to work...
+		
+		connection.close();
+		setupConnection(fileName);
+		
 		PreparedStatement statement = connection.prepareStatement("drop table if exists " + evolutionStackName);
 		
 		lock.lock();
 		
 		statement.execute();
+		statement.close();
 		
 		lock.unlock();
 	}

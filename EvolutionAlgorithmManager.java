@@ -72,19 +72,13 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException {
-		convertProps();
+		this.propPath = "evolutionStackSettings/" + propPath;		
+		this.fitnessCheck = fitnessCheck;
+		this.recombination = recombination;
 		
-		try {
-			this.fitnessCheck = fitnessCheck;
-			this.recombination = recombination;
+		convertProps();
 			
-			this.propPath = "evolutionStackSettings/" + propPath;
-			
-			accessDB(dbDriverPath, resetDbTable);
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		accessDB(dbDriverPath, resetDbTable);
 	}
 	
 	public Properties loadProps() {

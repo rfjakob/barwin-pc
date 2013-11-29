@@ -142,7 +142,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		// variableArea is hard coded... but it should be 0.25
 		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")));
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, propertiesPath + evolutionStackName);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
 	}
 
 	@Override
@@ -290,25 +290,25 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		
 		// delete from data base
 		dbDriver.delete(evolutionStackName);
-		
+
 		// delete from directory
-		File f = new File(propertiesPath + evolutionStackName);
+		File f = new File(propertiesPath + evolutionStackName + ".properties");
 
 	    // Make sure the file or directory exists and isn't write protected
 	    if (!f.exists())
 	      throw new IllegalArgumentException(
-	          "Delete: no such file or directory: " + evolutionStackName);
+	          "Delete: no such file or directory: " + evolutionStackName + ".properties");
 
 	    if (!f.canWrite())
 	      throw new IllegalArgumentException("Delete: write protected: "
-	          + evolutionStackName);
+	          + evolutionStackName + ".properties");
 
 	    // If it is a directory, make sure it is empty
 	    if (f.isDirectory()) {
 	      String[] files = f.list();
 	      if (files.length > 0)
 	        throw new IllegalArgumentException(
-	            "Delete: directory not empty: " + evolutionStackName);
+	            "Delete: directory not empty: " + evolutionStackName + ".properties");
 	    }
 	}
 	
