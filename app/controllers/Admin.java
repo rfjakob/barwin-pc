@@ -112,16 +112,19 @@ public class Admin extends AbstractController {
 		String[] nameA = name.split("-");
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			
 			genBotRMI.queueCocktail(nameA[0], name);
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Cocktail queued");
+			result.put("showTab", nameA[0]);
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			
+			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
-		ObjectNode result = Json.newObject();
-		result.put("valid", true);
-		result.put("message", "Cocktail queued");
-		
-		return ok(result);
+
 	}
 
 	public static Result generation(Long id) {

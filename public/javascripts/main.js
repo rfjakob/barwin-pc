@@ -77,6 +77,9 @@ $(function() {
 			'name' : $(this).parents(".cocktail").attr("data-name")
 		}, function(data) {
 			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
 		});
 	});
 

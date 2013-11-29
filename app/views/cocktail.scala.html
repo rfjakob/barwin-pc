@@ -21,7 +21,7 @@
 				<div class="panel-body">
 				@for(ingredient <- ingredients) {
 					@if(item.getCocktail.getAmount(ingredient.getName) > 0 ) {
-	    				<span class="iAmount">@{"%1.2f".format(Math.round(item.getCocktail.getAmount(ingredient.getName)*100).toFloat/100)}%</span>
+	    				<span class="iAmount">@{"%1.0f".format(Math.round(item.getCocktail.getAmount(ingredient.getName)*100).toFloat)}%</span>
 	    				<span class="iName">@ingredient.getName</span><br/>
 					}
 				}
