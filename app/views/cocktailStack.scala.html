@@ -1,9 +1,9 @@
 @(name: String, cList: Array[genBot2.CocktailWithName], ingredients: Array[genBot2.Ingredient])
 <h3 class="subheader">@name</h3>
 <div class="stack">
-	<ul class="cocktailList">
+	<div class="panel-group cocktails" id="accordion_@name">
 	   	@for(c <- cList) {
-	   		@cocktail(c, ingredients)
+	   		@cocktail(c, ingredients, "s")
 		}
-	</ul>
+	</div>
 </div>

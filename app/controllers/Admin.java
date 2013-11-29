@@ -138,12 +138,16 @@ public class Admin extends AbstractController {
 			String[] nameA = name.split("-");
 			//System.out.println("setFitness(" + nameA[0] + ", " + name + ", " + parameters.get("fitness")[0] + ")");
 			genBotRMI.setCocktailFitness(nameA[0], name, Double.parseDouble(parameters.get("fitness")[0]));
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Fitness set");
+			result.put("showTab", nameA[0]);
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
-		ObjectNode result = Json.newObject();
-		result.put("valid", true);
-		result.put("message", "Fitness set");
-		return ok(result);
+		
 	}
 }

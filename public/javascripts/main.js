@@ -24,9 +24,24 @@ gb = {
 		$('#serialCode').val('');
 	},
 	refreshStack: function(data) {
+		var opened = new Array()
+		$(".panel-collapse.in").each(function () {
+			opened.push($(this).attr("id"))
+		})
+		$('#stackC').addClass("noTransition")
 		$('#stackC').html(data.stack)
 		if(data.showTab)
 			$('#stack a[href="#' + data.showTab + '"]').tab('show')
+		for (var i = 0; i < opened.length; i++) {
+			var t = $("#" + opened[i])
+			if(t.length > 0)
+				t.collapse('show')
+		}
+		
+		window.setTimeout(function() {
+			$('#stackC').removeClass("noTransition")
+		}, 1000);
+		
 	},
 	stdActions: function(data) {
 		var type = "success"
@@ -45,17 +60,19 @@ gb = {
 	}
 }
 $(function() {
-	$("body").on('click', 'input.fitnessB', function(){
-		var fitnessI = $(this).prev("input.fitnessI");
+	$("body").on('click', 'input.setFitnessButton', function(){
 		$.post('/setFitness', {
-			'fitness' : fitnessI.val(),
-			'name' : fitnessI.parents(".cocktail").attr("data-name")
+			'fitness' : $(this).prev("input.setFitnessInput").val(),
+			'name' : $(this).prev("input.setFitnessInput").parents(".cocktail").attr("data-name")
 		}, function(data) {
 			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
 		});
 	});
 	
-	$("body").on('click', 'input.pourB', function(){
+	$("body").on('click', 'input.pourButton', function(){
 		$.post('/pour', {
 			'name' : $(this).parents(".cocktail").attr("data-name")
 		}, function(data) {

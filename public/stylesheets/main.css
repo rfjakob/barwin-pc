@@ -37,38 +37,31 @@ div.subheader {
 	font-size: 25px;
 }
 
-li.cocktail {
-	background: #FAFAFA;
-	border: 1px solid #82B4FF;
-	border-left: 12px solid #82B4FF;
-	padding: 5px;
-	margin: 10px 0px;
-	list-style: none;
-}
 
-li.cocktail:hover {
-	background: #F4F4F4;
-	border-color: #0066FF;
-}
 
-li.cocktail div.id {
-	font-weight: bold;
-	font-size: 20px;
-}
-
-li.cocktail div.ingredients {
+.cocktails div.ingredients {
 	font-size: 14px;
+	width: 200px;
 }
 
-li.cocktail div.ingredients span.iName {
+.cocktails div.ingredients span.iName {
 	display: inline-block;
+	margin-left: 5px;
+}
+
+.cocktails div.ingredients span.iAmount {
+	display: inline-block;
+	width: 40px;
+	text-align: right;
+}
+
+.cocktails input.setFitnessInput {
 	width: 100px;
 	text-align: right;
 }
 
-li.cocktail div.ingredients span.iAmount {
-	display: inline-block;
-	width: 100px;
+.cocktails input.pourButton {
+	margin-left: 20px;
 }
 
 #createForm {
@@ -121,6 +114,19 @@ ul.uCButtons .uCButton {
 	width: 300px;
 }
 
-#loadTable td {
+#stackC {
+	margin-bottom: 200px;
+}
+
+#stackC table td {
 	vertical-align: middle;
+}
+
+#stackC.noTransition {
+	margin-bottom: 2000px;
+}
+
+#stackC.noTransition .collapsing{
+    -webkit-transition: none;
+          transition: none;
 }
