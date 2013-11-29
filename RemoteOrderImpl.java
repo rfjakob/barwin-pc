@@ -311,5 +311,15 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	            "Delete: directory not empty: " + evolutionStackName + ".properties");
 	    }
 	}
-	
+
+	@Override
+	public double getFitnessPlusPrice(String evolutionStackName, int generationNumber,
+			String cocktailName) throws RemoteException, SQLException, FitnessNotSetException {
+		Cocktail cocktail = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber).getCocktailByName(cocktailName);
+		
+		double fitness = cocktail.getFitness();
+		double price = cocktail.getCosts();
+		
+		return fitness + price;
+	}
 }

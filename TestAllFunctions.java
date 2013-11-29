@@ -20,64 +20,34 @@ public class TestAllFunctions {
 		QueueManager queueManager;
 		
 
-		try {
-			System.out.println("Ich fang jetz an!");
 			
+		try {
 			queueManager = new QueueManager(queue, "", "", 250);
 			queueManager.start();
 			
 			RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			
-			remoteOrderImpl.generateEvolutionStack("SuperDrink", erlaubteZutaten1);
+			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1);
 			
-			remoteOrderImpl.removeEvolutionStack("SuperDrink");
+			remoteOrderImpl.removeEvolutionStack("Super Super Drink");
 			
-			remoteOrderImpl.loadEvolutionStack("SuperDrink");
+			remoteOrderImpl.loadEvolutionStack("Super Super Drink");
+			
+			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");
 						
 			String[] list = remoteOrderImpl.listPossibleEvolutionStacks();
-			
 			for (int i = 0; i < list.length; i++) {
 				System.out.println(list[i]);
 			}
-
-			CocktailWithName[] superdrink = remoteOrderImpl.getNamedPopulation("SuperDrink");
-
-			for (int i = 0; i < 4; i++) {
-//				for (int j = 0; j < 15; j++) {
-//					System.out.println(j);
-					queue.addCocktail("SuperDrink", remoteOrderImpl.getNamedPopulation("SuperDrink")[j].getName());
-//					System.out.println("Generation " + i);
-//				}
-
-				for (int j = (i + 1) * 15; j < j + 15; j++) {
-					CocktailWithName actQueue = remoteOrderImpl.getNamedPopulation("SuperDrink")[j];
-					actQueue.getCocktail().setPoured(true);
-					remoteOrderImpl.setCocktailFitness("SuperDrink", actQueue.getName(), 8);
-//					System.out.println(actQueue.toString());
-				}
-//			}
 			
-			remoteOrderImpl.deleteEvolutionStack("SuperDrink");
-			
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
+		} catch (MalformedURLException | RemoteException
+				| NotBoundException | SerialRMIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SerialRMIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotEnoughRatedCocktailsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		System.out.println("Now finished!");
+
 	}
 }

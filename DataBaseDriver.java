@@ -46,6 +46,8 @@ public class DataBaseDriver {
 	}
 	
 	public void setup(String fileName, boolean resetTable, String evolutionStackName) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		// check if the table exists
 		PreparedStatement statement = connection.prepareStatement("SELECT name FROM sqlite_master WHERE type='table' AND name='" + evolutionStackName + "'");
 		
@@ -100,6 +102,8 @@ public class DataBaseDriver {
 	}
 	
 	public void resetTable(String evolutionStackName) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(timeout);
 
@@ -113,6 +117,8 @@ public class DataBaseDriver {
 	}
 	
 	public void insertOrUpdate(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		if (wasGenerationStoredBefore(evolutionStackName, generationNumber)) {
 			update(evolutionStackName, generationNumber, generationManager);
 		} else {
@@ -121,6 +127,8 @@ public class DataBaseDriver {
 	}
 	
 	public void insert(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		try {
 			PreparedStatement statement = connection.prepareStatement("insert into " + evolutionStackName + " (number, generationManager) values (?, ?)");
 			statement.setObject(1, generationNumber);
@@ -139,6 +147,8 @@ public class DataBaseDriver {
 	}
 	
 	public void update(String evolutionStackName, int generationNumber, CocktailGenerationManager generationManager) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		try {
 			PreparedStatement statement = connection.prepareStatement("update " + evolutionStackName + " set generationManager = ? where number = " + generationNumber);
 			statement.setObject(1, serialize(generationManager));
@@ -156,6 +166,8 @@ public class DataBaseDriver {
 	}
 	
 	public CocktailGenerationManager select(String evolutionStackName, int generationNumber) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		PreparedStatement statement;
 		try {
 			statement = connection.prepareStatement("select generationManager from " + evolutionStackName + " where number=" + generationNumber);
@@ -185,6 +197,8 @@ public class DataBaseDriver {
 	}
 	
 	public boolean wasGenerationStoredBefore(String evolutionStackName, int generationNumber) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + " where number = " + generationNumber + ")");
 		
 		lock.lock();
@@ -206,6 +220,7 @@ public class DataBaseDriver {
 	 * returns the last generation number or -1 if no generation was saved yet
 	 */
 	public int getLastGenerationNumber(String evolutionStackName) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
 		
 		// first check if there is a generationnumber
 		if (!wasGenerationStoredBefore(evolutionStackName, 0)) {
@@ -243,6 +258,8 @@ public class DataBaseDriver {
 	}
 
 	public void delete(String evolutionStackName) throws SQLException {
+		evolutionStackName = spaceToUnderscore(evolutionStackName);
+		
 		// for some reason I need to close the connection and open it again
 		// I think there is some error in the database implementation, but it seems to work...
 		
@@ -258,5 +275,12 @@ public class DataBaseDriver {
 		
 		lock.unlock();
 	}
-
+	
+	private String spaceToUnderscore(String s) {
+		return s.replaceAll(" ", "_");
+	}
+	
+	private String UnderscoreToString(String s) {
+		return s.replaceAll("_", " ");
+	}
 }

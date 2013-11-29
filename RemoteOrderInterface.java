@@ -63,4 +63,6 @@ public interface RemoteOrderInterface extends Remote {
 	public void removeEvolutionStack(String evolutionStackName) throws RemoteException;
 	
 	public void deleteEvolutionStack(String evolutionStackName) throws RemoteException, SQLException;
+	
+	public double getFitnessPlusPrice(String evolutionStackName, int generationNumber, String cocktailName) throws RemoteException, SQLException, FitnessNotSetException;
 }
