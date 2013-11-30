@@ -1,8 +1,21 @@
-@(name: String, cList: Array[genBot2.CocktailWithName], ingredients: Array[genBot2.Ingredient])
+@(genBotRMI: genBot2.RemoteOrderInterface, name: String, ingredients: Array[genBot2.Ingredient])
 <h3 class="subheader">@name</h3>
 <div class="stack">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<form class="form-inline form-horizontal">
+				<fieldset>
+					<label class="control-label col-sm-3">Mutation Rate:</label>
+					<input class="setMutationInput form-control col-sm-3" type="text" name="mutation" value="@genBotRMI.getMutationStdDeviation(name)" />
+					<input class="setMutationButton btn btn-info" type="button" value="Set" />
+					<input class="evolveButton btn btn-info" @if(genBotRMI.isEvolutionStackNameLoaded(name)) {disabled="disabled"} type="button" value="Evolve" />
+				</fieldset>
+			</form>
+		</div>
+	</div>
+
 	<div class="panel-group cocktails" id="accordion_@name">
-	   	@for(c <- cList) {
+	   	@for(c <- genBotRMI.getNamedPopulation(name)) {
 	   		@cocktail(c, ingredients, "s")
 		}
 	</div>

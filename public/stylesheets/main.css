@@ -130,3 +130,8 @@ ul.uCButtons .uCButton {
     -webkit-transition: none;
           transition: none;
 }
+
+input.setMutationInput {
+	width: 100px;
+	margin-right: 20px;
+}

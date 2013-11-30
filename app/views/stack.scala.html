@@ -12,7 +12,7 @@
 	</ul>
 	<div class="tab-content">
 		@for(name <- names) {
-		<div class="tab-pane" id="@name">@cocktailStack(name, genBotRMI.getNamedPopulation(name), ingredients)</div>
+		<div class="tab-pane" id="@name">@cocktailStack(genBotRMI, name, ingredients)</div>
 		}
 		<div class="tab-pane active" id="_queue">@queue(genBotRMI, ingredients)</div>
 		<div class="tab-pane" id="_load">@load(genBotRMI)</div>
