@@ -32,6 +32,8 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException;
 	
+	public void setProps(Properties props) throws RemoteException;
+	
 	public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
 	
 	public void queueCocktail(CocktailWithName cocktail) throws RemoteException;

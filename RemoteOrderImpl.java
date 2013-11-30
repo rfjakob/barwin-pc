@@ -159,6 +159,21 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException {
 		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).loadProps();
 	}
+	
+
+	@Override
+	public void setProps(Properties props)
+			throws RemoteException {
+		String evolutionStackName = props.getProperty("evolutionStackName");
+		int populationSize = Integer.parseInt(props.getProperty("populationSize"));
+		int truncation = Integer.parseInt(props.getProperty("truncation"));
+		int elitism = Integer.parseInt(props.getProperty("elitism"));
+		double stdDeviation = Double.parseDouble(props.getProperty("stdDeviation"));
+		String  dbDriverPath = props.getProperty("dbDriverPath");
+		String booleanAllowedIngredientsString = props.getProperty("booleanAllowedIngredients");
+		
+		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngredientsString);
+	}
 
 	@Override
 	public void setProps(String evolutionStackName, int populationSize,
