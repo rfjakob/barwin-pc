@@ -7,6 +7,7 @@
 GET     /                           controllers.Admin.index()
 GET     /stack		                controllers.Admin.stack()
 POST    /stackOP                 	controllers.Admin.stackOP()
+GET     /sendResume	                controllers.Admin.sendResume()
 GET     /interface		            controllers.User.index()
 GET     /interfaceAjax		        controllers.User.ajaxIndex()
 POST    /pourType                 	controllers.User.pourType()
@@ -17,7 +18,6 @@ POST    /serial/setRMI        		controllers.Serial.setRMIServer()
 POST    /serial/connect             controllers.Serial.connect()
 POST    /serial/write               controllers.Serial.write()
 GET     /serial/read                controllers.Serial.read()
-GET     /:id                        controllers.Admin.generation(id: Long)
 POST    /setFitness                 controllers.Admin.setFitness()
 
 

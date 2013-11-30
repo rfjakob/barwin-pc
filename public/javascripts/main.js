@@ -103,6 +103,13 @@ $(function() {
 		});
 	})
 
+	$("body").on('click', '#resumeB', function(e){
+		e.preventDefault()
+		$.get("/sendResume" , function(data) {
+			gb.stdActions(data);
+		});
+	})
+	
 	$("body").on('click', '#createForm button', function(e){
 		e.preventDefault()
 		$.post("/generate", $("#createForm").serialize(), function(data) {

@@ -1,5 +1,7 @@
 package controllers;
 
+import genBot2.Ingredient;
+import genBot2.IngredientArray;
 import genBot2.RemoteOrderInterface;
 
 import java.rmi.Naming;
@@ -13,6 +15,10 @@ import views.html.error;
 
 public abstract class AbstractController extends Controller {
 	private static String genBotRMIService = "rmi://127.0.0.1:12122/genBot";
+	
+	static Ingredient[] alleZutaten = IngredientArray.getInstance()
+			.getAllIngredients();
+	
 	protected static Result error(Exception e) {
 		e.printStackTrace();
 		System.out.println("EXCEPION " + e.getMessage() + " (" + e.getClass() + ")");
