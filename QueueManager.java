@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
@@ -18,6 +19,7 @@ public class QueueManager extends Thread {
 	private CocktailQueue queue;
 	private GenBotProtocol protocol;
 	private SerialRMIInterface serial;
+	private String statusMessage = null;
 	
 	private int cocktailSizeMilliliter;
 	
@@ -58,7 +60,7 @@ public class QueueManager extends Thread {
 		while (true) {
 			try {
 				if (serial == null)
-					Thread.sleep(2000);
+					Thread.sleep(10000);
 				//if (serial != null) {
 					processSerialInput();
 				//}
@@ -124,6 +126,8 @@ public class QueueManager extends Thread {
 				case "ENJOY":
 					finishedPouring(me.args);
 					status = Status.waitingForReady;
+				case "POURING":
+					statusMessage = "POURING BOTTLE " + me.args[0];
 				default:
 					status = Status.unknown;
 					break;
@@ -207,5 +211,9 @@ public class QueueManager extends Thread {
 
 	public void setCocktailSizeMilliliter(int cocktailSizeMilliliter) {
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
 	}
 }
