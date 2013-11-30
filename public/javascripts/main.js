@@ -45,8 +45,9 @@ gb = {
 	},
 	stdActions: function(data) {
 		var type = "success"
+		
 		if(data.valid) {
-			
+		
 		} else {
 			type: "danger"
 		}
@@ -126,14 +127,7 @@ $(function() {
 		});
 	})
 	
-	$('ul.uCButtons a.uCButton').click(function(e) {
-		e.preventDefault()
-		$.post('/pourType', {
-			'name' : $(this).parents("li").attr("data-name")
-		}, function(data) {
-			gb.stdActions(data);
-		});
-	})
+
 
 	$('#serialForm button.send').click(function(e) {
 		e.preventDefault()
@@ -173,5 +167,31 @@ $(function() {
 				}
 			});
 		})();
+	}
+	if ($('#userInterface').length > 0) {
+		(function refreshUserInterface() {
+			$.ajax({
+				url: 		'/interfaceAjax',
+				success: 	function(data) {
+					if(data.valid) {
+						$('#userInterface').html(data.html)
+					}
+					gb.stdActions(data);
+				},
+				complete : function() {
+					setTimeout(refreshUserInterface, 500);
+				}
+			});
+		})();
+		
+		$("body").on('click', 'ul.uCButtons a.uCButton', function(e){
+			e.preventDefault()
+			$.post('/pourType', {
+				'name' : $(this).parents("li").attr("data-name")
+			}, function(data) {
+				//alert(data.valid)
+				gb.stdActions(data);
+			});
+		})
 	}
 });

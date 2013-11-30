@@ -35,7 +35,7 @@
 			<form class="form-inline form-horizontal">
 				<fieldset>
 					<label class="control-label col-sm-2">Fitness</label>
-					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isFitnessSet) {@item.getCocktail.getFitness}" />
+					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isFitnessSet){@{item.getCocktail.getFitness + item.getCocktail.getCosts}}" />
 					<input class="setFitnessButton btn btn-@if(item.getCocktail.isFitnessSet) {danger} else {warning}" type="button" value="@if(item.getCocktail.isFitnessSet) { Overwrite } else { Set }" />
 					<input class="pourButton btn btn-info" type="button" value="Pour" />
 				</fieldset>
