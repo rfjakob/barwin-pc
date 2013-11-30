@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
@@ -56,10 +57,11 @@ public class QueueManager extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				//Thread.sleep(200);
-				if (serial != null) {
+				if (serial == null)
+					Thread.sleep(2000);
+				//if (serial != null) {
 					processSerialInput();
-				}
+				//}
 				if(serialIsReady()) {
 					processQueue();
 					//Thread.sleep(200);
@@ -68,6 +70,9 @@ public class QueueManager extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
@@ -88,7 +93,7 @@ public class QueueManager extends Thread {
 			if(serial != null) {
 				sA = serial.readLines();
 			} else {
-				String[] sAT = {new String("READY 213 0")};
+				String[] sAT = {new String("READY 213 0 ")};
 				sA = sAT;
 			}
 			
@@ -98,11 +103,17 @@ public class QueueManager extends Thread {
 			GenBotMessage[] message = protocol.read(sA);
 			
 			for (GenBotMessage me : message) {
-				//System.out.println("GOT COMMANT " + me.raw);
+				System.out.println("GOT COMMANT " + me.raw);
 				switch (me.command) {
 				case "READY":
 					// THIS IF IS ONLY NEEDED FOR TESTING
-					//currentlyPouring = null;
+					if(currentlyPouring != null) {
+						System.out.println("NO ENJOY RECEIVED");
+						currentlyPouring.getCocktail().setPoured(true);		
+						currentlyPouring.getCocktail().setPouring(false);
+						currentlyPouring = null;
+					}
+						
 					System.out.println("weight: " + me.args[0] + " cup: " + me.args[1]);
 					//if(status != Status.waitingForWaitingForCup)
 						status = Status.ready;
@@ -137,12 +148,13 @@ public class QueueManager extends Thread {
 		//System.out.println("WRITING POUR");
 		if (serial != null) {
 			serial.writeLine(codedPourCocktail);
-			currentlyPouring = toBePoured;
-		
-			pourCocktail.setQueued(false);
-			pourCocktail.setPouring(true);
-			status = Status.waitingForWaitingForCup;
 		}
+		currentlyPouring = toBePoured;
+	
+		pourCocktail.setQueued(false);
+		pourCocktail.setPouring(true);
+		status = Status.waitingForWaitingForCup;
+		
 	}
 	
 	private void finishedPouring(int[] realValues) {
