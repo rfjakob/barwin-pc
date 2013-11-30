@@ -2,6 +2,9 @@ package controllers;
 
 
 
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -152,5 +155,50 @@ public class Admin extends AbstractController {
 			return errorAjax(e);
 		}
 		
+	}
+	
+	public static HashMap<String, Double> getMinMaxMedianThirdQuartMean(String evolutionStackName, int generationNumber) throws Exception, FitnessNotSetException {
+		RemoteOrderInterface genBotRMI;
+		genBotRMI = genBotRMIConnect();
+		
+		HashMap<String, Double> returnMap = new HashMap<String, Double>();
+		
+		
+		CocktailGenerationManager genMngr = genBotRMI.getOldGeneration(evolutionStackName, generationNumber);
+			
+		Cocktail[] rankedGen = genMngr.getCocktailGeneration().getRankedPopulation();
+		
+		returnMap.put("min", rankedGen[0].getFitness());
+		returnMap.put("max", rankedGen[0].getFitness());
+		
+		double sum = 0;
+		for (int i = 0; i < rankedGen.length; i++) {
+			if (rankedGen[i].getFitness() < returnMap.get("min")) {
+				returnMap.put("min", rankedGen[i].getFitness());
+			}
+			
+			if (rankedGen[i].getFitness() > returnMap.get("max")) {
+				returnMap.put("min", rankedGen[i].getFitness());
+			}
+			
+			sum += rankedGen[i].getFitness();
+		}
+		
+		if (rankedGen.length % 2 != 0) {
+			returnMap.put("median", rankedGen[(int) (Math.floor(rankedGen.length / 2) + 1)].getFitness());
+		} else {
+			returnMap.put("median", ((rankedGen[rankedGen.length / 2].getFitness() + rankedGen[(rankedGen.length / 2) + 1].getFitness()) / 2) );
+		}
+		
+		if (rankedGen.length % 4 != 0) {
+			returnMap.put("thirdQuart", rankedGen[(int) (Math.floor(rankedGen.length * 0.75) + 1)].getFitness());
+		} else {
+			returnMap.put("thirdQuart", ((rankedGen[(int) Math.round(rankedGen.length * 0.75)].getFitness() + rankedGen[(int) (Math.round(rankedGen.length * 0.75) + 1)].getFitness()) / 2) );
+		}
+
+		
+		returnMap.put("mean", (sum / genMngr.getCocktailGeneration().getRankedPopulationSize()));
+		
+		return returnMap;
 	}
 }
