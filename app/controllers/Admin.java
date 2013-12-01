@@ -166,7 +166,8 @@ public class Admin extends AbstractController {
 		
 		CocktailGenerationManager genMngr = genBotRMI.getOldGeneration(evolutionStackName, generationNumber);
 			
-		Cocktail[] rankedGen = genMngr.getCocktailGeneration().getRankedPopulation();
+		CocktailGeneration relevantCocktails = new CocktailGeneration(genMngr.getCocktailGeneration().getRankedPopulation());
+		Cocktail[] rankedGen = relevantCocktails.rankCocktails();
 		
 		returnMap.put("min", rankedGen[0].getFitness());
 		returnMap.put("max", rankedGen[0].getFitness());
