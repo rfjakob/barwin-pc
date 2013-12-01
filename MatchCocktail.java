@@ -11,7 +11,7 @@ public class MatchCocktail implements CheckFitness {
 	}
 
 	@Override
-	public double checkFitness(Cocktail cocktail, double fitnessInput) {
+	public double checkFitness(Cocktail cocktail, double cocktailSize, double fitnessInput) {
 		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
 		
 		double squaredDistance = 0;

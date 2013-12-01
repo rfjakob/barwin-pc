@@ -10,7 +10,7 @@ public interface RemoteOrderInterface extends Remote {
 
 	public CocktailWithName[] getNamedPopulation(String evolutionStackName) throws RemoteException;
 	
-	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, NotEnoughRatedCocktailsException, SQLException;
+	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException;
 	
 	public boolean canEvolve(String evolutionStackName) throws RemoteException;
 	

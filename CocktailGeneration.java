@@ -248,35 +248,6 @@ public class CocktailGeneration implements Serializable {
 		return rankedCocktailsWithName;
 	}
 	
-	public double getFitnessSum(Cocktail[] cocktails) throws FitnessNotSetException {
-		double fitnessSum = 0;
-		for (int i = 0; i < cocktails.length; i++) {
-			if (cocktails[i].isFitnessSet()) {
-				fitnessSum = fitnessSum + cocktails[i].getFitness();
-			}
-			else {
-				throw new FitnessNotSetException("Fitness of Cocktail " + i + "is not set!");
-			}
-		}
-		return fitnessSum;
-	}
-	
-	public double getMeanFitness() throws FitnessNotSetException {
-		return (getFitnessSum(getRankedPopulation()) / getRankedPopulationSize());
-	}
-	
-	private Cocktail getBestCocktail() {
-		return rankCocktails()[0];
-	}
-	
-	public CocktailWithName getBestNamedCocktail(String evolutionStackName, int generationNumber) {
-		return new CocktailWithName(evolutionStackName, generationNumber, getCocktailNumber(getBestCocktail()), getBestCocktail());
-	}
-	
-	public double getBestFitness() throws FitnessNotSetException {
-		return getBestCocktail().getFitness();
-	}
-	
 	public String toString() {
 		String out = "";
 		

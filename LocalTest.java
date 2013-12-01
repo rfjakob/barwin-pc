@@ -61,9 +61,6 @@ public class LocalTest {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (NotEnoughRatedCocktailsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SerialRMIException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();

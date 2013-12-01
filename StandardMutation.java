@@ -97,10 +97,10 @@ public class StandardMutation implements Recombination {
 	 * class)
 	 */
 	
-	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) {
+	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) {		
 		Cocktail[] newCocktails = new Cocktail[newPopulationSize];
 		int[] randomOrder = population.generateRandomPopulationOrder();
-		
+				
 		for (int i = 0; i < newPopulationSize; i++) {
 			newCocktails[i] = mutate(stdDeviation, population.getCocktail(randomOrder[i]), booleanAllowedIngredients);
 		}

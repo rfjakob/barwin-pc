@@ -197,9 +197,8 @@ public class DataBaseDriver {
 	}
 	
 	public boolean wasGenerationStoredBefore(String evolutionStackName, int generationNumber) throws SQLException {
-		evolutionStackName = spaceToUnderscore(evolutionStackName);
-		
-		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + " where number = " + generationNumber + ")");
+		evolutionStackName = spaceToUnderscore(evolutionStackName);		
+		PreparedStatement statement = connection.prepareStatement("select exists(Select 1 from " + evolutionStackName + " where number = " + generationNumber + ");");
 		
 		lock.lock();
 		
@@ -207,7 +206,7 @@ public class DataBaseDriver {
 		
 		lock.unlock();
 		
-		if (rs.next()) {
+		if (rs.next()) {			
 			return rs.getBoolean(1);
 		}
 		rs.close();

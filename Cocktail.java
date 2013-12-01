@@ -155,8 +155,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		}
 	}
 	
-	public void setFitness(CheckFitness fitnessCheck, double fitnessInput) {
-		fitness = fitnessCheck.checkFitness(this, fitnessInput);
+	public void setFitness(CheckFitness fitnessCheck, double cocktailSize, double fitnessInput) {
+		fitness = fitnessCheck.checkFitness(this, cocktailSize, fitnessInput);
 		fitnessIsSet = true;
 	}
 	

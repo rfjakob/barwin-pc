@@ -28,13 +28,17 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
+	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException {
 		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
 
-		evoAlgMngr.setFitness(name, fitnessInput);
+		evoAlgMngr.setFitness(name, queueManager.getCocktailSizeMilliliter(), fitnessInput);
 		
 		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
-			evoAlgMngr.evolve();
+			try {
+				evoAlgMngr.evolve();
+			} catch (NotEnoughRatedCocktailsException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -329,7 +333,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public double getFitnessPlusPrice(String evolutionStackName, int generationNumber,
-			String cocktailName) throws RemoteException, SQLException, FitnessNotSetException {
+			String cocktailName) throws RemoteException, SQLException, FitnessNotSetException {		
 		Cocktail cocktail = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber).getCocktailByName(cocktailName);
 		
 		double fitness = cocktail.getFitness();

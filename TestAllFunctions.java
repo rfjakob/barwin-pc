@@ -29,9 +29,17 @@ public class TestAllFunctions {
 			
 			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1);
 			
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 20.0);
+			
+			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
+			
+			System.out.println("Now removing and then loading again.");
+			
 			remoteOrderImpl.removeEvolutionStack("Super Super Drink");
 			
 			remoteOrderImpl.loadEvolutionStack("Super Super Drink");
+			
+			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
 			
 			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");
 						
@@ -45,6 +53,9 @@ public class TestAllFunctions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FitnessNotSetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

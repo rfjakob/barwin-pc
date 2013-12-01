@@ -19,7 +19,7 @@ public class IngredientArray {
 	private IngredientArray() {
 		ingredients = new Ingredient[]{
 				new Ingredient("Tequila", 12.50, 0.75, 0),
-				new Ingredient("Orange Juice", 1.20, 1, 1),
+				new Ingredient("Orange Juice", 1.20, 0.75, 1),
 				new Ingredient("Grenadine", 3.50, 0.5, 2),
 				new Ingredient("Vodka", 15.0, 0.75, 3),
 				new Ingredient("Whiskey", 20.0, 0.75, 4),

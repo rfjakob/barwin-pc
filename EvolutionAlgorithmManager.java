@@ -118,11 +118,14 @@ public class EvolutionAlgorithmManager {
 		this.stdDeviation = stdDeviation;
 		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
 		
-		if (!dbDriverPath.equals(this.dbDriverPath) ) {
-			this.dbDriverPath = dbDriverPath;
+		// This part is old - I think it just adds an error without helping at all
+//		if (!dbDriverPath.equals(this.dbDriverPath)) {
+//			this.dbDriverPath = dbDriverPath;
 			
-			accessDB(dbDriverPath, true);
-		}
+//			accessDB(dbDriverPath, true);
+//		}
+		// This is the replacement
+		this.dbDriverPath = dbDriverPath;
 		
 		setMutationStdDeviation(this.stdDeviation);
 	}
@@ -134,7 +137,7 @@ public class EvolutionAlgorithmManager {
 
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == -1) {
 				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
-			} else {
+			} else {				
 				this.genManager = load();
 				this.didJustLoad = true;
 			}
@@ -175,10 +178,6 @@ public class EvolutionAlgorithmManager {
 		// reduce generation to the rated cocktails
 		Cocktail[] ratedCocktails = getGenManager().getCocktailGeneration().getRankedPopulation();
 		
-		for (int i = 0; i < ratedCocktails.length; i++) {
-			ratedCocktails[i] = ratedCocktails[i];
-		}
-
 		// throw an exception if not enough cocktails are rated
 		if (!canEvolve()) {
 			throw new NotEnoughRatedCocktailsException("Only " + ratedCocktails.length + " cocktails are rated. As " + truncation + " cocktails should be truncated and the best " + elitism + "cocktails should be copied to the next generation we would need at least " + (truncation + elitism + 1) + " rated cocktails.");
@@ -341,8 +340,8 @@ public class EvolutionAlgorithmManager {
 		return retBoolean;
 	}
 	
-	public void setFitness(String name, double fitnessInput) throws SQLException {
-		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, fitnessInput);
+	public void setFitness(String name, double cocktailSize, double fitnessInput) throws SQLException {
+		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, cocktailSize, fitnessInput);
 		save();
 	}
 	

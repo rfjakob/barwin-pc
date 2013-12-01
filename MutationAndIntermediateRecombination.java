@@ -13,9 +13,9 @@ public class MutationAndIntermediateRecombination implements Recombination {
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
 			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException {
-
-		CocktailGeneration nextGeneration = intermediateRecombination.recombine(population, newPopulationSize, booleanAllowedIngredients);
-		nextGeneration = mutation.recombine(nextGeneration, newPopulationSize, booleanAllowedIngredients);
+		
+		CocktailGeneration nextGeneration = intermediateRecombination.recombine(population, newPopulationSize, booleanAllowedIngredients);		
+//		nextGeneration = mutation.recombine(nextGeneration, newPopulationSize, booleanAllowedIngredients);
 		
 		return nextGeneration;
 	}

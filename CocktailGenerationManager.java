@@ -110,14 +110,6 @@ public class CocktailGenerationManager implements Serializable {
 		throw new IllegalArgumentException("No Cocktail with name " + name);
 	}
 	
-	public String meanFitnessToString() throws FitnessNotSetException {
-		return "Generation number " + getGenerationNumber() + ": " + getCocktailGeneration().getMeanFitness();
-	}
-	
-	public String bestFitnessToString() throws FitnessNotSetException {
-		return "Generation number " + getGenerationNumber() + ": " + getCocktailGeneration().getBestFitness();
-	}
-	
 	public String toString() {
 		String out = "Generation number " + getGenerationNumber() + "\n";
 		out += getCocktailGeneration().toString();

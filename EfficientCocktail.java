@@ -6,10 +6,14 @@ public class EfficientCocktail implements CheckFitness {
 	}
 
 	@Override
-	public double checkFitness(Cocktail cocktail, double fitnessInput) {
-		double efficiency = fitnessInput - cocktail.getCosts();
+	public double checkFitness(Cocktail cocktail, double cocktailSize, double fitnessInput) {
+		double cocktailCosts = cocktail.getCosts() * cocktailSize;
 		
-		return efficiency;
+		double absoluteEfficiency = fitnessInput - cocktailCosts;
+		
+		double efficiencyPerML = absoluteEfficiency / cocktailSize;
+		
+		return efficiencyPerML;
 	}
 
 }

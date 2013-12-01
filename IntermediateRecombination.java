@@ -67,7 +67,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 				cocktail2 = restPopulation[i];
 			}
 		}
-		
+				
 		// now perform the recombination
 		IngredientArray ingredientArray = IngredientArray.getInstance();
 		
@@ -85,6 +85,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 		for (int i = 0; i < ingredientArray.getNumberOfIngredients(); i++) {
 			ingredients[0][i] = recombinationShares1[i] * cocktail1.getAmount(ingredientArray.getAllIngredients()[i]) + (1.0 - recombinationShares1[i]) * cocktail2.getAmount(ingredientArray.getAllIngredients()[i]);
 			ingredients[1][i] = recombinationShares2[i] * cocktail1.getAmount(ingredientArray.getAllIngredients()[i]) + (1.0 - recombinationShares2[i]) * cocktail2.getAmount(ingredientArray.getAllIngredients()[i]);
+
 			
 			if (ingredients[0][i] < 0) {
 				ingredients[0][i] = 0;
@@ -93,14 +94,15 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 				ingredients[1][i] = 0;
 			}
 			if (ingredients[0][i] > 1) {
-				ingredients[0][1] = 1;
+				ingredients[0][i] = 1;
 			}
 			if (ingredients[1][i] > 1) {
-				ingredients[1][1] = 1;
+				ingredients[1][i] = 1;
 			}
 		}
 		
 		Cocktail[] returnCocktails = {new Cocktail(ingredients[0]), new Cocktail(ingredients[1])};
+				
 		return returnCocktails;
 	}
 	
@@ -113,6 +115,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 		
 		for (int i = 0; i < newPopulationSize; i = i + 2) {
 			Cocktail[] children = crossover(cocktailGeneration);
+			
 			population[i] = children[0];
 			// we have to check if both children fit in the population (only even numbers)
 			if (i + 1 < population.length) {
