@@ -173,8 +173,6 @@ public class EvolutionAlgorithmManager {
 		// load properties - they may have been updated
 		convertProps();
 		
-		genManager.increaseGenerationNumber();
-		
 		// reduce generation to the rated cocktails
 		Cocktail[] ratedCocktails = getGenManager().getCocktailGeneration().getRankedPopulation();
 		
@@ -183,10 +181,12 @@ public class EvolutionAlgorithmManager {
 			throw new NotEnoughRatedCocktailsException("Only " + ratedCocktails.length + " cocktails are rated. As " + truncation + " cocktails should be truncated and the best " + elitism + "cocktails should be copied to the next generation we would need at least " + (truncation + elitism + 1) + " rated cocktails.");
 		}
 
+		genManager.increaseGenerationNumber();
+		
 		CocktailGeneration nextGeneration = new CocktailGeneration(ratedCocktails);
 
 		// Truncation
-		nextGeneration = truncation(truncation, genManager.getCocktailGeneration());
+		nextGeneration = truncation(truncation, nextGeneration);
 
 		// Crossover & Mutation
 		try {
