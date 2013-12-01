@@ -100,7 +100,7 @@ ul.uCButtons .uCButton {
 	background-color: #EEE;
 }
 
-#refreshB, #resumeB {
+#stackC .btn.action{
 	margin-top: 4px;
 	color: black;
 }

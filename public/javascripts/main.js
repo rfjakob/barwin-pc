@@ -109,6 +109,13 @@ $(function() {
 			gb.stdActions(data);
 		});
 	})
+
+	$("body").on('click', '#abortB', function(e){
+		e.preventDefault()
+		$.get("/sendAbort" , function(data) {
+			gb.stdActions(data);
+		});
+	})
 	
 	$("body").on('click', '#createForm button', function(e){
 		e.preventDefault()

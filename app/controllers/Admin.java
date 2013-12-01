@@ -143,6 +143,19 @@ public class Admin extends AbstractController {
 		}
 	}
 
+	public static Result sendAbort() {
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			genBotRMI.sendToSerial("ABORT ");
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Abort sent");
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
 	public static Result setFitness() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 		String name = parameters.get("name")[0];

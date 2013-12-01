@@ -7,6 +7,7 @@
 GET     /                           controllers.Admin.index()
 GET     /stack		                controllers.Admin.stack()
 POST    /stackOP                 	controllers.Admin.stackOP()
+GET     /sendAbort	                controllers.Admin.sendAbort()
 GET     /sendResume	                controllers.Admin.sendResume()
 GET     /interface		            controllers.User.index()
 GET     /interfaceAjax		        controllers.User.ajaxIndex()
