@@ -100,10 +100,9 @@ ul.uCButtons .uCButton {
 	background-color: #EEE;
 }
 
-#refreshB {
+#refreshB, #resumeB {
 	margin-top: 4px;
 	color: black;
-	
 }
 
 #loadTable thead {

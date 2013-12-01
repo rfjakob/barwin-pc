@@ -1,0 +1,29 @@
+@(genBotRMI: genBot2.RemoteOrderInterface, ingredients: Array[genBot2.Ingredient])
+<h3 class="subheader">Choose</h3>
+<ul class="uCButtons">
+	@for(name <- genBotRMI.listLoadedEvolutionStacks) {
+	<li data-name="@name"><a href="#@name" class="uCButton">@name</a></li> 
+	}
+</ul>
+
+@if(genBotRMI.getQueue.getLinkedList.length > 0) {
+<h3 class="subheader">Queue</h3>
+<ul class="uCQueue">
+	@for(c <- genBotRMI.getQueue.getLinkedList) {
+	   	@cocktail(c, ingredients, "u")
+	}
+</ul>
+} else {
+<h3 class="subheader">Queue is empty</h3>
+}
+
+@if(genBotRMI.getCurrentlyPouringCocktail != null) {
+<h3 class="subheader">Pouring</h3>
+<ul class="uCQueue">
+	@cocktail(genBotRMI.getCurrentlyPouringCocktail, ingredients, "u")
+</ul>
+} else {
+<h3 class="subheader">Nothing pouring</h3>
+}
+
+<h3 class="subheader">Rate</h3>

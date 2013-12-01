@@ -1,6 +1,6 @@
 package controllers;
 
-import genBot2.ArduinoProtocolException;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,7 +77,7 @@ public class Serial extends AbstractController {
 		}
 	}
 
-	public static Result read() throws ArduinoProtocolException {
+	public static Result read() {
 		try {
 			SerialRMIInterface serialRMI = genBotSerialRMIConnect();
 			ObjectNode result = Json.newObject();

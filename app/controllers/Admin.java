@@ -19,8 +19,7 @@ import views.html.*;
 
 public class Admin extends AbstractController {
 
-	static Ingredient[] alleZutaten = IngredientArray.getInstance()
-			.getAllIngredients();
+
 	
 	public static Result index() {
 		try {
@@ -130,10 +129,18 @@ public class Admin extends AbstractController {
 
 	}
 
-	public static Result generation(Long id) {
-		// return ok(index.render("Your new application is ready."));
-		// return ok("talking about my generation");
-		return ok("blup");
+
+	public static Result sendResume() {
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			genBotRMI.sendToSerial("RESUME ");
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Resume sent");
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
 	}
 
 	public static Result setFitness() {

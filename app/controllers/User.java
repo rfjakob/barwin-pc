@@ -17,41 +17,58 @@ import views.html.*;
 public class User extends AbstractController {
 	
 	public static Result index() {
+		return ok(user.render());
+	}
+
+	public static Result ajaxIndex() {
 		Ingredient[] alleZutaten = IngredientArray.getInstance()
 				.getAllIngredients();
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			/*for(CocktailWithName c: genBotRMI.getQueue().getLinkedList()) {
-				System.out.println(c);
-			}*/
-			return ok(user.render(genBotRMI, alleZutaten));
+			ObjectNode result = Json.newObject();
+			
+			//genBotRMI.getCurrentlyPouringCocktail()
+			
+			result.put("valid", true);
+			String s = genBotRMI.getStatusMessage();
+			if(s != null && !s.isEmpty())
+				result.put("message", s);
+			result.put("html", userInner.render(genBotRMI, alleZutaten).toString());
+			
+			return ok(result);
 		} catch (Exception e) {
-			return error(e);
+			return errorAjax(e);
 		}
 	}
-
+	
 	public static Result pourType() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 		String name = parameters.get("name")[0];
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			
+			CocktailWithName t = null;
 			for(CocktailWithName c: genBotRMI.getNamedPopulation(name)) {
 				if(c.getCocktail().isQueued() || c.getCocktail().isPouring() || c.getCocktail().isPoured()) 
 					continue;
-				
-				genBotRMI.queueCocktail(c.getEvolutionStackName(), c.getName());
-				//genBotRMI.queueCocktail(c);
+				t = c;
 				break;
 			}
+			ObjectNode result = Json.newObject();
 			
-			//genBotRMI.queueCocktail(nameA[0], name);
+
+			if(t == null) {
+				result.put("valid", false);
+				result.put("message", "No more cocktails");
+			} else {
+				result.put("valid", true);
+				result.put("message", "Cocktail queued");
+				genBotRMI.queueCocktail(t.getEvolutionStackName(), t.getName());
+			}
+			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
-		ObjectNode result = Json.newObject();
-		result.put("valid", true);
-		result.put("message", "Cocktail queued");
-		
-		return ok(result);
+
 	}
 }
