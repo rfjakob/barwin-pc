@@ -2,7 +2,7 @@
 <h3 class="subheader">Choose</h3>
 <ul class="uCButtons">
 	@for(name <- genBotRMI.listLoadedEvolutionStacks) {
-	<li data-name="@name"><a href="#@name" class="uCButton">@name</a></li> 
+	<li data-name="@{name.replace(" ", "_")}"><a href="#@name" class="uCButton">@name</a></li> 
 	}
 </ul>
 

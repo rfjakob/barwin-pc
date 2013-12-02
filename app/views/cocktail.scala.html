@@ -1,18 +1,18 @@
 @(item: genBot2.CocktailWithName, ingredients: Array[genBot2.Ingredient], str: String)
-<div data-name="@item.getName" class="cocktail panel @if(item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-success } 
+<div data-name="@item.getName.replace(" ", "_")" class="cocktail panel @if(item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-success } 
 													 @if(!item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-danger }
 													 @if(item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-warning } 
 													 @if(!item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-default } ">
 	<div class="panel-heading">
 		<h4 class="panel-title">
-			<a data-toggle="collapse" href="#@(item.getName)_@str">
+			<a data-toggle="collapse" href="#@(item.getName.replace(" ", "_"))_@str">
 				@item.getName @if(item.getCocktail.isQueued) { <span class="glyphicon glyphicon-list right"> } 
 							  @if(item.getCocktail.isPouring) { <span class="glyphicon glyphicon-record right"> } 
 							  @if(item.getCocktail.isPoured) { <span class="glyphicon glyphicon-ok-sign right"> } 
 			</a>
 		</h4>
 	</div>
-	<div id="@(item.getName)_@str" class="panel-collapse collapse">
+	<div id="@(item.getName.replace(" ", "_"))_@str" class="panel-collapse collapse">
 		<div class="panel-body">
 			<div class="ingredients right panel panel-default">
 				<!-- div class="panel-heading">
@@ -27,11 +27,6 @@
 				}
 				</div>
 			</div>
-			
-			<!--  span class="fitnessIsSet">isFitnessSet?: @item.getCocktail.isFitnessSet</span>
-			<span class="fitnessIsSet">IsQueue?: @item.getCocktail.isQueued</span>
-			<span class="fitnessIsSet">IsPouring?: @item.getCocktail.isPouring</span>
-			<span class="fitnessIsSet">IsPoured?: @item.getCocktail.isPoured</span-->
 			<form class="form-inline form-horizontal">
 				<fieldset>
 					<label class="control-label col-sm-2">Fitness</label>
@@ -40,7 +35,6 @@
 					<input class="pourButton btn btn-info" type="button" value="Pour" />
 				</fieldset>
 			</form>
-			
 			<div class="clear"></div>
 		</div>
 	</div>
