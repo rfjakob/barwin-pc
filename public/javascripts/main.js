@@ -109,12 +109,30 @@ $(function() {
 			gb.stdActions(data);
 		});
 	})
+
+	$("body").on('click', '#abortB', function(e){
+		e.preventDefault()
+		$.get("/sendAbort" , function(data) {
+			gb.stdActions(data);
+		});
+	})
 	
 	$("body").on('click', '#createForm button', function(e){
 		e.preventDefault()
 		$.post("/generate", $("#createForm").serialize(), function(data) {
 			gb.stdActions(data);
 			if(data.valid) {
+				gb.refreshStack(data);
+			}
+		});
+	})
+
+	$("body").on('click', '#settingsForm button', function(e){
+		e.preventDefault()
+		$.post("/saveSettings", $("#settingsForm").serialize(), function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				data.showTab = "_settings";
 				gb.refreshStack(data);
 			}
 		});
@@ -128,11 +146,26 @@ $(function() {
 		}, function(data) {
 			gb.stdActions(data);
 			if(data.valid) {
-				data.showTab = "_load";
+				data.showTab = "_settings";
 				gb.refreshStack(data);
 			}
 		});
 	})
+	
+	$("body").on('click', '#queue button', function(e){
+		e.preventDefault()
+		$.post('/queueOP', {
+			'name' 	: $(this).parents("tr").attr("data-name"),
+			'action': $(this).attr("data-action"),
+		}, function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				data.showTab = "_queue";
+				gb.refreshStack(data);
+			}
+		});
+	})
+	
 	
 
 

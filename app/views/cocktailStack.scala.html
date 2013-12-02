@@ -3,18 +3,24 @@
 <div class="stack">
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<form class="form-inline form-horizontal">
-				<fieldset>
-					<label class="control-label col-sm-3">Mutation Rate:</label>
-					<input class="setMutationInput form-control col-sm-3" type="text" name="mutation" value="@genBotRMI.getMutationStdDeviation(name)" />
-					<input class="setMutationButton btn btn-info" type="button" value="Set" />
-					<input class="evolveButton btn btn-info" @if(genBotRMI.isEvolutionStackNameLoaded(name)) {disabled="disabled"} type="button" value="Evolve" />
-				</fieldset>
+			<form class="form-horizontal stackSettings" role="form">
+				<div class="form-group">
+					<label for="mutationRateInput" class="col-sm-4 control-label">Mutation Rate</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="mutationRateInput" name="mutationRate"
+							placeholder="Enter cocktail size in gramm" value="@genBotRMI.getMutationStdDeviation(name)">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</div>
 			</form>
+			<input class="evolveButton right btn btn-info" @if(genBotRMI.isEvolutionStackNameLoaded(name)) {disabled="disabled"} type="button" value="Evolve" />
 		</div>
 	</div>
-
-	<div class="panel-group cocktails" id="accordion_@name">
+	<div class="panel-group cocktails" id="accordion_@{name.replace(" ", "_")}">
 	   	@for(c <- genBotRMI.getNamedPopulation(name)) {
 	   		@cocktail(c, ingredients, "s")
 		}

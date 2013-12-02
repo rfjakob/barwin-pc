@@ -7,6 +7,7 @@
 		</thead>
 		<tbody>
 			@for(c <- genBotRMI.getQueue.getLinkedList) {
+			<tr data-name="@c.getName.replace(" ", "_")">
 				<td>@c.getName</td>
 				<td>
 					<button type="button" data-action="delete" class="btn btn-danger btn-sm">Delete</button>

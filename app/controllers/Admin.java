@@ -57,15 +57,41 @@ public class Admin extends AbstractController {
 		
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			String name = parameters.get("name")[0];
+			String name = parameters.get("name")[0].replace("_", " ");
 			String action = parameters.get("action")[0];
-			
+			System.out.println(action);
 			if(action.equals("load")) 
 				genBotRMI.loadEvolutionStack(name);
 			else if(action.equals("remove"))
 				genBotRMI.removeEvolutionStack(name);
-			else if(action.equals("delete"))
+			else if(action.equals("delete")) 
 				genBotRMI.deleteEvolutionStack(name);
+			else
+				throw new Exception("Operation " + name + " not implemented");
+			
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Done");
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
+
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
+	
+	public static Result queueOP() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			String name = parameters.get("name")[0].replace("_", " ");
+			String action = parameters.get("action")[0];
+			System.out.println(action);
+			if(action.equals("delete")) 
+				genBotRMI.deleteCocktailFromQueue(name);
 			else
 				throw new Exception("Operation " + name + " not implemented");
 			
@@ -80,7 +106,7 @@ public class Admin extends AbstractController {
 			return errorAjax(e);
 		}
 	}
-
+	
 	public static Result generate() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 
@@ -99,7 +125,45 @@ public class Admin extends AbstractController {
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
 			result.put("message", "Created");
-			result.put("showTab", name);
+			result.put("showTab", name.replace(" ", "_"));
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
+	public static Result saveStackSettings() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			int cocktailSize = Integer.parseInt(parameters.get("cocktailSize")[0]);
+			genBotRMI.setCocktailSize(cocktailSize);
+			
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Settings saved");
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+	
+	public static Result saveSettings() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			int cocktailSize = Integer.parseInt(parameters.get("cocktailSize")[0]);
+			genBotRMI.setCocktailSize(cocktailSize);
+			
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Settings saved");
 			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
 					alleZutaten).toString());
 			return ok(result);
@@ -110,7 +174,7 @@ public class Admin extends AbstractController {
 	
 	public static Result pour() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
-		String name = parameters.get("name")[0];
+		String name = parameters.get("name")[0].replace("_", " ");;
 		String[] nameA = name.split("-");
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
@@ -118,7 +182,7 @@ public class Admin extends AbstractController {
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
 			result.put("message", "Cocktail queued");
-			result.put("showTab", nameA[0]);
+			result.put("showTab", nameA[0].replace(" ", "_"));
 			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
 					alleZutaten).toString());
 			
@@ -126,9 +190,26 @@ public class Admin extends AbstractController {
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
-
 	}
 
+	public static Result evolve() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		String name = parameters.get("name")[0].replace("_", " ");;
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			genBotRMI.evolve(name);
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Do the evolution!");
+			result.put("showTab", name.replace(" ", "_"));
+			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
+					alleZutaten).toString());
+			
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
 
 	public static Result sendResume() {
 		try {
@@ -143,9 +224,22 @@ public class Admin extends AbstractController {
 		}
 	}
 
+	public static Result sendAbort() {
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			genBotRMI.sendToSerial("ABORT ");
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("message", "Abort sent");
+			return ok(result);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
 	public static Result setFitness() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
-		String name = parameters.get("name")[0];
+		String name = parameters.get("name")[0].replace("_", " ");;
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			String[] nameA = name.split("-");
@@ -154,7 +248,7 @@ public class Admin extends AbstractController {
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
 			result.put("message", "Fitness set");
-			result.put("showTab", nameA[0]);
+			result.put("showTab", nameA[0].replace(" ", "_"));
 			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI,
 					alleZutaten).toString());
 			return ok(result);

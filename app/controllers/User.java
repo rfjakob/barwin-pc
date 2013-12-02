@@ -43,7 +43,7 @@ public class User extends AbstractController {
 	
 	public static Result pourType() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
-		String name = parameters.get("name")[0];
+		String name = parameters.get("name")[0].replace("_", " ");;
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			
@@ -55,8 +55,6 @@ public class User extends AbstractController {
 				break;
 			}
 			ObjectNode result = Json.newObject();
-			
-
 			if(t == null) {
 				result.put("valid", false);
 				result.put("message", "No more cocktails");
