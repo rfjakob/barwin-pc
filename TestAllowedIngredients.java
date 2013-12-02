@@ -24,11 +24,16 @@ public class TestAllowedIngredients {
 		
 		remoteOrderImpl.generateEvolutionStack("Test1", erlaubteZutaten1);
 		
-		remoteOrderImpl.setProps("Test1", 15, 0, 2, 0.05, "blub", "0000011");
+		remoteOrderImpl.setProps("Test1", 15, 0, 2, 0.05, 1000, "blub", "0000011");
 		int gen = -1;
 		while (true) {
 			gen++;
-						
+					
+			CocktailWithName[] cg1 = remoteOrderImpl.getNamedPopulation("Test1");
+			for (int i = 0; i < cg1.length; i++) {
+				System.out.println(cg1[i].toString());
+			}
+
 			for (int num = 0; num < 15; num++) {
 				String name = "Test1-" + gen + "-" + num;
 			
@@ -40,7 +45,10 @@ public class TestAllowedIngredients {
 				remoteOrderImpl.queueCocktail("Test1", name);
 				remoteOrderImpl.setCocktailFitness("Test1", name, 10.0);
 			}
-			
+			CocktailWithName[] cg2 = remoteOrderImpl.getNamedPopulation("Test1");
+			for (int i = 0; i < cg2.length; i++) {
+				System.out.println(cg2[i].toString());
+			}			
 		}
 	}
 

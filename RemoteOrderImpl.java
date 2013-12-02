@@ -75,7 +75,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, int populationSize,
 			int truncation, int elitism, String dbDriverPath,
-			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation,
+			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double maxPricePerLiter,
 			String propPath) throws RemoteException, SQLException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
@@ -89,7 +89,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		// variableArea is hard coded... but it should be 0.25
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, propPath);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, maxPricePerLiter, propPath);
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			Ingredient[] allowedIngredients) throws RemoteException,
 			SQLException {
 		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, evolutionStackName);
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, 5, evolutionStackName);
 	}
 	
 	@Override
@@ -173,18 +173,19 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		int truncation = Integer.parseInt(props.getProperty("truncation"));
 		int elitism = Integer.parseInt(props.getProperty("elitism"));
 		double stdDeviation = Double.parseDouble(props.getProperty("stdDeviation"));
+		double maxPricePerLiter = Double.parseDouble(props.getProperty("maxPricePerLiter"));
 		String  dbDriverPath = props.getProperty("dbDriverPath");
 		String booleanAllowedIngredientsString = props.getProperty("booleanAllowedIngredients");
 		
-		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngredientsString);
+		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
 	}
 
 	@Override
 	public void setProps(String evolutionStackName, int populationSize,
-			int truncation, int elitism, double stdDeviation,
+			int truncation, int elitism, double stdDeviation, double maxPricePerLiter,
 			String dbDriverPath, String booleanAllowedIngredientsString)
 			throws RemoteException {
-		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngredientsString);
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
 	}
 
 	@Override

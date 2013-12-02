@@ -257,4 +257,12 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			ingredientAmounts[i] = new IngredientAmount(ingredients[i], amounts[i] / sum);
 		}
 	}
+	
+	public boolean pricePerLiterHigherAs(double price) {
+		if (getCosts() > price) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

@@ -19,6 +19,7 @@ public class CocktailGenerationManager implements Serializable {
 			cocktails[i] = generateRandomCocktail(booleanAllowedIngredients);
 		}
 		this.cocktailGeneration = new CocktailGeneration(cocktails);
+		
 		this.evolutionStackName = cocktailStackName;
 	}
 	

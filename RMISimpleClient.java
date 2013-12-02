@@ -17,7 +17,7 @@ public class RMISimpleClient {
 			
 			RemoteOrderInterface remoteOrderImpl = (RemoteOrderInterface) registry.lookup("rmiImpl");
 			
-			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, "eigenschaften");
+			remoteOrderImpl.generateEvolutionStack("testStack", erlaubteZutaten, 10, 3, 2, "datenbank", true, "EfficientCocktail", "MutationAndIntermediateRecombination", 0.001, 5, "eigenschaften");
 			
 			String[] evolutionStacks = remoteOrderImpl.listLoadedEvolutionStacks();
 			System.out.println(evolutionStacks.length);

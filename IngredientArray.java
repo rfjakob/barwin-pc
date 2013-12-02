@@ -1,14 +1,21 @@
 package genBot2;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+
 /*
  * IngredientArray is a Singleton to keep the Ingredients in order over
- * the whole program. The available Ingredients are hard-coded in this Class
- * (this is not considered very bad, but could maybe be changed...).
+ * the whole program.
+ * Please note that the ingredients are not sanity-checked. Make sure
+ * everything is correct.
  */
 
 public class IngredientArray {
-
 	private static IngredientArray ingredientArray = null;
+	private static String ingredientFolder = "ingredients/";
 	
 	private Ingredient[] ingredients;
 	
@@ -17,15 +24,41 @@ public class IngredientArray {
 	 * The Ingredients and their order are defined here.
 	 */
 	private IngredientArray() {
-		ingredients = new Ingredient[]{
-				new Ingredient("Tequila", 12.50, 0.75, 0),
-				new Ingredient("Orange Juice", 1.20, 0.75, 1),
-				new Ingredient("Grenadine", 3.50, 0.5, 2),
-				new Ingredient("Vodka", 15.0, 0.75, 3),
-				new Ingredient("Whiskey", 20.0, 0.75, 4),
-				new Ingredient("Club Mate", 2.0, 0.5, 5),
-				new Ingredient("Rum", 20.0, 0.75, 6)
-		};
+		String files;
+		File folder = new File(ingredientFolder);
+		File[] listOfFiles = folder.listFiles();
+		
+		ArrayList<String> fileNames = new ArrayList<String>();
+		
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				files = listOfFiles[i].getName();
+				
+				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
+					fileNames.add(files);
+				}
+			}
+		}
+		ingredients = new Ingredient[fileNames.size()];
+		
+		Properties ingProps = new Properties();
+		
+		try {
+			for (int i = 0; i < ingredients.length; i++) {
+				ingProps.load(new FileInputStream(ingredientFolder + fileNames.get(i)));
+				
+				ingredients[i] = new Ingredient(
+						ingProps.getProperty("name"),
+						Double.parseDouble(ingProps.getProperty("bottlePrice")),
+						Double.parseDouble(ingProps.getProperty("bottleSize")),
+						Integer.parseInt(ingProps.getProperty("arduinoOutputLine")),
+						ingredientFolder
+						);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/*
@@ -40,11 +73,25 @@ public class IngredientArray {
 		return ingredientArray;
 	}
 	
+	public static void newIngredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine) {
+		new Ingredient(name, bottlePrice, bottleSize, arduinoOutputLine, ingredientFolder);
+		
+		IngredientArray ingredientArray = getInstance();
+		ingredientArray.loadIngredients();
+	}
+	
+	/*
+	 * loads all Ingredients from the properties files in the properties folder
+	 */
+	public void loadIngredients() {
+		this.ingredientArray = new IngredientArray();
+	}
+	
 	/*
 	 * Returns just the Array of Ingredients, not the whole class 
 	 * IngredientArray. This method is just here to avoid too long
 	 * method trains (I think this is not the correct name...).
-	 * @return an array of Ingredients
+	 * @return an array of 
 	 */
 	public Ingredient[] getAllIngredients() {
 		IngredientArray ingredientList = getInstance();

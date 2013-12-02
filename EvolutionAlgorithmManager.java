@@ -22,6 +22,8 @@ public class EvolutionAlgorithmManager {
 	
 	private double stdDeviation;
 	
+	private double maxPricePerLiter;
+	
 	private int populationSize;
 	private CheckFitness fitnessCheck;
 	private Recombination recombination;
@@ -42,7 +44,7 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, String propPath) throws SQLException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double maxPricePerLiter, String propPath) throws SQLException {		
 		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
 		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
 		
@@ -64,7 +66,7 @@ public class EvolutionAlgorithmManager {
 			this.dbDriverPath = dbDriverPath;
 		}
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 		
 		convertProps();	
 		
@@ -105,17 +107,19 @@ public class EvolutionAlgorithmManager {
 				Integer.parseInt(props.getProperty("truncation")), 
 				Integer.parseInt(props.getProperty("elitism")), 
 				Double.parseDouble(props.getProperty("stdDeviation")),
+				Double.parseDouble(props.getProperty("maxPricePerLiter")),
 				props.getProperty("dbDriverPath"),
 				props.getProperty("booleanAllowedIngredients")
 				);
 	}
 	
-	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
+	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
 		this.evolutionStackName = evolutionStackName;
 		this.populationSize = populationSize;
 		this.truncation = truncation;
 		this.elitism = elitism;
 		this.stdDeviation = stdDeviation;
+		this.maxPricePerLiter = maxPricePerLiter;
 		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
 		
 		// This part is old - I think it just adds an error without helping at all
@@ -144,6 +148,8 @@ public class EvolutionAlgorithmManager {
 		} else {
 			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
 		}
+		
+		checkCocktailPrice(genManager.getCocktailGeneration());
 	}
 	
 	public boolean canEvolve() {
@@ -199,9 +205,26 @@ public class EvolutionAlgorithmManager {
 		// Elitism
 		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
 		
+		// set fitness and poured status for too expensive cocktails
+		nextGeneration = checkCocktailPrice(nextGeneration);
+		
 		genManager.setGeneration(nextGeneration);
 	}
 	
+	private CocktailGeneration checkCocktailPrice(
+			CocktailGeneration nextGeneration) {
+		Cocktail[] cocktails = nextGeneration.getPopulation();
+		
+		for (int i = 0; i < cocktails.length; i++) {
+			if (cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				cocktails[i].setPoured(true);
+				cocktails[i].setFitness(fitnessCheck, 1000, 0);
+			}
+		}
+		nextGeneration = new CocktailGeneration(cocktails);
+		return nextGeneration;
+	}
+
 	public double getMutationStdDeviation() {
 		return recombination.getMutationStdDeviation();
 	}
@@ -355,13 +378,14 @@ public class EvolutionAlgorithmManager {
 		getGenManager().getCocktailByName(name).setQueued(true);
 	}
 	
-	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) {
+	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {
 		Properties props = new Properties();
 		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
 		props.setProperty("elitism", String.valueOf(elitism));
 		props.setProperty("stdDeviation", String.valueOf(stdDeviation));
+		props.setProperty("maxPricePerLiter", String.valueOf(maxPricePerLiter));
 		if (dbDriverPath != null) {
 			props.setProperty("dbDriverPath", dbDriverPath);
 		}

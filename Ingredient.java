@@ -1,6 +1,9 @@
 package genBot2;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Properties;
 
 /*
  * Class to store ingredients. Only the name, the price per liter
@@ -27,11 +30,24 @@ public class Ingredient implements Serializable {
 	 * generate the pricePerLiter
 	 * @param arduinoOutput Arduino Output
 	 */
-	public Ingredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine) {
+	public Ingredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine, String ingredientFolder) {
 		this.name = name;
 		this.arduinoOutputLine = arduinoOutputLine;
 		
 		this.pricePerLiter = bottlePrice / bottleSize;
+		
+		Properties ingProps = new Properties();
+		ingProps.setProperty("name", name);
+		ingProps.setProperty("bottlePrice", String.valueOf(bottlePrice));
+		ingProps.setProperty("bottleSize", String.valueOf(bottleSize));
+		ingProps.setProperty("arduinoOutputLine", String.valueOf(arduinoOutputLine));
+		
+		try {
+			ingProps.store(new FileOutputStream(ingredientFolder + name + ".properties"), "Be careful, there is no sanity-check!");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/*

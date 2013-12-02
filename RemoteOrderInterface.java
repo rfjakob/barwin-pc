@@ -20,7 +20,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName, String recombinationName, boolean resetDbTable, String propPath, double stdDeviation) throws RemoteException, SQLException;
 	
-	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, String propPath)  throws RemoteException, SQLException;
+	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double maxPricePerLiter, String propPath)  throws RemoteException, SQLException;
 	
 	public void loadEvolutionStack(String evolutionStackName) throws RemoteException, SQLException;
 	
@@ -34,7 +34,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void setProps(Properties props) throws RemoteException;
 	
-	public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
+	public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
 	
 	public void queueCocktail(CocktailWithName cocktail) throws RemoteException;
 	
