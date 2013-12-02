@@ -257,6 +257,17 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMutationStdDeviation(stdDeviation);
 	}
 	
+	@Override
+	public double getMaxPricePerLiter(String evolutionStackName) throws RemoteException {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getMaxPricePerLiter();
+	}
+
+	@Override
+	public void setMaxPricePerLiter(String evolutionStackName, double maxPricePerLiter)
+			throws RemoteException {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMaxPricePerLiter(maxPricePerLiter);
+	}	
+	
 	private Properties loadProps(String propFile) {
 		Properties props = new Properties();
 		
@@ -334,6 +345,13 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	      if (files.length > 0)
 	        throw new IllegalArgumentException(
 	            "Delete: directory not empty: " + evolutionStackName + ".properties");
+	    }
+	    
+	    // Attempt to delete it
+	    boolean success = f.delete();
+
+	    if (!success) {
+	    	throw new IllegalArgumentException("Delete: deletion failed");
 	    }
 	}
 

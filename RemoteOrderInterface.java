@@ -69,4 +69,10 @@ public interface RemoteOrderInterface extends Remote {
 	public double getFitnessPlusPrice(String evolutionStackName, int generationNumber, String cocktailName) throws RemoteException, SQLException, FitnessNotSetException;
 
 	public String getStatusMessage() throws RemoteException;
+
+	public void setMaxPricePerLiter(String evolutionStackName, double maxPricePerLiter)
+			throws RemoteException;
+
+	public double getMaxPricePerLiter(String evolutionStackName)
+			throws RemoteException;
 }

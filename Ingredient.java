@@ -12,7 +12,7 @@ import java.util.Properties;
  * @see IngredientAmount
  */
 
-public class Ingredient implements Serializable {
+public class Ingredient implements Serializable, Comparable<Ingredient> {
 	
 	/**
 	 * 
@@ -79,6 +79,17 @@ public class Ingredient implements Serializable {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public int compareTo(Ingredient o) {
+		if (this.getArduinoOutputLine() == o.getArduinoOutputLine()) {
+			return 0;
+		} else if (this.getArduinoOutputLine() > o.getArduinoOutputLine()) {
+			return 1;
+		} else {
+			return -1;
 		}
 	}
 }

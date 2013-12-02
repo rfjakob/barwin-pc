@@ -27,7 +27,7 @@ public class TestAllFunctions {
 			
 			RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			
-			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1, 7);
+			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1, 10);
 			
 			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 20.0);
 			
@@ -38,15 +38,19 @@ public class TestAllFunctions {
 			remoteOrderImpl.removeEvolutionStack("Super Super Drink");
 			
 			remoteOrderImpl.loadEvolutionStack("Super Super Drink");
-			
-			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
-			
+
 			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");
+			
+			System.out.println("deleted.");
+			
+//			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
+			
+//			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");
 						
-			String[] list = remoteOrderImpl.listPossibleEvolutionStacks();
-			for (int i = 0; i < list.length; i++) {
-				System.out.println(list[i]);
-			}
+//			String[] list = remoteOrderImpl.listPossibleEvolutionStacks();
+//			for (int i = 0; i < list.length; i++) {
+//				System.out.println(list[i]);
+//			}
 			
 		} catch (MalformedURLException | RemoteException
 				| NotBoundException | SerialRMIException e) {

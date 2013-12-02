@@ -132,7 +132,7 @@ public class EvolutionAlgorithmManager {
 		this.dbDriverPath = dbDriverPath;
 		
 		setMutationStdDeviation(this.stdDeviation);
-		setRecombinationMaxPricePerLiter(this.maxPricePerLiter);
+		setMaxPricePerLiter(this.maxPricePerLiter);
 	}
 
 	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException {
@@ -212,11 +212,21 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void setMutationStdDeviation(double stdDeviation) {
+		this.stdDeviation = stdDeviation;
 		recombination.setMutationStdDeviation(stdDeviation);
+
+		storeProps(evolutionStackName, populationSize, truncation, elitism, maxPricePerLiter, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
-	private void setRecombinationMaxPricePerLiter(double maxPricePerLiter) {
-		recombination.setMaxPricePerLiter(maxPricePerLiter);		
+	public double getMaxPricePerLiter() {
+		return recombination.getMaxPricePerLiter();
+	}
+	
+	public void setMaxPricePerLiter(double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
+		recombination.setMaxPricePerLiter(maxPricePerLiter);
+		
+		storeProps(evolutionStackName, populationSize, truncation, elitism, maxPricePerLiter, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {
@@ -391,5 +401,4 @@ public class EvolutionAlgorithmManager {
 	public String getName() {
 		return evolutionStackName;
 	}
-
 }
