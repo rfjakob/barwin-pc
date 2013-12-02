@@ -84,7 +84,7 @@ public class IngredientArray {
 	 * loads all Ingredients from the properties files in the properties folder
 	 */
 	public void loadIngredients() {
-		this.ingredientArray = new IngredientArray();
+		ingredientArray = new IngredientArray();
 	}
 	
 	/*

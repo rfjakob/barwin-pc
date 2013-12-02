@@ -23,7 +23,7 @@ public class TestEvolutionWithArduino {
 		
 		RemoteOrderImpl rmt = new RemoteOrderImpl(queuemngr);
 		
-		rmt.generateEvolutionStack("Test Drink", testZutaten);
+		rmt.generateEvolutionStack("Test Drink", testZutaten, 7);
 		
 		Double value = 0.0;
 		

@@ -27,7 +27,7 @@ public class TestAllFunctions {
 			
 			RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			
-			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1);
+			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1, 7);
 			
 			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 20.0);
 			

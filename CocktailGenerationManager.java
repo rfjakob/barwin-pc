@@ -11,13 +11,20 @@ public class CocktailGenerationManager implements Serializable {
 	private CocktailGeneration cocktailGeneration;
 	private final String evolutionStackName;
 
-	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients) {
+	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients, double maxPricePerLiter) {
 		this.generationNumber = 0;
 		
 		Cocktail[] cocktails = new Cocktail[initialPopulationSize];
-		for (int i = 0; i < initialPopulationSize; i++) {
+		
+		int i = 0;
+		while (i < initialPopulationSize) {
 			cocktails[i] = generateRandomCocktail(booleanAllowedIngredients);
+			
+			if (!cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				i++;
+			}
 		}
+
 		this.cocktailGeneration = new CocktailGeneration(cocktails);
 		
 		this.evolutionStackName = cocktailStackName;

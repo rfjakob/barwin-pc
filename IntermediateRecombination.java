@@ -5,6 +5,7 @@ import java.util.Random;
 public class IntermediateRecombination extends RouletteWheelSelection implements Recombination {
 
 	private double variableArea;
+	private double maxPricePerLiter;
 	
 	/*
 	 * Constructor
@@ -19,11 +20,12 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	 * statistically, that the offsprings area is the same as it was for the parents
 	 * see http://www.geatbx.com/docu/algindex-03.html#P570_30836
 	 */
-	public IntermediateRecombination(double variableArea) {
+	public IntermediateRecombination(double variableArea, double maxPricePerLiter) {
 		if (variableArea < 0) {
 			throw new IllegalArgumentException("variableArea must be bigger than 0!");
 		}
 		this.variableArea = variableArea;
+		this.maxPricePerLiter = maxPricePerLiter;
 	}
 	
 	/*
@@ -113,16 +115,17 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException {
 		Cocktail[] population = new Cocktail[newPopulationSize];
 		
-		for (int i = 0; i < newPopulationSize; i = i + 2) {
+		int i = 0;
+		while (i < newPopulationSize) {
 			Cocktail[] children = crossover(cocktailGeneration);
 			
-			population[i] = children[0];
-			// we have to check if both children fit in the population (only even numbers)
-			if (i + 1 < population.length) {
-				population[i + 1] = children[1];
+			for (int j = 0; j < children.length; j++) {
+				if ((!children[j].pricePerLiterHigherAs(maxPricePerLiter)) & i < newPopulationSize) {
+					population[i] = children[j];
+					i++;
+				}
 			}
 		}
-		
 		return new CocktailGeneration(population);
 	}
 
@@ -141,6 +144,16 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	@Override
 	public void setMutationStdDeviation(double stdDeviation) {
 		// just a placeholder
+	}
+
+	@Override
+	public double getMaxPricePerLiter() {
+		return maxPricePerLiter;
+	}
+
+	@Override
+	public void setMaxPricePerLiter(double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
 	}
 
 }

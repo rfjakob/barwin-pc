@@ -54,17 +54,17 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
-			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation)
+			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double maxPricePerLiter)
 			throws RemoteException, SQLException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
 		}
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation);
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation, maxPricePerLiter);
 		if (recombinationName.equals("StandardMutation")) {
-			recombination = new StandardMutation(stdDeviation);
+			recombination = new StandardMutation(stdDeviation, maxPricePerLiter);
 		} else if (recombinationName.equals("IntermediateRecombination")) {
-			recombination = new IntermediateRecombination(0.25);
+			recombination = new IntermediateRecombination(0.25, maxPricePerLiter);
 		}
 		// variableArea is hard coded... but it should be 0.25
 
@@ -81,11 +81,11 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
 		}
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation);
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation, maxPricePerLiter);
 		if (recombinationName.equals("StandardMutation")) {
-			recombination = new StandardMutation(stdDeviation);
+			recombination = new StandardMutation(stdDeviation, maxPricePerLiter);
 		} else if (recombinationName.equals("IntermediateRecombination")) {
-			recombination = new IntermediateRecombination(0.25);
+			recombination = new IntermediateRecombination(0.25, maxPricePerLiter);
 		}
 		// variableArea is hard coded... but it should be 0.25
 		
@@ -94,10 +94,10 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
-			Ingredient[] allowedIngredients) throws RemoteException,
+			Ingredient[] allowedIngredients, double maxPricePerLiter) throws RemoteException,
 			SQLException {
 		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, 5, evolutionStackName);
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, maxPricePerLiter, evolutionStackName);
 	}
 	
 	@Override
@@ -144,7 +144,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		Properties props = loadProps(evolutionStackName);
 		
 		// variableArea is hard coded... but it should be 0.25
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")));
+		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")), Double.parseDouble(props.getProperty("maxPricePerLiter")));
 		
 		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
 	}

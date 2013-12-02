@@ -4,10 +4,12 @@ public class MutationAndIntermediateRecombination implements Recombination {
 
 	private IntermediateRecombination intermediateRecombination;
 	private StandardMutation mutation;
+	private double maxPricePerLiter;
 	
-	public MutationAndIntermediateRecombination(double variableArea, double stdDeviation) {
-		this.intermediateRecombination = new IntermediateRecombination(variableArea);
-		this.mutation = new StandardMutation(stdDeviation);
+	public MutationAndIntermediateRecombination(double variableArea, double stdDeviation, double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
+		this.intermediateRecombination = new IntermediateRecombination(variableArea, maxPricePerLiter);
+		this.mutation = new StandardMutation(stdDeviation, maxPricePerLiter);
 	}
 
 	@Override
@@ -28,6 +30,18 @@ public class MutationAndIntermediateRecombination implements Recombination {
 	@Override
 	public void setMutationStdDeviation(double stdDeviation) {
 		mutation.setMutationStdDeviation(stdDeviation);
+	}
+
+	@Override
+	public double getMaxPricePerLiter() {
+		return maxPricePerLiter;
+	}
+
+	@Override
+	public void setMaxPricePerLiter(double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
+		intermediateRecombination.setMaxPricePerLiter(maxPricePerLiter);
+		mutation.setMaxPricePerLiter(maxPricePerLiter);
 	}
 
 }

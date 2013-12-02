@@ -132,6 +132,7 @@ public class EvolutionAlgorithmManager {
 		this.dbDriverPath = dbDriverPath;
 		
 		setMutationStdDeviation(this.stdDeviation);
+		setRecombinationMaxPricePerLiter(this.maxPricePerLiter);
 	}
 
 	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException {
@@ -140,16 +141,14 @@ public class EvolutionAlgorithmManager {
 			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
 
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == -1) {
-				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
+				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, maxPricePerLiter);
 			} else {				
 				this.genManager = load();
 				this.didJustLoad = true;
 			}
 		} else {
-			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients);
+			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, maxPricePerLiter);
 		}
-		
-		checkCocktailPrice(genManager.getCocktailGeneration());
 	}
 	
 	public boolean canEvolve() {
@@ -205,32 +204,19 @@ public class EvolutionAlgorithmManager {
 		// Elitism
 		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
 		
-		// set fitness and poured status for too expensive cocktails
-		nextGeneration = checkCocktailPrice(nextGeneration);
-		
 		genManager.setGeneration(nextGeneration);
 	}
 	
-	private CocktailGeneration checkCocktailPrice(
-			CocktailGeneration nextGeneration) {
-		Cocktail[] cocktails = nextGeneration.getPopulation();
-		
-		for (int i = 0; i < cocktails.length; i++) {
-			if (cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
-				cocktails[i].setPoured(true);
-				cocktails[i].setFitness(fitnessCheck, 1000, 0);
-			}
-		}
-		nextGeneration = new CocktailGeneration(cocktails);
-		return nextGeneration;
-	}
-
 	public double getMutationStdDeviation() {
 		return recombination.getMutationStdDeviation();
 	}
 	
 	public void setMutationStdDeviation(double stdDeviation) {
 		recombination.setMutationStdDeviation(stdDeviation);
+	}
+	
+	private void setRecombinationMaxPricePerLiter(double maxPricePerLiter) {
+		recombination.setMaxPricePerLiter(maxPricePerLiter);		
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {

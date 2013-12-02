@@ -22,7 +22,7 @@ public class TestAllowedIngredients {
 
 		RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 		
-		remoteOrderImpl.generateEvolutionStack("Test1", erlaubteZutaten1);
+		remoteOrderImpl.generateEvolutionStack("Test1", erlaubteZutaten1, 7);
 		
 		remoteOrderImpl.setProps("Test1", 15, 0, 2, 0.05, 1000, "blub", "0000011");
 		int gen = -1;

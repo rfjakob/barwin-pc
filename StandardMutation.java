@@ -5,9 +5,11 @@ import java.util.Random;
 public class StandardMutation implements Recombination {
 	
 	private double stdDeviation;
+	private double maxPricePerLiter;
 
-	public StandardMutation(double stdDeviation) {
+	public StandardMutation(double stdDeviation, double maxPricePerLiter) {
 		this.stdDeviation = stdDeviation;
+		this.maxPricePerLiter = maxPricePerLiter;
 	}
 
 	public double getStdDeviation() {
@@ -100,9 +102,13 @@ public class StandardMutation implements Recombination {
 	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) {		
 		Cocktail[] newCocktails = new Cocktail[newPopulationSize];
 		int[] randomOrder = population.generateRandomPopulationOrder();
-				
-		for (int i = 0; i < newPopulationSize; i++) {
+		
+		int i = 0;
+		while (i < newPopulationSize) {
 			newCocktails[i] = mutate(stdDeviation, population.getCocktail(randomOrder[i]), booleanAllowedIngredients);
+			if (!newCocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				i++;
+			}
 		}
 		
 		return new CocktailGeneration(newCocktails);
@@ -122,6 +128,16 @@ public class StandardMutation implements Recombination {
 	@Override
 	public void setMutationStdDeviation(double stdDeviation) {
 		this.stdDeviation = stdDeviation;
+	}
+
+	@Override
+	public double getMaxPricePerLiter() {
+		return maxPricePerLiter;
+	}
+
+	@Override
+	public void setMaxPricePerLiter(double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
 	}
 
 }

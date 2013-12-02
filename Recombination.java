@@ -11,4 +11,8 @@ public interface Recombination {
 	public double getMutationStdDeviation();
 	
 	public void setMutationStdDeviation(double stdDeviation);
+	
+	public double getMaxPricePerLiter();
+	
+	public void setMaxPricePerLiter(double maxPricePerLiter);
 }
