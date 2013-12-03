@@ -226,7 +226,7 @@ public class EvolutionAlgorithmManager {
 		this.stdDeviation = stdDeviation;
 		recombination.setMutationStdDeviation(stdDeviation);
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, maxPricePerLiter, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
 	public double getMaxPricePerLiter() {
@@ -237,7 +237,7 @@ public class EvolutionAlgorithmManager {
 		this.maxPricePerLiter = maxPricePerLiter;
 		recombination.setMaxPricePerLiter(maxPricePerLiter);
 		
-		storeProps(evolutionStackName, populationSize, truncation, elitism, maxPricePerLiter, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {
@@ -386,6 +386,8 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {
+		System.out.println("stddev: " + stdDeviation + ", maxPrice: " + maxPricePerLiter);
+		
 		Properties props = new Properties();
 		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));
