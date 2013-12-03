@@ -358,7 +358,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 	@Override
-	public Ingredient[] getAllowedIngredients(String evolutionStackName) {
+	public Ingredient[] getAllowedIngredients(String evolutionStackName) throws RemoteException {
 		boolean[] allIngsBool = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getBooleanAllowedIngredients();
 		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
 		

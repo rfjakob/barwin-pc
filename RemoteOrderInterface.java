@@ -80,5 +80,5 @@ public interface RemoteOrderInterface extends Remote {
 
 	public Ingredient[] getIngredients() throws RemoteException;
 
-	Ingredient[] getAllowedIngredients(String evolutionStackName);
+	Ingredient[] getAllowedIngredients(String evolutionStackName) throws RemoteException;
 }
