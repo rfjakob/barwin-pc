@@ -176,6 +176,18 @@ $(function() {
 		});
 	})
 	
+	$("body").on('click', '.evolveButton', function(e){
+		e.preventDefault()
+		$.post('/evolve', {
+			'name' 	: $(this).attr("data-name")
+		}, function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
+		});
+	})
+	
 	
 
 

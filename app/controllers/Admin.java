@@ -18,9 +18,6 @@ import play.mvc.*;
 import views.html.*;
 
 public class Admin extends AbstractController {
-
-
-	
 	public static Result index() {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
@@ -38,12 +35,7 @@ public class Admin extends AbstractController {
 	public static Result stack() {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Refreshed");
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+			return getStack(genBotRMI, "Refreshed", "");
 
 		} catch (Exception e) {
 			return errorAjax(e);
@@ -67,11 +59,7 @@ public class Admin extends AbstractController {
 			else
 				throw new Exception("Operation " + name + " not implemented");
 			
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Done");
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+			return getStack(genBotRMI, "Done", "");
 
 		} catch (Exception e) {
 			return errorAjax(e);
@@ -92,11 +80,7 @@ public class Admin extends AbstractController {
 			else
 				throw new Exception("Operation " + name + " not implemented");
 			
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Refreshed");
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+			return getStack(genBotRMI, "Deleted", "");
 
 		} catch (Exception e) {
 			return errorAjax(e);
@@ -115,13 +99,8 @@ public class Admin extends AbstractController {
 			String name = parameters.get("name")[0];
 			double maxPrice = Double.parseDouble(parameters.get("maxPrice")[0]);
 			genBotRMI.generateEvolutionStack(name, selectedIngredients, maxPrice);
-			
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Created");
-			result.put("showTab", name.replace(" ", "_"));
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+
+			return getStack(genBotRMI, "Created", name);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
@@ -137,13 +116,8 @@ public class Admin extends AbstractController {
 			double maxPrice = Double.parseDouble(parameters.get("maxPrice")[0]);
 			genBotRMI.setMaxPricePerLiter(name, maxPrice);
 			genBotRMI.setMutationStdDeviation(name, mutationRate);
-			
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("showTab", name.replace(" ", "_"));
-			result.put("message", "Settings saved");
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+		
+			return getStack(genBotRMI, "Settings saved", name);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
@@ -156,12 +130,7 @@ public class Admin extends AbstractController {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			int cocktailSize = Integer.parseInt(parameters.get("cocktailSize")[0]);
 			genBotRMI.setCocktailSize(cocktailSize);
-			
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Settings saved");
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+			return getStack(genBotRMI, "Settings saved", "");
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
@@ -174,13 +143,7 @@ public class Admin extends AbstractController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			genBotRMI.queueCocktail(nameA[0], name);
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Cocktail queued");
-			result.put("showTab", nameA[0].replace(" ", "_"));
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			
-			return ok(result);
+			return getStack(genBotRMI, "Cocktail queued", nameA[0]);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
@@ -192,13 +155,7 @@ public class Admin extends AbstractController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			genBotRMI.evolve(name);
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Do the evolution!");
-			result.put("showTab", name.replace(" ", "_"));
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			
-			return ok(result);
+			return getStack(genBotRMI, "Do the evolution!", name);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
@@ -238,16 +195,22 @@ public class Admin extends AbstractController {
 			String[] nameA = name.split("-");
 			//System.out.println("setFitness(" + nameA[0] + ", " + name + ", " + parameters.get("fitness")[0] + ")");
 			genBotRMI.setCocktailFitness(nameA[0], name, Double.parseDouble(parameters.get("fitness")[0]));
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Fitness set");
-			result.put("showTab", nameA[0].replace(" ", "_"));
-			result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
-			return ok(result);
+			return getStack(genBotRMI, "Fitness set", nameA[0]);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
 		
+	}
+	
+	public static Result getStack(RemoteOrderInterface genBotRMI, String message, String name) throws Exception {
+		ObjectNode result = Json.newObject();
+		result.put("valid", true);
+		if(!message.isEmpty())
+			result.put("message", message);
+		if(!name.isEmpty())
+			result.put("showTab", name.replace(" ", "_"));
+		result.put("stack", stack.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI).toString());
+		return ok(result);
 	}
 	
 	public static HashMap<String, Double> getMinMaxMedianThirdQuartMean(String evolutionStackName, int generationNumber) throws Exception, FitnessNotSetException {

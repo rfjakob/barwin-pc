@@ -25,7 +25,7 @@
 					</div>
 				</div>
 			</form>
-			<input class="evolveButton right btn btn-info" @if(genBotRMI.isEvolutionStackNameLoaded(name)) {disabled="disabled"} type="button" value="Evolve" />
+			<input data-name="@name.replace(" ", "_")" class="evolveButton right btn btn-info" @if(!genBotRMI.canEvolve(name)){disabled="disabled"} type="button" value="Evolve" />
 		</div>
 	</div>
 	<div class="panel-group cocktails" id="accordion_@{name.replace(" ", "_")}">

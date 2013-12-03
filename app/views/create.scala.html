@@ -20,7 +20,7 @@
 			<label class="col-sm-2 control-label">Ingredients</label>
 			<div class="col-sm-10">
 		@for(i <- 0 until genBotRMI.getIngredients.length) { <label class="checkbox-inline">
-			<input type="checkbox" value="@i" name="ingredients">@i @genBotRMI.getIngredients()(i).getName() @genBotRMI.getIngredients()(i)
+			<input type="checkbox" value="@i" name="ingredients">@genBotRMI.getIngredients()(i).getName
 		</label> }
 			</div>
 		</div>
