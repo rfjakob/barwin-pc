@@ -9,7 +9,7 @@ import serialRMI.SerialRMIException;
 
 public class DeleteFromQueue {
 
-	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException, SQLException, MaxAttemptsToMeetPriceConstraintException {
+	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException, SQLException, MaxAttemptsToMeetPriceConstraintException, FitnessNotSetException {
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten1 = {alleZutaten[5], alleZutaten[6]};
 
@@ -47,6 +47,10 @@ public class DeleteFromQueue {
 			
 			remoteOrderImpl.deleteCocktailFromQueue("Test1-0-8");
 			System.out.println("deleted");
+			
+			remoteOrderImpl.setCocktailFitness("Test1", "Test1-0-3", 4);
+			
+			System.out.println(remoteOrderImpl.getFitnessPlusPrice("Test1", 0, "Test1-0-3"));
 	}
 
 }

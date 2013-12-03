@@ -25,6 +25,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	private boolean queued;
 	private boolean eliteCocktail;
 	
+	private double fitnessInput;
+	
 	/*
 	 * Constructor
 	 * When the sum of all amounts is not equal to one, the amounts get normalized
@@ -158,6 +160,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	public void setFitness(CheckFitness fitnessCheck, double cocktailSize, double fitnessInput) {
 		fitness = fitnessCheck.checkFitness(this, cocktailSize, fitnessInput);
 		fitnessIsSet = true;
+		
+		this.fitnessInput = fitnessInput;
 	}
 	
 	public double[] getAmountsAsDouble() {
