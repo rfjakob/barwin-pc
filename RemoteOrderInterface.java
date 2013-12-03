@@ -79,4 +79,6 @@ public interface RemoteOrderInterface extends Remote {
 	void sendToSerial(String s) throws RemoteException, SerialRMIException;
 
 	public Ingredient[] getIngredients() throws RemoteException;
+
+	Ingredient[] getAllowedIngredients(String evolutionStackName);
 }

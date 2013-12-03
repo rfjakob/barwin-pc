@@ -358,6 +358,31 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 	@Override
+	public Ingredient[] getAllowedIngredients(String evolutionStackName) {
+		boolean[] allIngsBool = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getBooleanAllowedIngredients();
+		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
+		
+		int numOfAllowed = 0;
+		for (int i = 0; i < allIngsBool.length; i++) {
+			if (allIngsBool[i]) {
+				numOfAllowed++;
+			}
+		}
+		
+		Ingredient[] retIngs = new Ingredient[numOfAllowed];
+		
+		int allIngsCount = 0;
+		for (int i = 0; i < numOfAllowed; i++) {
+			if (allIngsBool[i]) {
+				retIngs[i] = ings[i];
+				allIngsCount++;
+			}
+		}
+		
+		return retIngs;
+	}
+	
+	@Override
 	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
 		queueManager.sendToSerial(s);
 	}
