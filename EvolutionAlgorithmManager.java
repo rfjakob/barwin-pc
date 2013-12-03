@@ -385,9 +385,7 @@ public class EvolutionAlgorithmManager {
 		getGenManager().getCocktailByName(name).setQueued(true);
 	}
 	
-	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {
-		System.out.println("stddev: " + stdDeviation + ", maxPrice: " + maxPricePerLiter);
-		
+	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {		
 		Properties props = new Properties();
 		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));

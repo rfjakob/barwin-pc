@@ -38,10 +38,35 @@ public class TestAllFunctions {
 			
 			remoteOrderImpl.loadEvolutionStack("Super Super Drink");
 
-			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-1", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
 			
-			System.out.println("deleted.");
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-2", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
 			
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-3", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-4", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-5", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-6", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 4);
+			System.out.println("can evolve: " + remoteOrderImpl.canEvolve("Super Super Drink"));
+
+
+
 //			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
 			
 //			remoteOrderImpl.deleteEvolutionStack("Super Super Drink");

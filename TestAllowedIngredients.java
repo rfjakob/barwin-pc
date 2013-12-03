@@ -43,9 +43,9 @@ public class TestAllowedIngredients {
 					System.out.println(name + ": " + cocktail);
 				}
 				
-				remoteOrderImpl.queueCocktail("Test1", name);
-				remoteOrderImpl.deleteCocktailFromQueue(name);
-				System.out.println("deleted");
+//				remoteOrderImpl.queueCocktail("Test1", name);
+//				remoteOrderImpl.deleteCocktailFromQueue(name);
+//				System.out.println("deleted");
 //				remoteOrderImpl.setCocktailFitness("Test1", name, 10.0);
 			}
 //			CocktailWithName[] cg2 = remoteOrderImpl.getNamedPopulation("Test1");
