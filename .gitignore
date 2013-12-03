@@ -4,8 +4,8 @@
 # except for .gitignore
 !.gitignore
 
-lib/evolutionStackSettings
-lib/log
+lib/log/*
+lib/*.so
 
 # Ignore Play! working directory #
 db

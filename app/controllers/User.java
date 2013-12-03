@@ -13,11 +13,17 @@ import play.libs.Json;
 //import play.cache.Cache;
 import play.mvc.*;
 import views.html.*;
+import views.html.frontend.*;
 
 public class User extends AbstractController {
 	
 	public static Result index() {
-		return ok(user.render());
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			return ok(views.html.frontend.content.render(genBotRMI));
+		} catch (Exception e) {
+			return error(e);
+		}
 	}
 
 	public static Result ajaxIndex() {

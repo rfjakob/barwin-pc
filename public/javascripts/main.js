@@ -138,6 +138,16 @@ $(function() {
 		});
 	})
 	
+	$("body").on('click', '.stackSettings button', function(e){
+		e.preventDefault()
+		$.post("/saveStackSettings", $(this).parents(".stackSettings").serialize(), function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
+		});
+	})
+	
 	$("body").on('click', '#loadTable button', function(e){
 		e.preventDefault()
 		$.post('/stackOP', {
