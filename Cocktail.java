@@ -164,6 +164,10 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		this.fitnessInput = fitnessInput;
 	}
 	
+	public double getFitnessInput() {
+		return fitnessInput;
+	}
+	
 	public double[] getAmountsAsDouble() {
 		IngredientArray ingredients = IngredientArray.getInstance();
 		double[] amounts = new double[ingredients.getNumberOfIngredients()];
