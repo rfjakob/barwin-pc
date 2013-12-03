@@ -6,6 +6,8 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import serialRMI.SerialRMIException;
+
 public interface RemoteOrderInterface extends Remote {
 
 	public CocktailWithName[] getNamedPopulation(String evolutionStackName) throws RemoteException;
@@ -73,4 +75,8 @@ public interface RemoteOrderInterface extends Remote {
 
 	public double getMaxPricePerLiter(String evolutionStackName)
 			throws RemoteException;
+	
+	void sendToSerial(String s) throws RemoteException, SerialRMIException;
+
+	public Ingredient[] getIngredients() throws RemoteException;
 }

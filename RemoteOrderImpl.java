@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import serialRMI.SerialRMIException;
+
 public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	private EvolutionStackContainer evolutionStackController;
@@ -354,4 +356,27 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	    	throw new IllegalArgumentException("Delete: deletion failed");
 	    }
 	}
+
+	@Override
+	public double getFitnessPlusPrice(String evolutionStackName, int generationNumber,
+			String cocktailName) throws RemoteException, SQLException, FitnessNotSetException {		
+		Cocktail cocktail = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber).getCocktailByName(cocktailName);
+		
+		double fitness = cocktail.getFitness();
+		double price = cocktail.getCosts();
+		
+		return fitness + price;
+	}
+
+	@Override
+	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
+		queueManager.sendToSerial(s);
+	}
+
+	@Override
+	public Ingredient[] getIngredients() throws RemoteException {
+		return IngredientArray.getInstance()
+				.getAllIngredients();
+	}
+
 }

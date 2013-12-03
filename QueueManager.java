@@ -12,6 +12,8 @@ import java.rmi.RemoteException;
 
 
 
+
+
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
@@ -62,7 +64,8 @@ public class QueueManager extends Thread {
 				if (serial == null)
 					Thread.sleep(10000);
 				//if (serial != null) {
-					processSerialInput();
+				
+				processSerialInput();
 				//}
 				if(serialIsReady()) {
 					processQueue();
@@ -93,6 +96,7 @@ public class QueueManager extends Thread {
 			String[] sA;
 			//String[] sA = {new String("READY")};
 			if(serial != null) {
+				//System.out.println("reading ...");
 				sA = serial.readLines();
 			} else {
 				String[] sAT = {new String("READY 213 0 ")};
@@ -109,25 +113,44 @@ public class QueueManager extends Thread {
 				switch (me.command) {
 				case "READY":
 					// THIS IF IS ONLY NEEDED FOR TESTING
-					if(currentlyPouring != null) {
+					/*if(currentlyPouring != null) {
 						System.out.println("NO ENJOY RECEIVED");
 						currentlyPouring.getCocktail().setPoured(true);		
 						currentlyPouring.getCocktail().setPouring(false);
-						currentlyPouring = null;
-					}
+						//currentlyPouring = null;
+					}*/
 						
 					System.out.println("weight: " + me.args[0] + " cup: " + me.args[1]);
 					//if(status != Status.waitingForWaitingForCup)
-						status = Status.ready;
+					status = Status.ready;
+					statusMessage = null;
 					break;
 				case "WAITING_FOR_CUP":
 					status = Status.waitingForCup;
-					System.out.println("Wort ma am Becher!");
+					//System.out.println("Wort ma am Becher!");
+					statusMessage = "Waiting for cup";
+					break;
 				case "ENJOY":
 					finishedPouring(me.args);
 					status = Status.waitingForReady;
+					statusMessage = "Take cup";
+					break;
+				case "ERROR":
+					statusMessage = me.raw;
+					System.out.println("ERROR" + me.raw);
+					status = Status.error;
+					break;
 				case "POURING":
-					statusMessage = "POURING BOTTLE " + me.args[0];
+					statusMessage = "POURING ";
+
+					for(Ingredient i : IngredientArray.getInstance()
+							.getAllIngredients()) {
+						if(i.getArduinoOutputLine() == me.args[0]) {
+							statusMessage += i.getName();
+						}
+					}
+					
+					break;
 				default:
 					status = Status.unknown;
 					break;
@@ -215,5 +238,11 @@ public class QueueManager extends Thread {
 
 	public String getStatusMessage() {
 		return statusMessage;
+	}
+
+	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
+		if (serial != null) {
+			serial.writeLine(s);
+		}
 	}
 }

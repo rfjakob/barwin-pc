@@ -1,6 +1,6 @@
 package genBot2;
 
-public class MaxAttemptsToMeetPriceConstraintException extends Throwable {
+public class MaxAttemptsToMeetPriceConstraintException extends Exception {
 
 	/**
 	 * 

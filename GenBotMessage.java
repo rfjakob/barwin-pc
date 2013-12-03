@@ -10,6 +10,7 @@ public class GenBotMessage {
 			throw new ArduinoProtocolException("Command '" + raw + "' not implemented!"); 
 
 		switch (a[0]) {
+			case "ERROR": 
 			case "DEBUG":
 				debug = raw.substring(command.length() + 1);
 				break;

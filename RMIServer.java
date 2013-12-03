@@ -71,7 +71,7 @@ public class RMIServer {
 		
 		QueueManager queueManager;
 		CocktailQueue queue = new CocktailQueue();		
-		queueManager = new QueueManager(queue, serialRMIAddress, serialPort, 250);
+		queueManager = new QueueManager(queue, serialRMIAddress, serialPort, 200);
 		
 		rmiImpl = new RemoteOrderImpl(queueManager);
 		RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
