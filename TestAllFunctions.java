@@ -27,7 +27,7 @@ public class TestAllFunctions {
 			
 			RemoteOrderImpl remoteOrderImpl = new RemoteOrderImpl(queueManager);
 			
-			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1, 10);
+			remoteOrderImpl.generateEvolutionStack("Super Super Drink", erlaubteZutaten1, 11);
 			
 			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 20.0);
 			
@@ -60,6 +60,9 @@ public class TestAllFunctions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FitnessNotSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MaxAttemptsToMeetPriceConstraintException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

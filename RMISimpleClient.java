@@ -40,6 +40,9 @@ public class RMISimpleClient {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (MaxAttemptsToMeetPriceConstraintException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 

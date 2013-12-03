@@ -44,7 +44,7 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double maxPricePerLiter, String propPath) throws SQLException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double maxPricePerLiter, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {		
 		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
 		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
 		
@@ -73,7 +73,7 @@ public class EvolutionAlgorithmManager {
 		accessDB(dbDriverPath, resetDbTable);
 	}
 	
-	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException {
+	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
 		this.propPath = "evolutionStackSettings/" + propPath;		
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
@@ -135,7 +135,7 @@ public class EvolutionAlgorithmManager {
 		setMaxPricePerLiter(this.maxPricePerLiter);
 	}
 
-	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException {
+	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
 		if (dbDriverPath != null) {
 			this.dbDriver = DataBaseDriver.getInstance(dbDriverPath);
 			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
@@ -195,7 +195,18 @@ public class EvolutionAlgorithmManager {
 
 		// Crossover & Mutation
 		try {
-			nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
+			boolean recombinationSucceeded = false;
+			while (!recombinationSucceeded) {
+				try {
+					nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
+					recombinationSucceeded = true;
+				} catch (MaxAttemptsToMeetPriceConstraintException e) {
+					e.printStackTrace();
+					
+					recombinationSucceeded = false;
+					convertProps();
+				}
+			}
 		} catch (FitnessNotSetException e) {
 			// This should really not happen!
 			e.printStackTrace();

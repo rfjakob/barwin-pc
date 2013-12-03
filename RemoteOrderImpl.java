@@ -55,7 +55,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
 			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double maxPricePerLiter)
-			throws RemoteException, SQLException {
+			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
@@ -76,7 +76,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			Ingredient[] allowedIngredients, int populationSize,
 			int truncation, int elitism, String dbDriverPath,
 			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double maxPricePerLiter,
-			String propPath) throws RemoteException, SQLException {
+			String propPath) throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
@@ -95,7 +95,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, double maxPricePerLiter) throws RemoteException,
-			SQLException {
+			SQLException, MaxAttemptsToMeetPriceConstraintException {
 		
 		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, maxPricePerLiter, evolutionStackName);
 	}
@@ -124,7 +124,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void loadEvolutionStack(String evolutionStackName)
-			throws RemoteException, SQLException {
+			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		
 		String[] possibleNames = listPossibleEvolutionStacks();
 		boolean containsName = false;

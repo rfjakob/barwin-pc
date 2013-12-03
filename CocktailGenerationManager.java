@@ -10,18 +10,28 @@ public class CocktailGenerationManager implements Serializable {
 	private int generationNumber;
 	private CocktailGeneration cocktailGeneration;
 	private final String evolutionStackName;
+	
+	private int maxAttemptsToMeetPriceConstraints = 300;
 
-	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients, double maxPricePerLiter) {
+	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients, double maxPricePerLiter) throws MaxAttemptsToMeetPriceConstraintException {
 		this.generationNumber = 0;
 		
 		Cocktail[] cocktails = new Cocktail[initialPopulationSize];
+		
+		int countToThrowException = 0;
 		
 		int i = 0;
 		while (i < initialPopulationSize) {
 			cocktails[i] = generateRandomCocktail(booleanAllowedIngredients);
 			
-			if (!cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+			if (cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				countToThrowException++;
+				if (countToThrowException >= maxAttemptsToMeetPriceConstraints) {
+					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. I give up now.");
+				}
+			} else {
 				i++;
+				countToThrowException = 0;
 			}
 		}
 

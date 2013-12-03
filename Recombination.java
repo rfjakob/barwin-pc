@@ -6,7 +6,7 @@ public interface Recombination {
  * @param population the old population on which the recombination should be performed
  * @param newPopulationSize the resulting cocktailpopulation's size
  */
-	public CocktailGeneration recombine(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException;
+	public CocktailGeneration recombine(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException;
 	
 	public double getMutationStdDeviation();
 	

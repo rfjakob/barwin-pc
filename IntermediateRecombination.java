@@ -7,6 +7,8 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	private double variableArea;
 	private double maxPricePerLiter;
 	
+	private int maxAttemptsToMeetCostsConstraint = 1000;
+	
 	/*
 	 * Constructor
 	 * @param variableArea influences the interval to choose the new cocktail from 
@@ -112,17 +114,25 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	 * makes all crossovers for the Generation
 	 * @return a new cocktail generation
 	 */
-	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException {
+	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
 		Cocktail[] population = new Cocktail[newPopulationSize];
 		
+		int attempts = 0;
 		int i = 0;
 		while (i < newPopulationSize) {
 			Cocktail[] children = crossover(cocktailGeneration);
 			
 			for (int j = 0; j < children.length; j++) {
-				if ((!children[j].pricePerLiterHigherAs(maxPricePerLiter)) & i < newPopulationSize) {
-					population[i] = children[j];
-					i++;
+				if ((children[j].pricePerLiterHigherAs(maxPricePerLiter))) {
+					attempts++;
+					if (attempts >= maxAttemptsToMeetCostsConstraint) {
+						throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. Giving up now. You can try to decrease the value in the specific properties file.");
+					}
+				} else {
+					if (i < newPopulationSize) {
+						population[i] = children[j];
+						i++;
+					}
 				}
 			}
 		}
@@ -131,7 +141,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException {
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
 		return allCrossovers(population, newPopulationSize);
 	}
 

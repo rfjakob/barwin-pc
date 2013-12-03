@@ -64,6 +64,9 @@ public class LocalTest {
 		} catch (SerialRMIException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+		} catch (MaxAttemptsToMeetPriceConstraintException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 	}

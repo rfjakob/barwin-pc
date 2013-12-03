@@ -11,7 +11,7 @@ import serialRMI.SerialRMIException;
 
 public class TestEvolutionWithArduino {
 	
-	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException, SQLException, NotEnoughRatedCocktailsException {
+	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException, SQLException, NotEnoughRatedCocktailsException, MaxAttemptsToMeetPriceConstraintException {
 		
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] testZutaten = {alleZutaten[0], alleZutaten[1]};

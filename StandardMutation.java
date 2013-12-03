@@ -6,6 +6,8 @@ public class StandardMutation implements Recombination {
 	
 	private double stdDeviation;
 	private double maxPricePerLiter;
+	
+	private int maxAttemptsToMeetCostsConstraint = 1000;
 
 	public StandardMutation(double stdDeviation, double maxPricePerLiter) {
 		this.stdDeviation = stdDeviation;
@@ -99,15 +101,22 @@ public class StandardMutation implements Recombination {
 	 * class)
 	 */
 	
-	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) {		
+	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws MaxAttemptsToMeetPriceConstraintException {		
 		Cocktail[] newCocktails = new Cocktail[newPopulationSize];
 		int[] randomOrder = population.generateRandomPopulationOrder();
 		
+		int attempts = 0;
 		int i = 0;
 		while (i < newPopulationSize) {
 			newCocktails[i] = mutate(stdDeviation, population.getCocktail(randomOrder[i]), booleanAllowedIngredients);
-			if (!newCocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+			if (newCocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				attempts++;
+				if (attempts >= maxAttemptsToMeetCostsConstraint) {
+					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " per liter. Giving up now. You can decrease the value in the respective properties file.");
+				}
+			} else {
 				i++;
+				attempts = 0;
 			}
 		}
 		
@@ -116,7 +125,7 @@ public class StandardMutation implements Recombination {
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException {
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
 		return mutateCocktails(population, newPopulationSize, booleanAllowedIngredients);
 	}
 
