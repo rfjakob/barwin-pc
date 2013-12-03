@@ -3,6 +3,8 @@ package genBot2;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Queue;
 
 import serialRMI.SerialRMIException;
@@ -18,8 +20,8 @@ public class ShowAllIngredients {
 		
 		System.out.println("--Different--");
 		
-		CocktailQueue queue = new CocktailQueue();
-		RemoteOrderInterface remInt = new RemoteOrderImpl(new QueueManager(queue, "", "", 250));
+		Registry registry = LocateRegistry.getRegistry();
+	    RemoteOrderInterface remInt = (RemoteOrderInterface) registry.lookup( "rem");
 		
 		Ingredient[] allIngs1 = remInt.getIngredients();
 		
