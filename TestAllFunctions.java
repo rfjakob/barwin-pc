@@ -31,7 +31,6 @@ public class TestAllFunctions {
 			
 			remoteOrderImpl.setCocktailFitness("Super Super Drink", "Super Super Drink-0-0", 20.0);
 			
-			System.out.println("Fitness: " + remoteOrderImpl.getFitnessPlusPrice("Super Super Drink", 0, "Super Super Drink-0-0"));
 			
 			System.out.println("Now removing and then loading again.");
 			
@@ -57,9 +56,6 @@ public class TestAllFunctions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FitnessNotSetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MaxAttemptsToMeetPriceConstraintException e) {
