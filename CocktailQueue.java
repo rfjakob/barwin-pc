@@ -79,7 +79,7 @@ public class CocktailQueue implements Serializable {
 	}
 	
 	public void deleteCocktail(String evolutionAlgorithmManager, String cocktailName) {
-		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getRatedNamedCocktailGeneration();
+		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getNamedCocktailGeneration();
 		boolean cocktailFound = false;
 		
 		for (int i = 0; i < cocktails.length; i++) {

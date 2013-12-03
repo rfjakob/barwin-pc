@@ -44,12 +44,13 @@ public class TestAllowedIngredients {
 				}
 				
 				remoteOrderImpl.queueCocktail("Test1", name);
-				remoteOrderImpl.setCocktailFitness("Test1", name, 10.0);
+				remoteOrderImpl.deleteCocktailFromQueue(name);
+//				remoteOrderImpl.setCocktailFitness("Test1", name, 10.0);
 			}
-			CocktailWithName[] cg2 = remoteOrderImpl.getNamedPopulation("Test1");
-			for (int i = 0; i < cg2.length; i++) {
-				System.out.println(cg2[i].toString());
-			}			
+//			CocktailWithName[] cg2 = remoteOrderImpl.getNamedPopulation("Test1");
+//			for (int i = 0; i < cg2.length; i++) {
+//				System.out.println(cg2[i].toString());
+//			}			
 		}
 	}
 
