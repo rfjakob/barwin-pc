@@ -101,11 +101,12 @@ public class CocktailQueue implements Serializable {
 			if (actualCocktail.getName().equals(cocktailName)) {
 				deleteCocktail(actualCocktail.getEvolutionStackName(), cocktailName);
 				cocktailFound = true;
+				break;
 			}
 		}
 		
 		if (cocktailFound == false) {
-			throw new IllegalArgumentException(cocktailName + "not found !");
+			throw new IllegalArgumentException(cocktailName + " not found!");
 		}
 	}
 	

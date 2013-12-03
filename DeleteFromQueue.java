@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import serialRMI.SerialRMIException;
 
-public class TestAllowedIngredients {
+public class DeleteFromQueue {
 
 	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
@@ -26,9 +26,7 @@ public class TestAllowedIngredients {
 		System.out.println("generated");
 		
 		remoteOrderImpl.setProps("Test1", 15, 0, 2, 0.05, 5, "blub", "0000011");
-		int gen = -1;
-		while (true) {
-			gen++;
+		int gen = 0;
 					
 			CocktailWithName[] cg1 = remoteOrderImpl.getNamedPopulation("Test1");
 			for (int i = 0; i < cg1.length; i++) {
@@ -44,15 +42,11 @@ public class TestAllowedIngredients {
 				}
 				
 				remoteOrderImpl.queueCocktail("Test1", name);
-				remoteOrderImpl.deleteCocktailFromQueue(name);
-				System.out.println("deleted");
-//				remoteOrderImpl.setCocktailFitness("Test1", name, 10.0);
 			}
-//			CocktailWithName[] cg2 = remoteOrderImpl.getNamedPopulation("Test1");
-//			for (int i = 0; i < cg2.length; i++) {
-//				System.out.println(cg2[i].toString());
-//			}			
-		}
+			System.out.println("All queued!");
+			
+			remoteOrderImpl.deleteCocktailFromQueue("Test1-0-8");
+			System.out.println("deleted");
 	}
 
 }

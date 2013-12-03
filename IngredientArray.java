@@ -34,7 +34,7 @@ public class IngredientArray {
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
 				files = listOfFiles[i].getName();
-				
+
 				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
 					fileNames.add(files);
 				}
