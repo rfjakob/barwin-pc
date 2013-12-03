@@ -1,4 +1,4 @@
-@(ingredients: Array[genBot2.Ingredient])
+@(genBotRMI: genBot2.RemoteOrderInterface)
 <h3 class="subheader">Create</h3>
 <div class="stack">
 	<form class="form-horizontal" role="form" id="createForm">
@@ -10,10 +10,17 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="maxPriceInput" class="col-sm-2 control-label">Max. Price</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="maxPriceInput" name="maxPrice"
+					placeholder="Max. Price">
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-2 control-label">Ingredients</label>
 			<div class="col-sm-10">
-		@for(i <- 0 until ingredients.length) { <label class="checkbox-inline">
-			<input type="checkbox" value="@i" name="ingredients">@ingredients(i).getName
+		@for(i <- 0 until genBotRMI.getIngredients.length) { <label class="checkbox-inline">
+			<input type="checkbox" value="@i" name="ingredients">@i @genBotRMI.getIngredients()(i).getName() @genBotRMI.getIngredients()(i)
 		</label> }
 			</div>
 		</div>

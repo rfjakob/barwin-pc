@@ -10,7 +10,7 @@
 <h3 class="subheader">Queue</h3>
 <ul class="uCQueue">
 	@for(c <- genBotRMI.getQueue.getLinkedList) {
-	   	@cocktail(c, ingredients, "u")
+	   	@cocktail(c, genBotRMI, "u")
 	}
 </ul>
 } else {
@@ -20,7 +20,7 @@
 @if(genBotRMI.getCurrentlyPouringCocktail != null) {
 <h3 class="subheader">Pouring</h3>
 <ul class="uCQueue">
-	@cocktail(genBotRMI.getCurrentlyPouringCocktail, ingredients, "u")
+	@cocktail(genBotRMI.getCurrentlyPouringCocktail, genBotRMI, "u")
 </ul>
 } else {
 <h3 class="subheader">Nothing pouring</h3>
