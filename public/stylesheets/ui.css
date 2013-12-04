@@ -129,7 +129,7 @@ a{
 	text-align:center;
 	position:absolute;
 	border-radius:0.4em;
-	background-image: url('./images/barwin.png');
+	background-image: url('/assets/images/barwin.png');
 	background-position:center 50%;
 	background-repeat:repeat-y;
 	background-attachment:fixed;
@@ -139,7 +139,7 @@ a{
 #Content{
 }
 
-#Step1, #Step2, #Step3, #Step4, #Step5{
+.layer {
 	display:block;
 	position:absolute;
 	min-width:50%;
@@ -153,39 +153,10 @@ a{
 	-webkit-transition: all 1s ease-out;
 	-moz-transition: all 1s ease-out;
     -o-transition: all 1s ease-out;
+    margin-top:2em;
 }
-#Step1:active, #Step2:active, #Step3:active, #Step4:active, #Step5:active ;{
+.layer:active {
 	-webkit-transition: opacity 1s ease-out;
-}
-
-#Step1{
-	margin-top:2em;
-	visibility:visible;
-	height:85%;
-}
-
-#Step2{
-	margin-top:10%;
-	overflow:hidden;
-	visibility:hidden;
-}
-
-#Step3{
-	margin-top:10%;
-	overflow:hidden;
-	visibility:hidden;
-}
-
-#Step4{
-	margin-top:0%;
-	overflow:hidden;
-	visibility:hidden;
-}
-
-#Step5{
-	margin-top:10%;
-	overflow:hidden;
-	visibility:hidden;
 }
 
 #PleaseTakeCocktail{

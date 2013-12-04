@@ -22,9 +22,16 @@ public class Admin extends AbstractController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
-			for (Ingredient i: genBotRMI.getIngredients())
-				System.out.println(i.getName());
+			//for (Ingredient i: genBotRMI.getIngredients())
+			//	System.out.println(i.getName());
 			//genBotRMI.getNamedPopulation("adsf").;
+			
+			for(String s: genBotRMI.listLoadedEvolutionStacks()) {
+				System.out.println(s);
+				for(Ingredient i: genBotRMI.getAllowedIngredients(s)) {
+					System.out.println("  -- " + i.getName());
+				}
+			}
 			
 			return ok(index.render(genBotRMI.listLoadedEvolutionStacks(), genBotRMI));
 		} catch (Exception e) {
@@ -36,6 +43,20 @@ public class Admin extends AbstractController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 			return getStack(genBotRMI, "Refreshed", "");
+
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
+	public static Result getStatus(String rrr) {
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			ObjectNode result = Json.newObject();
+			result.put("valid", true);
+			result.put("statusCode", genBotRMI.getStatusCode());
+			result.put("statusMessage", genBotRMI.getStatusMessage());
+			return ok(result);
 
 		} catch (Exception e) {
 			return errorAjax(e);

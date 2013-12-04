@@ -5,6 +5,7 @@
 !.gitignore
 
 lib/log/*
+lib/evolutionStackSettings/*
 lib/*.so
 
 # Ignore Play! working directory #

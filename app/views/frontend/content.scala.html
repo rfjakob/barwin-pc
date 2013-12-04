@@ -1,106 +1,74 @@
 @(genBotRMI: genBot2.RemoteOrderInterface) @frontend.index() {
 	<div id="PageContainer">
-		<div id="OrderedCocktailNumber">0</div>
+		<div style="display:none">
+			<div id="OrderedCocktailNumber"></div>
+			<div id="OrderedCocktailName"></div>
+			<div id="OrderedName"></div>
+		</div>
 		<div id="Page">
-			<div class="barwin">BARWIN</div>
-			<div id="Step1"	style="display: block; opacity: 1; visibility: visible;">
+			<div class="barwin" onClick="window.location.href='/interface'">BARWIN</div>
+			<div id="OrderLayer" class="layer" style="display: block;">
 				<div class="stepContent">
 					@frontend.select(genBotRMI)
 				</div>
 			</div>
-			<div id="Step2"
-				style="display: none; opacity: 0; visibility: hidden;">
+			<div id="ConfirmLayer" class="layer" style="display: none; opacity: 0;">
 				<div class="stepContent">
-					<div id="PleaseWait">
-						<div id="PleaseWaitImage">
-							<img src="./BARWIN_files/please_wait.png"
-								alt="Please Wait for Mixing" height="100">
-						</div>
-					</div>
 					<div class="printMessage">
 						<div id="SystemMessage">Your order is</div>
-						<div id="ChosenCocktail"
-							style="display: block; opacity: 0.5936906572928624;"></div>
+						<div id="ChosenCocktail" style="display: block;"></div>
 						<div id="CocktailIngredients"></div>
 					</div>
 					<div id="StartMixing" class="choiceButton">
-						<a href="http://labyrinthos.gr/barwintest/#mix">Mix!</a>
+						<a href="#mix">Mix!</a>
 					</div>
 					<div id="CancelMixing" class="choiceButton">
-						<a href="http://labyrinthos.gr/barwintest/#order">Back</a>
-					</div>
-					<div id="StopMixing" class="choiceButton">
-						<a href="http://labyrinthos.gr/barwintest/#vote">Vote!!</a>
+						<a href="#order">Back</a>
 					</div>
 				</div>
 			</div>
-			<div id="Step3"
-				style="display: none; opacity: 0; visibility: hidden;">
+			<div id="MixingLayer" class="layer" style="display: none; opacity: 0;">
 				<div class="stepContent">
-					<div id="PleaseTakeCocktail">
-						<div id="PleaseTakeCocktailImage">
-							<img src="./BARWIN_files/cocktail.png"
-								alt="Please Take Your Cocktail" height="100">
-						</div>
-					</div>
-					<div class="systemMessageContainer">
-						<div class="printMessage">
-							<div id="PleaseTakeCocktailMessage">
-								Please take your cocktail <br> TASTE &amp; VOTE!
-							</div>
-							<div id="PleaseVoteMessage"
-								style="display: block; opacity: 0.5936906572928624;">Do
-								Not Forget!</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="Step4"
-				style="display: none; opacity: 0; visibility: hidden;">
-				<div class="stepContent">
-					<div id="PleaseVote">
-						<div id="PleaseVoteLowImage">
-							<img src="./BARWIN_files/low_vote.png" alt="Low-vote" height="50">
-						</div>
-						<div id="PleaseVoteHighImage">
-							<img src="./BARWIN_files/high_vote.png" alt="High-vote"
-								height="50">
+					<div id="PleaseWait">
+						<div id="PleaseWaitImage">
+							<img src="@routes.Assets.at("images/please_wait.png")"alt="Please Wait for Mixing" height="100">
 						</div>
 					</div>
 					<div class="printMessage">
-						<div id="VotingQuestion">How much would you pay for this
-							cocktail?</div>
+						<div id="SystemMessage">Pouring</div>
+					</div>
+				</div>
+			</div>
+			<div id="VotingLayer" class="layer" style="display: none; opacity: 0; ">
+				<div class="stepContent">
+					<div id="PleaseVote">
+						<div id="PleaseVoteLowImage">
+							<img src="@routes.Assets.at("images/low_vote.png")" alt="Low-vote" height="50">
+						</div>
+						<div id="PleaseVoteHighImage">
+							<img src="@routes.Assets.at("images/high_vote.png")" alt="High-vote" height="50">
+						</div>
+					</div>
+					<div class="printMessage">
+						<div id="VotingQuestion">How much would you pay for this cocktail?</div>
 					</div>
 					<div id="VotingValueDisplay">
 						<input type="text" id="VotingValueDisplayContent">
 						<!--<div id="VotingValueDisplayContent">7.5</div>-->
 					</div>
-					<!--<div data-role="fieldcontain" id="VotingSlider">
-					<input id="VotingSliderInput" type="range" min="0" max="15" value="7.5" step="0.1" onchange="votingValue(this.value)" />
-				</div>-->
-					<div id="VotingSlider"
-						class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"
-						aria-disabled="false">
-						<div
-							class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max"
-							style="width: 50%;"></div>
-						<a class="ui-slider-handle ui-state-default ui-corner-all"
-							href="http://labyrinthos.gr/barwintest/#" style="left: 50%;"></a>
+					<div id="VotingSlider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false">
+						<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div>
+						<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 50%;"></a>
 					</div>
 					<div id="Vote" class="choiceButton">
-						<a href="http://labyrinthos.gr/barwintest/#thankyou"
-							onclick="voteHOOK(document.getElementById(&#39;VotingValueDisplayContent&#39;).value)">Submit</a>
-					</div>
-					<div id="CancelVote" class="choiceButton">
-						<a href="http://labyrinthos.gr/barwintest/#order">Cancel</a>
+						<a href="#vote"	onclick="vote($('#VotingValueDisplayContent').val()); return false;">Submit</a>
 					</div>
 				</div>
 			</div>
-			<div id="Step5"
-				style="display: none; opacity: 0; visibility: hidden;">
+			<div id="MessageLayer" class="layer" style="display: none; opacity: 0;">
 				<div class="stepContent">
-					<div id="Thankyou">
-						<div id="ThankyouMessage">THANK YOU!</div>
+					<div class="message">
+						<div class="messageContent"><span></span> </div>
 					</div>
 				</div>
 			</div>

@@ -6,6 +6,7 @@
 
 GET     /                           controllers.Admin.index()
 GET     /stack		                controllers.Admin.stack()
+GET     /getStatus/:rrr            	controllers.Admin.getStatus(rrr)
 POST    /stackOP                 	controllers.Admin.stackOP()
 POST    /queueOP                 	controllers.Admin.queueOP()
 GET     /sendAbort	                controllers.Admin.sendAbort()

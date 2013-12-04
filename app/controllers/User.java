@@ -65,9 +65,11 @@ public class User extends AbstractController {
 				result.put("valid", false);
 				result.put("message", "No more cocktails");
 			} else {
-				result.put("valid", true);
-				result.put("message", "Cocktail queued");
 				genBotRMI.queueCocktail(t.getEvolutionStackName(), t.getName());
+				result.put("valid", true);
+				result.put("name", t.getEvolutionStackName());
+				result.put("cocktailName", t.getName());
+				result.put("message", "Cocktail queued");
 			}
 			return ok(result);
 		} catch (Exception e) {
