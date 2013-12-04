@@ -83,4 +83,6 @@ public interface RemoteOrderInterface extends Remote {
 	public Ingredient[] getAllowedIngredients(String evolutionStackName) throws RemoteException;
 
 	int getStatusCode() throws RemoteException;
+
+	void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException;
 }

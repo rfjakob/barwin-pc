@@ -185,20 +185,6 @@ public class QueueManager extends Thread {
 		if (serial != null) {
 			serial.writeLine(codedPourCocktail);
 		}
-		
-		try {
-			statusCode = 1;
-			Thread.sleep(5000);
-			statusCode = 2;
-			Thread.sleep(5000);
-			statusCode = 3;
-			Thread.sleep(5000);
-			statusCode = 0;
-			
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		currentlyPouring = toBePoured;
 	
@@ -206,6 +192,22 @@ public class QueueManager extends Thread {
 		pourCocktail.setPouring(true);
 		status = Status.waitingForWaitingForCup;
 		
+		if (serial == null) {
+			// COMMENT THIS
+			try {
+				statusCode = 1;
+				Thread.sleep(3000);
+				statusCode = 2;
+				Thread.sleep(10000);
+				statusCode = 3;
+				Thread.sleep(3000);
+				statusCode = 0;
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void finishedPouring(int[] realValues) {
