@@ -1,5 +1,7 @@
 	var statusCode = -1;
 	var statusMessage = "";
+	var statusCocktail = "";
+	
 	var effectTime = 500;
 	var lastStatusCode = -1;
 	
@@ -12,12 +14,13 @@
 					if(data.valid) {
 						statusCode = data.statusCode;
 						statusMessage = data.statusMessage;
-						console.log("status: " + data.statusCode);
+						statusCocktail = data.statusCocktail;
+						console.log("status: " + data.statusCode + " " + data.statusCocktail + " " + $("#OrderedCocktailName").html());
 						//$(".barwin").html(data.statusCode + " " + c++)
 					}
 				},
 				complete : function() {
-					setTimeout(updateStatus, 500);
+					setTimeout(updateStatus, 1000);
 				}
 			});
 		})();
@@ -55,37 +58,45 @@
 		 * 2 pouring > #mix, replace message to Preparing
 		 * 3 take cup
 		 */
-		if (statusCode == 0) {
-			if(pouring) {
-				window.location.href = "#vote";
-				pouring = false;
-			} else {
+		if(timesTo == 0) {
+			AnimateRotate(360);
+			timesTo = 6;
+		}
+		
+		if(statusCocktail != $("#OrderedCocktailName").html()) {
+			timesTo--;
+			setTimeout(checkStatus, 1000)
+		} else {
+			if (statusCode == 0) {
+				if(pouring) {
+					window.location.href = "#vote";
+					pouring = false;
+				} else {
+					timesTo--;
+					setTimeout(checkStatus, 1000)
+				}
+			} else if (statusCode == 1){
+				if(lastStatusCode != statusCode)
+					showMessage("Please place the cup on the <br/> &#9679;");
+				//window.location.href = "#mix";
+				setTimeout(checkStatus, 1000)
+			} else if (statusCode == 2){
+	
+				$("#SystemMessage").html(statusMessage);
+				timesTo--;
+				window.location.href = "#mix2"; // implement error page
+				pouring = true;
+				setTimeout(checkStatus, 1000)
+					
+			} else if (statusCode == 3){
+				if(lastStatusCode != statusCode)
+					showMessage("Please taste your cocktail and rate it!");
+				setTimeout(checkStatus, 1000)
+			} else{
 				setTimeout(checkStatus, 1000)
 			}
-		} else if (statusCode == 1){
-			if(lastStatusCode != statusCode)
-				showMessage("Please place the cup on the <br/> &#9679;");
-			//window.location.href = "#mix";
-			setTimeout(checkStatus, 1000)
-		} else if (statusCode == 2){
-			if(timesTo == 0) {
-				AnimateRotate(360);
-				timesTo = 6;
-			}
-			$("#SystemMessage").html(statusMessage);
-			timesTo--;
-			window.location.href = "#mix2"; // implement error page
-			pouring = true;
-			setTimeout(checkStatus, 1000)
-				
-		} else if (statusCode == 3){
-			if(lastStatusCode != statusCode)
-				showMessage("Please taste your cocktail and rate it!");
-			setTimeout(checkStatus, 1000)
-		} else{
-			setTimeout(checkStatus, 1000)
+			lastStatusCode = statusCode
 		}
-		lastStatusCode = statusCode
 	}
 
 	function vote(voteValue) {
@@ -145,6 +156,7 @@
 				$("#MixingLayer").show();
 				$("#MixingLayer").animate({opacity:'1'}, effectTime);
 			} else if (step == "vote"){
+				$("#VotingQuestion").html('How much would you pay for this ' + $("#OrderedName").html() + '?');				
 				$("#VotingLayer").show();
 				$("#VotingLayer").animate({opacity:'1'}, effectTime);
 

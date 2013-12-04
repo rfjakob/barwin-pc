@@ -1,4 +1,17 @@
 @(genBotRMI: genBot2.RemoteOrderInterface)
+@if(genBotRMI.getCurrentlyPouringCocktail() != null) {
+<h3 class="subheader">Currently Pouring</h3>
+<table class="table table-striped" id="currentlyPouring">
+		<thead>
+			<td>Name</td>
+		</thead>
+		<tbody>
+			<tr">
+				<td>@genBotRMI.getCurrentlyPouringCocktail.getName</td>
+			</tr>
+		</tbody>
+</table>
+}
 <h3 class="subheader">Queue</h3>
 <div class="stack">
 	<table class="table table-striped" id="queue">

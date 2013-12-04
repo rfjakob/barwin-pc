@@ -56,6 +56,8 @@ public class Admin extends AbstractController {
 			result.put("valid", true);
 			result.put("statusCode", genBotRMI.getStatusCode());
 			result.put("statusMessage", genBotRMI.getStatusMessage());
+			if(genBotRMI.getCurrentlyPouringCocktail() != null)
+				result.put("statusCocktail", genBotRMI.getCurrentlyPouringCocktail().getName());
 			return ok(result);
 
 		} catch (Exception e) {
