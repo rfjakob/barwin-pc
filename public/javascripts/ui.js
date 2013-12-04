@@ -15,7 +15,7 @@
 						statusCode = data.statusCode;
 						statusMessage = data.statusMessage;
 						statusCocktail = data.statusCocktail;
-						console.log("status: " + data.statusCode + " " + data.statusCocktail + " " + $("#OrderedCocktailName").html());
+						//console.log("status: " + data.statusCode + " " + data.statusCocktail + " " + $("#OrderedCocktailName").html());
 						//$(".barwin").html(data.statusCode + " " + c++)
 					}
 				},
