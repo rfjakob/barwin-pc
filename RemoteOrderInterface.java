@@ -76,13 +76,13 @@ public interface RemoteOrderInterface extends Remote {
 	public double getMaxPricePerLiter(String evolutionStackName)
 			throws RemoteException;
 	
-	void sendToSerial(String s) throws RemoteException, SerialRMIException;
+	public void sendToSerial(String s) throws RemoteException, SerialRMIException;
 
 	public Ingredient[] getIngredients() throws RemoteException;
 
 	public Ingredient[] getAllowedIngredients(String evolutionStackName) throws RemoteException;
 
-	int getStatusCode() throws RemoteException;
+	public int getStatusCode() throws RemoteException;
 
-	void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException;
+	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException;
 }

@@ -46,7 +46,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	@Override
 	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException {
-		//getNamedPopulation(evolutionStackName).
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager().getCocktailByName(name).setPoured(false);
 	}
 
 	@Override
