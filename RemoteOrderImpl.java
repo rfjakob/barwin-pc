@@ -228,6 +228,11 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
+	public int getStatusCode() throws RemoteException {
+		return queueManager.getStatusCode();
+	}
+
+	@Override
 	public CocktailGenerationManager readGenerationManager(
 			String evolutionStackName) throws RemoteException {
 		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager();
@@ -372,9 +377,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		Ingredient[] retIngs = new Ingredient[numOfAllowed];
 		
 		int allIngsCount = 0;
-		for (int i = 0; i < numOfAllowed; i++) {
+		for (int i = 0; i < allIngsBool.length; i++) {
 			if (allIngsBool[i]) {
-				retIngs[i] = ings[i];
+				retIngs[allIngsCount] = ings[i];
 				allIngsCount++;
 			}
 		}

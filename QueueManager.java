@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 
 
 
+
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface; 
 public class QueueManager extends Thread {
@@ -22,6 +23,7 @@ public class QueueManager extends Thread {
 	private GenBotProtocol protocol;
 	private SerialRMIInterface serial;
 	private String statusMessage = null;
+	private int statusCode = 0;
 	
 	private int cocktailSizeMilliliter;
 	
@@ -123,17 +125,19 @@ public class QueueManager extends Thread {
 					System.out.println("weight: " + me.args[0] + " cup: " + me.args[1]);
 					//if(status != Status.waitingForWaitingForCup)
 					status = Status.ready;
+					statusCode = 0;
 					statusMessage = null;
 					break;
 				case "WAITING_FOR_CUP":
 					status = Status.waitingForCup;
-					//System.out.println("Wort ma am Becher!");
 					statusMessage = "Waiting for cup";
+					statusCode = 1;
 					break;
 				case "ENJOY":
 					finishedPouring(me.args);
 					status = Status.waitingForReady;
 					statusMessage = "Take cup";
+					statusCode = 3;
 					break;
 				case "ERROR":
 					statusMessage = me.raw;
@@ -141,15 +145,20 @@ public class QueueManager extends Thread {
 					status = Status.error;
 					break;
 				case "POURING":
-					statusMessage = "POURING ";
-
-					for(Ingredient i : IngredientArray.getInstance()
-							.getAllIngredients()) {
+					statusMessage = "Pouring ";
+					
+					Ingredient ci = null;
+					for(Ingredient i : IngredientArray.getInstance().getAllIngredients()) {
 						if(i.getArduinoOutputLine() == me.args[0]) {
-							statusMessage += i.getName();
+							ci = i;
+							break;
+							//statusMessage += i.getName();
 						}
 					}
+					if(currentlyPouring != null && ci != null)
+						statusMessage += cocktailSizeMilliliter * currentlyPouring.getCocktail().getAmount(ci) + "ml of " + ci.getName();
 					
+					statusCode = 2;
 					break;
 				default:
 					status = Status.unknown;
@@ -176,6 +185,21 @@ public class QueueManager extends Thread {
 		if (serial != null) {
 			serial.writeLine(codedPourCocktail);
 		}
+		
+		try {
+			statusCode = 1;
+			Thread.sleep(5000);
+			statusCode = 2;
+			Thread.sleep(5000);
+			statusCode = 3;
+			Thread.sleep(5000);
+			statusCode = 0;
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		currentlyPouring = toBePoured;
 	
 		pourCocktail.setQueued(false);
@@ -238,6 +262,10 @@ public class QueueManager extends Thread {
 
 	public String getStatusMessage() {
 		return statusMessage;
+	}
+	
+	public int getStatusCode() {
+		return statusCode;
 	}
 
 	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
