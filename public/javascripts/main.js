@@ -211,7 +211,7 @@ $(function() {
 		gb.clearSerialLine()
 	})
 
-	if ($('#serialContainer').length > 0) {
+	/*if ($('#serialContainer').length > 0) {
 		(function readSerial() {
 			$.ajax({
 				url: 		'/serial/read',
@@ -229,7 +229,7 @@ $(function() {
 				}
 			});
 		})();
-	}
+	}*/
 	if ($('#userInterface').length > 0) {
 		(function refreshUserInterface() {
 			$.ajax({

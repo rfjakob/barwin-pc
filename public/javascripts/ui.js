@@ -8,7 +8,7 @@
 	var c = 0;
 	
 	(function updateStatus() {
-			$.ajax({
+		$.ajax({
 				url: 		'/getStatus/' + Math.random().toString(36).substring(7),
 				success: 	function(data) {
 					if(data.valid) {
@@ -52,6 +52,7 @@
 	var timesTo = 0;
 	var pouring = false;
 	function checkStatus() {
+		//console.log("checkStatus: "  + statusCode);
 		/* status
 		 * 0 ready
 		 * 1 waiting for cup > #mix
@@ -62,7 +63,9 @@
 			AnimateRotate(360);
 			timesTo = 6;
 		}
-		
+
+		// CHECK IF IT IS THE RIGHT COCKTAIL IS POURING
+		// ONLY IF IT IS THE ORDERED, CHECK statusCode
 		if(statusCocktail != $("#OrderedCocktailName").html()) {
 			timesTo--;
 			setTimeout(checkStatus, 1000)
@@ -81,8 +84,8 @@
 				//window.location.href = "#mix";
 				setTimeout(checkStatus, 1000)
 			} else if (statusCode == 2){
-	
-				$("#SystemMessage").html(statusMessage);
+				
+				$("#MixingLayer .SystemMessage").html(statusMessage);
 				timesTo--;
 				window.location.href = "#mix2"; // implement error page
 				pouring = true;
@@ -96,7 +99,7 @@
 				setTimeout(checkStatus, 1000)
 			}
 			lastStatusCode = statusCode
-		}
+		//}
 	}
 
 	function vote(voteValue) {
@@ -156,7 +159,7 @@
 				$("#MixingLayer").show();
 				$("#MixingLayer").animate({opacity:'1'}, effectTime);
 			} else if (step == "vote"){
-				$("#VotingQuestion").html('How much would you pay for this ' + $("#OrderedName").html() + '?');				
+				$("#VotingQuestion").html('Please rate for this ' + $("#OrderedName").html() + '?');				
 				$("#VotingLayer").show();
 				$("#VotingLayer").animate({opacity:'1'}, effectTime);
 
@@ -202,3 +205,51 @@
         $('.message .messageContent span').animate({opacity:'1'}, effectTime).delay(200).animate({opacity:'0'}, effectTime, pulse);
     })();
 	});
+
+	// jquery slider
+	$(function() {
+		$( "#VotingSlider" ).slider({
+			range: "max",min: 0,max: 150,value: 75,
+			slide: function( event, ui ) {
+				$( "#VotingValueDisplayContent" ).val( ui.value/10 );
+			}
+		});
+		$( "#VotingValueDisplayContent" ).val( $( "#VotingSlider" ).slider( "value" )/10 );	
+	});
+
+//
+	function votingValue() {
+		var newVotingValue = newVotingValue.substring(0, 4);
+		opacityFactor = newVotingValue / 12; // go to full opacity at positive or negative 0.8 out of 1 vote.
+		$("#VotingValueDisplayContent").html(newVotingValue);
+		$("#PleaseVoteLowImage").css('opacity', (1.25 - opacityFactor));
+		$("#PleaseVoteHighImage").css('opacity', opacityFactor);
+	}
+
+// 360 degree rotation in 3secs
+//	function AnimateRotate(angle) {
+//		var $elem = $('#PleaseWaitImage');
+//		$({deg: 0}).animate({deg: angle}, {
+//    		duration: 3000,
+//    		step: function(now) {
+//        		$elem.css({
+//            		transform: 'rotate(' + now + 'deg)'
+//        		});
+//    		}
+//		});
+//	}
+
+// Fadein fadeout in 3secs
+//	function AnimateThanks(opacity) {
+//		var $elem = $('#ThanksMessage');
+//		$({val: 0}).animate({val: opacity}, {
+//    		duration: 3000,
+//    		step: function(now) {
+//        		$elem.css({
+//            		transform: 'opacity(' + now + 'val)'
+//        		});
+//    		}
+//		});
+//	}
+
+// Directives
