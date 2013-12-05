@@ -156,7 +156,7 @@ public class QueueManager extends Thread {
 						}
 					}
 					if(currentlyPouring != null && ci != null)
-						statusMessage += cocktailSizeMilliliter * currentlyPouring.getCocktail().getAmount(ci) + "ml of " + ci.getName();
+						statusMessage += ci.getName();
 					
 					statusCode = 2;
 					break;
@@ -211,19 +211,21 @@ public class QueueManager extends Thread {
 	}
 	
 	private void finishedPouring(int[] realValues) {
-		currentlyPouring.getCocktail().setPoured(true);		
-		currentlyPouring.getCocktail().setPouring(false);
-		int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length;
-		
-		if (realValues.length == mandatoryLength) {
-			double[] realDoubles = new double[mandatoryLength];
-			for (int i = 0; i < mandatoryLength; i++) {
-				realDoubles[i] = realValues[i];
-				
-				currentlyPouring.getCocktail().changeAmounts(realDoubles);
+		if(currentlyPouring != null) {
+			currentlyPouring.getCocktail().setPoured(true);		
+			currentlyPouring.getCocktail().setPouring(false);
+			int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length;
+			
+			if (realValues.length == mandatoryLength) {
+				double[] realDoubles = new double[mandatoryLength];
+				for (int i = 0; i < mandatoryLength; i++) {
+					realDoubles[i] = realValues[i];
+					
+					currentlyPouring.getCocktail().changeAmounts(realDoubles);
+				}
 			}
+			currentlyPouring = null;
 		}
-		currentlyPouring = null;
 	}
 	
 	private String codePour(Cocktail pourCocktail) {
