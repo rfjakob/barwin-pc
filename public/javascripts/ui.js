@@ -99,7 +99,7 @@
 				setTimeout(checkStatus, 1000)
 			}
 			lastStatusCode = statusCode
-		//}
+		}
 	}
 
 	function vote(voteValue) {
