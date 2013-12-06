@@ -66,10 +66,10 @@
 
 		// CHECK IF IT IS THE RIGHT COCKTAIL IS POURING
 		// ONLY IF IT IS THE ORDERED, CHECK statusCode
-		if(statusCocktail != $("#OrderedCocktailName").html()) {
+		/*if(statusCocktail != $("#OrderedCocktailName").html()) {
 			timesTo--;
 			setTimeout(checkStatus, 1000)
-		} else {
+		} else {*/
 			if (statusCode == 0) {
 				if(pouring) {
 					window.location.href = "#vote";
@@ -99,7 +99,7 @@
 				setTimeout(checkStatus, 1000)
 			}
 			lastStatusCode = statusCode
-		}
+		//}
 	}
 
 	function vote(voteValue) {
