@@ -37,4 +37,14 @@ Dependencies
 
 Build
 -----
-Just type "make" to generate serialRMI.jar in the bin directory.
+Just run
+
+	make
+
+to generate serialRMI.jar in the build directory.
+
+Run
+
+	make install
+
+to copy serialRMI.jar where genBotWI expects it (this assumes that genBotWI is in ..)
