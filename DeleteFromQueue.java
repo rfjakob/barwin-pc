@@ -50,7 +50,7 @@ public class DeleteFromQueue {
 			
 			remoteOrderImpl.setCocktailFitness("Test1", "Test1-0-3", 4);
 			
-			System.out.println(remoteOrderImpl.getFitnessPlusPrice("Test1", 0, "Test1-0-3"));
+			//System.out.println(remoteOrderImpl.getFitnessPlusPrice("Test1", 0, "Test1-0-3"));
 	}
 
 }

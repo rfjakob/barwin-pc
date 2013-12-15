@@ -1,12 +1,14 @@
 package genBot2;
 
-public class GenBotMessage {
+public class ArduinoMessage {
+	public ArduinoMessage() {
+	}
 	
-	public GenBotMessage(String sc) throws ArduinoProtocolException {
+	public ArduinoMessage(String sc) throws ArduinoProtocolException {
 		raw = sc;
 		String[] a = raw.split(" ");
 		command = a[0];
-		if(!GenBotProtocol.commands.containsKey(command))
+		if(!ArduinoProtocol.commands.containsKey(command))
 			throw new ArduinoProtocolException("Command '" + raw + "' not implemented!"); 
 
 		switch (a[0]) {
@@ -21,7 +23,7 @@ public class GenBotMessage {
 		}
 	}
 
-	public GenBotMessage(String command, int[] args) {
+	public ArduinoMessage(String command, int[] args) {
 		this.command = command;
 		this.args = args;
 		
@@ -31,6 +33,7 @@ public class GenBotMessage {
 			raw += " " + args[i];
 		
 	}
+	public boolean unknownMessage = false;
 	public String command;
 	public String raw;
 	public String debug;
