@@ -8,26 +8,27 @@ import gnu.io.UnsupportedCommOperationException;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-//import java.rmi.server.RemoteServer;
 import java.rmi.server.UnicastRemoteObject;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-//import java.util.List;
 import java.util.Properties;
 
 public class Serial implements SerialRMIInterface {
@@ -41,7 +42,7 @@ public class Serial implements SerialRMIInterface {
 	static OutputStream out;
 	static BufferedWriter file;
 	static String logging = "";
-	
+
 	private String readBuffer = "";
 	
 	public static void main(String[] args) throws Exception {	    
@@ -90,7 +91,7 @@ public class Serial implements SerialRMIInterface {
 			Serial rmiImpl = new Serial();
 			SerialRMIInterface stub = (SerialRMIInterface) UnicastRemoteObject
 					.exportObject(rmiImpl, 0);
-			// RemoteServer.setLog(System.out);
+
 			System.out.println("Starting RMI service '" + rmiServiceName + "'");
 			registry.rebind(rmiServiceName, stub);
 			
@@ -145,7 +146,7 @@ public class Serial implements SerialRMIInterface {
 			throw new SerialRMIException(e);
 		}
 		if (portIdentifier.isCurrentlyOwned()) {
-			System.out.println("Error: Port is currently in use");
+			System.out.println("Warning: Port is currently in use");
 		} else {
 			SerialPort serialPort;
 			try {
@@ -166,13 +167,10 @@ public class Serial implements SerialRMIInterface {
 				in = serialPort.getInputStream();
 				out = serialPort.getOutputStream();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			log("Connected to port " + portName, 2);
-			// (new Thread(new SerialReader(in))).start();
-			// (new Thread(new SerialWriter(out))).start();
 			connected = true;
 		}
 	}
@@ -192,7 +190,6 @@ public class Serial implements SerialRMIInterface {
 			System.err.println("   - IOException occured: " + e.getMessage());
 			System.err.println("   - Setting status to not connected");
 			disconnect();
-			//e.printStackTrace();
 		}
 	}
 
@@ -201,6 +198,7 @@ public class Serial implements SerialRMIInterface {
 		write(str + "\r\n");
 		log(str, 4);
 	}
+
 	@Override
 	public String read() throws SerialRMIException {
 		if(!connected)
@@ -228,37 +226,30 @@ public class Serial implements SerialRMIInterface {
 	}
 	
 	public String[] readLines() throws RemoteException, SerialRMIException {
-		//System.out.println("readLines()");
+		// Remove \r 
 		String read = read().replaceAll("\\r", "");
 		if(read.isEmpty())
 			return new String[0];
 		
-		//System.out.println("read '" + read.replaceAll("\\n", "\\\\n") + "' (in buffer '" + readBuffer + "')");
+		// Combine buffered and new readed string
 		String str = readBuffer + read; 
-		
 		int i = str.lastIndexOf("\n");
 		
-		
-		//System.out.println("index: " + i + "  str length: " + str.length());
-		// NO NEWLINE FOUND
+		// No newline in string
 		if(i == -1) {
 			readBuffer = str;
-			//System.out.println("NO NEWLINE, REMEMBER: " + readBuffer);
 			return new String[0];
 		}
 		
-		
-		// NEWLINE FOUND BUT NOT AT THE END
+		// Newline found but not at the end
 		if(i != str.length() - 1) {
 			readBuffer = str.substring(i + 1);
-			//System.out.println("NO NEWLINE AT END, REMEMBER: " + readBuffer);
 			str = str.substring(0, i);
 		} else {
 			readBuffer = "";
 		}
 		
 		String[] sA = str.split("\\n");
-		//System.out.println("Trying to convert: " + str.replaceAll("\\n", "\\\\n") + " (l: " + sA.length + ")");
 		for (int j = 0; j < sA.length; j++)
 			log(sA[j], 3);
 		
@@ -268,6 +259,7 @@ public class Serial implements SerialRMIInterface {
 	private static void log(String str, int i) {
 		if(logging.isEmpty())
 			return;
+
 		if(logging.equals("line") && (i == 0 || i == 1)  || logging.equals("raw") && (i == 3 || i == 4))
 			return;
 			
@@ -316,14 +308,12 @@ public class Serial implements SerialRMIInterface {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String[] getSerialPorts() throws RemoteException {
-		//System.out.println("getSerialPorts()");
 		ArrayList<String> portList = new ArrayList<String>();
 		java.util.Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
 		while (portEnum.hasMoreElements()) {
 			CommPortIdentifier portIdentifier = portEnum.nextElement();
 			if(portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL)
 				portList.add(portIdentifier.getName());
-			//System.out.println(portIdentifier.getName());
 		}
 		String[] portListA = new String[portList.size()];
 		return portList.toArray(portListA);
