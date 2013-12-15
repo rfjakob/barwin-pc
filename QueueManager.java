@@ -6,6 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface;
@@ -42,12 +43,88 @@ public class QueueManager extends Thread {
 		
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 		
-		if (!(server.equals("") || portName.equals(""))) {
-			this.serial = (SerialRMIInterface) Naming.lookup(server);
-			serial.connect(portName);
-		} else {
-			this.serial = null;
+		Scanner scanner = new Scanner(System.in);
+		System.out.println();
+		System.out.println("------------------------------------");
+		System.out.println("- Specify serialRMI server address -");
+		System.out.println("------------------------------------");
+		System.out.println("--- default: " + server);
+		System.out.println("--- use 'none' for simulating");
+		System.out.println("--------------------------------");
+		System.out.print("--- Address: ");
+		String serverI = scanner.nextLine();
+		System.out.println("--------------------------------");
+		System.out.println();
+		
+		if(serverI.isEmpty()) {
+			serverI = server;
+			System.out.println("Using default: " + server);
 		}
+		
+		if(serverI.equals("none")) {
+			System.out.println("No server specified.");
+			System.out.println();
+			System.out.println("------------------------------------");
+			System.out.println("- STARTING SIMULATION MODE ---------");
+			System.out.println("------------------------------------");
+			this.serial = null;
+		} else {
+			server = serverI;
+			try {
+				System.out.println("Trying to connect to " + server + " ... ");
+				this.serial = (SerialRMIInterface) Naming.lookup(server);
+				System.out.println("Connected!");
+			} catch (RemoteException e) {
+				System.out.println();
+				System.out.println("------------------------------------");
+				System.out.println("- ERROR WHILE CONNECTING -----------");
+				System.out.println("------------------------------------");
+				e.printStackTrace();
+				System.out.println("------------------------------------");
+				scanner.close();
+				throw e;
+			}
+			
+			System.out.println();
+			System.out.println("--------------------------------");
+			System.out.println("- Specify serial port ----------");
+			System.out.println("--------------------------------");
+			int i = 0;
+			String[] availablePorts = this.serial.getSerialPorts();
+			if(availablePorts.length > 1) {
+				for(String tName: availablePorts) {
+					i++;
+					System.out.print("--- " + i + ": " + tName);
+					if (portName.equals(tName)) {
+						System.out.print(" (default)");
+					}
+					System.out.println();
+				}
+				System.out.println("--------------------------------");
+				System.out.println("--- Use number to specify: ");
+				if(scanner.hasNextInt()) {
+					portName = availablePorts[scanner.nextInt() - 1];
+				} 
+				System.out.println("--------------------------------");
+			} else if(availablePorts.length == 1) {
+				if(!portName.equals(availablePorts[0])) {
+					System.out.print("--- WARNING: Port " + portName + " not available, using port " + availablePorts[0]);
+					portName = availablePorts[0];
+				}  
+			} else {
+				System.out.println();
+				System.out.println("------------------------------------");
+				System.out.println("- ERROR NO SERIAL PORT -------------");
+				System.out.println("------------------------------------");
+				scanner.close();
+				throw new SerialRMIException("ERROR NO SERIAL PORT");
+			}
+			
+			
+			serial.connect(portName);
+		}
+		scanner.close();
+		
 		
 		this.status = Status.unknown;
 	}
@@ -223,7 +300,7 @@ public class QueueManager extends Thread {
 			currentlyPouring.getCocktail().setPoured(true);		
 			currentlyPouring.getCocktail().setPouring(false);
 			
-			/*
+			/* REPLACE REAL VALUES
 			int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length; 
 			if (realValues.length == mandatoryLength) {
 				double[] realDoubles = new double[mandatoryLength];
