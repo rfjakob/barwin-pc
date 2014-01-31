@@ -4,8 +4,8 @@ package genBot2;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GenBotProtocol {
-	static GenBotProtocol instance;
+public class ArduinoProtocol {
+	static ArduinoProtocol instance;
 	static final Integer cBottles = 7;
 	
 	static public final Map<String, Integer> commands =  new HashMap<String, Integer>() {
@@ -22,16 +22,23 @@ public class GenBotProtocol {
 	    put("POURING"			,  2);
 	    put("TURN_BOTTLE"		,  2);
 	}};
-	public static GenBotProtocol getInstance() {
+	
+	public static ArduinoProtocol getInstance() {
 		if(instance == null)
-			instance = new GenBotProtocol();
+			instance = new ArduinoProtocol();
 		return instance;
 	}
 
-	public GenBotMessage[] read(String[] sA) throws ArduinoProtocolException{
-		GenBotMessage[] ma = new GenBotMessage[sA.length];
+	public ArduinoMessage[] read(String[] sA) {
+		ArduinoMessage[] ma = new ArduinoMessage[sA.length];
 		for (int i = 0; i < sA.length; i++)
-			ma[i] = new GenBotMessage(sA[i]);
+			try {
+				ma[i] = new ArduinoMessage(sA[i]);
+			} catch (ArduinoProtocolException e) {
+				ma[i] = new ArduinoMessage();
+				ma[i].raw = sA[i];
+				ma[i].unknownMessage = true;
+			}
 		return ma;
 	}
 

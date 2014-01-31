@@ -85,4 +85,6 @@ public interface RemoteOrderInterface extends Remote {
 	public int getStatusCode() throws RemoteException;
 
 	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException;
+
+	public ArduinoMessage[] getReceivedMessages()  throws RemoteException;
 }

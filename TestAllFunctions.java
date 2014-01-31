@@ -12,9 +12,6 @@ public class TestAllFunctions {
 		
 		Ingredient[] alleZutaten = IngredientArray.getInstance().getAllIngredients();
 		Ingredient[] erlaubteZutaten1 = {alleZutaten[2], alleZutaten[3], alleZutaten[4]};
-		Ingredient[] erlaubteZutaten2 = {alleZutaten[0], alleZutaten[3], alleZutaten[4], alleZutaten[5], alleZutaten[6]};
-		Ingredient[] erlaubteZutaten3 = alleZutaten;
-
 		CocktailQueue queue = new CocktailQueue();
 
 		QueueManager queueManager;

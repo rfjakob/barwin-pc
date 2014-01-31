@@ -50,6 +50,10 @@ public class DeleteFromQueue {
 			
 			remoteOrderImpl.setCocktailFitness("Test1", "Test1-0-3", 4);
 			
+<<<<<<< HEAD
+=======
+			//System.out.println(remoteOrderImpl.getFitnessPlusPrice("Test1", 0, "Test1-0-3"));
+>>>>>>> b2e17b97f511c5ad54592609d51d586a401525da
 	}
 
 }

@@ -398,6 +398,11 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
+	public ArduinoMessage[] getReceivedMessages() {
+		return queueManager.getReceivedMessagesAndClearQueue();
+	}
+
+	@Override
 	public Ingredient[] getIngredients() throws RemoteException {
 		return IngredientArray.getInstance()
 				.getAllIngredients();
