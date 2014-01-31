@@ -33,7 +33,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException {
 		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
 
-		evoAlgMngr.setFitness(name, queueManager.getCocktailSizeMilliliter(), fitnessInput);
+		evoAlgMngr.setFitness(name, queueManager.getCocktailSizeMilliliter() / 1000, fitnessInput);
 		
 		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
 			try {
@@ -104,7 +104,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			Ingredient[] allowedIngredients, double maxPricePerLiter) throws RemoteException,
 			SQLException, MaxAttemptsToMeetPriceConstraintException {
 		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 15, 3, 2, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, maxPricePerLiter, evolutionStackName);
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 8, 2, 1, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, maxPricePerLiter, evolutionStackName);
 	}
 	
 	@Override

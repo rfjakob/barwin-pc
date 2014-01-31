@@ -214,6 +214,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 					out += ", ";
 	//			}
 			}
+			out += "Costs: " + getCosts() + " ";
+			out += "Rating: " + getFitnessInput() + " ";
 			out += "Fitness: " + fitness;
 			
 			return out;
