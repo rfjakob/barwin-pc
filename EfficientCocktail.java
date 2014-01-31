@@ -10,6 +10,9 @@ public class EfficientCocktail implements CheckFitness {
 		double cocktailCosts = cocktail.getCosts() * cocktailSize;
 		
 		double absoluteEfficiency = fitnessInput - cocktailCosts;
+		if (absoluteEfficiency < 0) {
+			absoluteEfficiency = 0;
+		}
 		
 		double efficiencyPerML = absoluteEfficiency / cocktailSize;
 		
