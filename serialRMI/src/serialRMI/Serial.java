@@ -143,6 +143,7 @@ public class Serial implements SerialRMIInterface {
 			portIdentifier = CommPortIdentifier
 					.getPortIdentifier(portName);
 		} catch (NoSuchPortException e) {
+			System.out.println("serialRMI: NoSuchPortException");
 			throw new SerialRMIException(e);
 		}
 		if (portIdentifier.isCurrentlyOwned()) {
