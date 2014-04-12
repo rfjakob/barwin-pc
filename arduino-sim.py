@@ -8,18 +8,18 @@
 # This should make testing the PC software easier as the hardware is
 # not required and all scenarios can be covered easily.
 
-import os, serial, time
+import sys, os, serial, time
 
 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L52
 def ERROR(msg):
-	s.write("ERROR %s\r\n" %msg)
+	swrite("ERROR %s\r\n" %msg)
 
 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L29
 def DEBUG_MSG_LN(msg):
-	s.write("DEBUG     %s\r\n" %msg)
+	swrite("DEBUG     %s\r\n" %msg)
 
 def MSG(msg):
-	s.write("%s\r\n" %msg)
+	swrite("%s\r\n" %msg)
 
 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/bottle/bottle.cpp#L165
 #
@@ -32,7 +32,7 @@ def pour_all(parts):
 		if part == 0:
 			continue
 
-		s.write("POURING %d 0\r\n" % n)
+		swrite("POURING %d 0\r\n" % n)
 		time.sleep(1)
 		
 		if n == 1:
@@ -55,14 +55,14 @@ def pour_all(parts):
 
 def wait_for_resume():
 	while True:
-		if(s.inWaiting() == 0):
+		if(vserial.inWaiting() == 0):
 			time.sleep(0.1)
 			continue
 		
-		c = s.read(50)
-		if c == "RESUME":
+		c = sread(50)
+		if c == "RESUME\r\n":
 			return 0
-		elif c == "ABORT":
+		elif c == "ABORT\r\n":
 			return 1
 		else:
 			ERROR("ERROR INVAL_CMD");
@@ -70,26 +70,50 @@ def wait_for_resume():
 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/ads1231/ads1231.cpp#L274
 def wait_for_cup():
 	MSG("WAITING_FOR_CUP")
-	
+
+# Escape \r\n
+def escapern(s):
+	return s.replace("\r", "\\r").replace("\n", "\\n")
+
+# Write to serial
+def swrite(msg):
+	print 'TX: \033[91m%s\033[0m' % escapern(msg)
+	vserial.write(msg)
+
+# Read from serial
+def sread(n):
+	msg = vserial.read(n)
+	print 'RX: \033[92m%s\033[0m' % escapern(msg)
+	return msg
 
 master_fd, slave_fd = os.openpty()
 slave_fn = os.ttyname(slave_fd)
 
-print "Created virtual terminal: %s" % slave_fn
+print "Virtual terminal: %s" % slave_fn
 
-s = serial.Serial()
-s.fd = master_fd
-s._isOpen = True
-s.timeout = 0.05
+vserial = serial.Serial()
+vserial.fd = master_fd
+vserial._isOpen = True
+vserial.timeout = 0.05
+
+friendly_name = "/dev/ttyS99"
+if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != slave_fn):
+	print "Creating %s symlink via sudo..." % friendly_name
+	ret = os.system("sudo ln -sfT %s %s" % (slave_fn, friendly_name))
+	if ret != 0:
+		print "Failed"
+		exit(1)
+
+print "Symlinked as:     %s" % friendly_name
 
 while True:
-	if(s.inWaiting() == 0):
-		s.write("READY 0 0\r\n")
+	if(vserial.inWaiting() == 0):
+		swrite("READY 0 0\r\n")
 		time.sleep(1)
 		continue
 	
-	c = s.read(50)
-	s.write("DEBUG     Got: " + c + "\r\n")
+	c = sread(50)
+	swrite("DEBUG     Got: " + c + "\r\n")
 	if c.startswith('POUR '):
 		c = c[5:]
 		parts = c.split(" ")
