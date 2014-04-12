@@ -1,0 +1,31 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+
+GET     /                           controllers.Admin.index()
+GET     /stack		                controllers.Admin.stack()
+GET     /getStatus/:rrr            	controllers.Admin.getStatus(rrr)
+POST    /stackOP                 	controllers.Admin.stackOP()
+POST    /queueOP                 	controllers.Admin.queueOP()
+GET     /sendAbort	                controllers.Admin.sendAbort()
+GET     /sendResume	                controllers.Admin.sendResume()
+GET     /interface		            controllers.User.index()
+GET     /interfaceAjax		        controllers.User.ajaxIndex()
+POST    /pourType                 	controllers.User.pourType()
+POST    /generate                   controllers.Admin.generate()
+POST    /saveSettings               controllers.Admin.saveSettings()
+POST    /saveStackSettings          controllers.Admin.saveStackSettings()
+POST    /evolve                   	controllers.Admin.evolve()
+POST    /pour                   	controllers.Admin.pour()
+GET     /serial                		controllers.Serial.index()
+POST    /serial/setRMI        		controllers.Serial.setRMIServer()
+POST    /serial/connect             controllers.Serial.connect()
+POST    /serial/write               controllers.Serial.write()
+GET     /serial/read                controllers.Serial.read()
+POST    /setFitness                 controllers.Admin.setFitness()
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

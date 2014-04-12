@@ -1,0 +1,22 @@
+@(names: Array[String], genBotRMI: genBot2.RemoteOrderInterface) 
+<div id="stackC">
+	<ul class="nav nav-tabs" id="stack">
+		@for(name <- names) {
+		<li><a href="#@{name.replace(" ", "_")}" class="tab" data-toggle="tab">@name</a></li> 
+		}
+		<li><a href="#_queue" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
+		<li><a href="#_settings" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a></li>
+		<li><a href="#_create" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span></a></li>
+		<a class="btn action" href="#" id="refreshB"><span class="glyphicon glyphicon-refresh"></a>
+		<a class="btn action" href="#" id="resumeB"><span class="glyphicon glyphicon-forward"></a>
+		<a class="btn action" href="#" id="abortB"><span class="glyphicon glyphicon-bell"></a>
+	</ul>
+	<div class="tab-content">
+		@for(name <- names) {
+		<div class="tab-pane" id="@{name.replace(" ", "_")}">@cocktailStack(genBotRMI, name)</div>
+		}
+		<div class="tab-pane active" id="_queue">@queue(genBotRMI)</div>
+		<div class="tab-pane" id="_settings">@settings(genBotRMI)</div>
+		<div class="tab-pane" id="_create">@create(genBotRMI)</div>
+	</div>
+</div>

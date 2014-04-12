@@ -1,0 +1,3 @@
+grant codeBase "file:/opt/roboexotica/genBotWI/lib/genBot2.jar" {
+    permission java.security.AllPermission;
+};

@@ -1,0 +1,136 @@
+body {
+	width: 800px;
+	margin: 80px auto 0px auto;
+	background-color: #FEFEFE;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+	background-color: #FEFEFE;
+}
+
+.clear {
+	clear: both;
+}
+
+.left {
+	float: left;
+}
+
+.hidden {
+	display: none;
+}
+
+.right {
+	float: right;
+}
+.transition {
+	transition: all 0.3s linear;
+}
+
+#error {
+	width: 300px;
+	margin: 100px auto;
+	text-align: center;
+}
+
+div.subheader {
+	font-size: 25px;
+}
+
+
+
+.cocktails div.ingredients {
+	font-size: 14px;
+	width: 200px;
+}
+
+.cocktails div.ingredients span.iName {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.cocktails div.ingredients span.iAmount {
+	display: inline-block;
+	width: 40px;
+	text-align: right;
+}
+
+.cocktails input.setFitnessInput {
+	width: 100px;
+	text-align: right;
+}
+
+.cocktails input.pourButton {
+	margin-left: 20px;
+}
+
+#createForm {
+	margin: 20px;	
+}
+
+.alertHeader {
+	width: 800px;
+	margin: auto;
+	top: 10px;
+	position: fixed;	
+}
+
+
+#serialCode {
+	height: 400px;
+	font-family:monospace;
+	font-size: 8px;
+}
+
+ul.uCButtons {
+	text-align: center;
+}
+
+ul.uCButtons li {
+	display: inline-block;
+}
+
+ul.uCButtons .uCButton {
+	display: inline-block;
+	font-size: 20px;
+	width: 200px;
+	text-align: center;
+	margin: 5px;
+	padding: 10px;
+	background-color: #EEE;
+}
+
+#stackC .btn.action{
+	margin-top: 4px;
+	color: black;
+}
+
+#loadTable thead {
+	font-weight: bold;
+}
+
+#loadTable tr td:last-child {
+	width: 300px;
+}
+
+#stackC {
+	margin-bottom: 200px;
+}
+
+#stackC table td {
+	vertical-align: middle;
+}
+
+#stackC.noTransition {
+	margin-bottom: 2000px;
+}
+
+#stackC.noTransition .collapsing{
+    -webkit-transition: none;
+          transition: none;
+}
+
+input.setMutationInput {
+	width: 100px;
+	margin-right: 20px;
+}

@@ -1,0 +1,42 @@
+@(ports: Array[String], rmiServer: String) @main("GenBot") {
+<div id="serialConnect">
+	<form class="form-horizontal" role="form" id="serialConnectForm" method="post" action="/serial/setRMI">
+		<div class="form-group">
+			<label for="rmiServer" class="col-sm-2 control-label">RMI Server</label>
+			<div class="col-sm-10">
+				<input type="text" value="@rmiServer" class="form-control" id="rmiServer" name="rmiServer"
+					placeholder="Enter text">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary send">Connect</button>
+			</div>
+		</div>
+	</form>
+	@if(ports == null) {
+	<div class="alert alert-danger">No RMI connections</div>
+	} else {
+	<form class="form-horizontal" role="form" id="serialConnectForm" method="post" action="/serial/connect">
+		@if(ports.length > 0) {
+		<div class="form-group">
+			<label for="stringInput" class="col-sm-2 control-label">Port</label>
+			<div class="col-sm-10">
+				<select name="port" class="form-control">
+				@for(port <- ports) {
+					<option>@port</option>
+				}
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary send">Connect</button>
+			</div>
+		</div>
+	</form> } else {
+	<div class="alert alert-danger">No serial port available</div>
+		}
+	}
+</div>
+}
