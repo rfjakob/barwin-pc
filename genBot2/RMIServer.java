@@ -71,11 +71,8 @@ public class RMIServer {
 		
 		QueueManager queueManager;
 		CocktailQueue queue = new CocktailQueue();	
-		try {
-			queueManager = new QueueManager(queue, serialRMIAddress, serialPort, 200);
-		} catch (Exception e) {
-			return;
-		}
+		queueManager = new QueueManager(queue, serialRMIAddress, serialPort, 200);
+
 		rmiImpl = new RemoteOrderImpl(queueManager);
 		RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
 		// RemoteServer.setLog(System.out);
