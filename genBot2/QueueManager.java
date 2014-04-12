@@ -35,14 +35,22 @@ public class QueueManager extends Thread {
 	
 	private Status status;
 
-	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter) throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException {
+	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter)
+		throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException
+	{
 		setDaemon(true);
 		
 		this.queue = queue;
 		this.protocol = ArduinoProtocol.getInstance();
-		
 		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
-		
+
+		System.out.println("Connecting to RMI: " + server);
+		this.serial = (SerialRMIInterface) Naming.lookup(server);
+		System.out.println("Connecting to tty: " + portName);
+		this.serial.connect(portName);
+		this.status = Status.unknown;
+
+		/*
 		Scanner scanner = new Scanner(System.in);
 		System.out.println();
 		System.out.println("------------------------------------");
@@ -127,6 +135,7 @@ public class QueueManager extends Thread {
 		
 		
 		this.status = Status.unknown;
+		*/
 	}
 
 	@Override
@@ -146,6 +155,7 @@ public class QueueManager extends Thread {
 			} catch (SerialRMIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try { Thread.sleep(1000); } catch(InterruptedException e91) {}
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -162,75 +172,71 @@ public class QueueManager extends Thread {
 		}
 	}
 	
-	private void processSerialInput() throws SerialRMIException {
-		try {
-			String[] sA;
-			//String[] sA = {new String("READY")};
-			if(serial != null) {
-				sA = serial.readLines();
-			} else {
-				// Only for testing, always get read
-				String[] sAT = {new String("READY 213 0 ")};
-				sA = sAT;
-			}
-			
-			if(sA.length == 0)
-				return;
+	private void processSerialInput() throws SerialRMIException, RemoteException {
+		String[] sA;
+		//String[] sA = {new String("READY")};
+		if(serial != null) {
+			sA = serial.readLines();
+		} else {
+			// Only for testing, always get read
+			String[] sAT = {new String("READY 213 0 ")};
+			sA = sAT;
+		}
+		
+		if(sA.length == 0)
+			return;
 
-			ArduinoMessage[] messages = protocol.read(sA);
-			
-			for (ArduinoMessage message : messages) {
-				receivedMessages.add(message);
-				if(message.unknownMessage) {
-					System.err.println("Unknown Message " + message.raw);
-					continue;
-				}
-				//System.out.println("GOT COMMAND " + me.raw);
-				switch (message.command) {
-					case "READY":						
-						//System.out.println("weight: " + message.args[0] + " cup: " + message.args[1]);
-						status = Status.ready;
-						statusClientCode = 0;
-						statusClientMessage = null;
-						break;
-					case "WAITING_FOR_CUP":
-						status = Status.waitingForCup;
-						statusClientMessage = "Waiting for cup";
-						statusClientCode = 1;
-						break;
-					case "ENJOY":
-						finishedPouring(message.args);
-						status = Status.waitingForReady;
-						statusClientMessage = "Take cup";
-						statusClientCode = 3;
-						break;
-					case "ERROR":
-						statusClientMessage = message.raw;
-						//System.out.println("ERROR" + message.raw);
-						status = Status.error;
-						break;
-					case "POURING":
-						statusClientMessage = "Pouring ";
-						// Get string of ingredient
-						Ingredient ci = null;
-						for(Ingredient i : IngredientArray.getInstance().getAllIngredients()) {
-							if(i.getArduinoOutputLine() == message.args[0]) {
-								ci = i;
-								break;
-							}
-						}
-						if(currentlyPouring != null && ci != null)
-							statusClientMessage += ci.getName();
-						
-						statusClientCode = 2;
-						break;
-					default:
-						status = Status.unknown;
-						break;
-				}
+		ArduinoMessage[] messages = protocol.read(sA);
+		
+		for (ArduinoMessage message : messages) {
+			receivedMessages.add(message);
+			if(message.unknownMessage) {
+				System.err.println("Unknown Message " + message.raw);
+				continue;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			//System.out.println("GOT COMMAND " + me.raw);
+			switch (message.command) {
+				case "READY":						
+					//System.out.println("weight: " + message.args[0] + " cup: " + message.args[1]);
+					status = Status.ready;
+					statusClientCode = 0;
+					statusClientMessage = null;
+					break;
+				case "WAITING_FOR_CUP":
+					status = Status.waitingForCup;
+					statusClientMessage = "Waiting for cup";
+					statusClientCode = 1;
+					break;
+				case "ENJOY":
+					finishedPouring(message.args);
+					status = Status.waitingForReady;
+					statusClientMessage = "Take cup";
+					statusClientCode = 3;
+					break;
+				case "ERROR":
+					statusClientMessage = message.raw;
+					//System.out.println("ERROR" + message.raw);
+					status = Status.error;
+					break;
+				case "POURING":
+					statusClientMessage = "Pouring ";
+					// Get string of ingredient
+					Ingredient ci = null;
+					for(Ingredient i : IngredientArray.getInstance().getAllIngredients()) {
+						if(i.getArduinoOutputLine() == message.args[0]) {
+							ci = i;
+							break;
+						}
+					}
+					if(currentlyPouring != null && ci != null)
+						statusClientMessage += ci.getName();
+					
+					statusClientCode = 2;
+					break;
+				default:
+					status = Status.unknown;
+					break;
+			}
 		}
 	}
 
