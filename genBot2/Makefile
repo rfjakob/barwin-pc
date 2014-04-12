@@ -2,7 +2,7 @@
 genBotWIFolder = /opt/roboexotica/genBotWI/
 all:
 	mkdir -p bin
-	javac -cp ${genBotWIFolder}lib/serialRMI.jar -d bin *.java
+	javac -cp javac -cp ../serialRMI/src/ -d bin *.java -d bin *.java
 	cd bin; jar -cf genBot2.jar genBot2/*.class
 
 install: all
