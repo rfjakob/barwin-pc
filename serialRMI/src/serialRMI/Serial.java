@@ -258,6 +258,9 @@ public class Serial implements SerialRMIInterface {
 	}
 
 	private static void log(String str, int i) {
+		if(file == null)
+			return;
+
 		if(logging.isEmpty())
 			return;
 
