@@ -155,13 +155,15 @@ public class QueueManager extends Thread {
 			} catch (SerialRMIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				try { Thread.sleep(1000); } catch(InterruptedException e91) {}
+				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
 			} 
 		}
 	}
