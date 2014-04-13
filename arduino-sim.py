@@ -8,7 +8,7 @@
 # This should make testing the PC software easier as the hardware is
 # not required and all scenarios can be covered easily.
 
-import sys, os, serial, time
+import sys, os, serial, time, re
 
 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L52
 def ERROR(msg):
@@ -73,17 +73,20 @@ def wait_for_cup():
 
 # Escape \r\n
 def escapern(s):
-	return s.replace("\r", "\\r").replace("\n", "\\n")
+	s = s.replace("\r", "\\r").replace("\n", "\\n")
+	# Fainter color for final \r\n
+	s = re.sub("\\\\r\\\\n$", '\033[2m\\\\r\\\\n', s)
+	return s
 
 # Write to serial
 def swrite(msg):
-	print 'TX: \033[91m%s\033[0m' % escapern(msg)
+	print 'TX: \033[31m%s\033[0m' % escapern(msg)
 	vserial.write(msg)
 
 # Read from serial
 def sread(n):
 	msg = vserial.read(n)
-	print 'RX: \033[92m%s\033[0m' % escapern(msg)
+	print 'RX: \033[32m%s\033[0m' % escapern(msg)
 	return msg
 
 master_fd, slave_fd = os.openpty()
