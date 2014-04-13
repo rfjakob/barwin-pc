@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make sure we are in the right directory
+cd "$(dirname "$(realpath "$0")")"
+
 if [ -f /usr/share/arduino/lib/RXTXcomm.jar ]
 then
 	RXTXJAR=/usr/share/arduino/lib/RXTXcomm.jar
