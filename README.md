@@ -10,7 +10,7 @@ This repo merges these three repos:
 
 Build
 -----
-Run make in the top-level directory:
+Run make in the src/ directory:
 
 	make
 
@@ -18,19 +18,19 @@ Run
 ---
 1. Start the Arduino simulator (enter sudo password if asked):
 
-		./arduino-sim.py
+		./bin/arduino-sim.py
 
 2. Start the serial port service
 
-		./genBotWI/lib/runSerial.sh
+		./bin/runSerial.sh
 
 3. Start the evolutionary algorithm
 
-		./genBotWI/lib/runGenBot.sh
+		./bin/runGenBot.sh
 
 4. Start the web interface
 
-		./genBotWI/run.sh
+		./bin/runWebInterface.sh
 
 5. Go to web interface
 
