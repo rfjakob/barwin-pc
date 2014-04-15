@@ -5,6 +5,12 @@ set -e
 # Make sure we are in the right directory
 cd "$(dirname "$(realpath "$0")")";
 
+# Rebuild
+cd ..
+make
+
+cd bin
+
 # Create the /dev/ttyS99 symlink here - may ask for the sudo password.
 # If we don't do it now, arduino-sim may ask for it later.
 # This will delay the startup, and genBot crashes immediately as
