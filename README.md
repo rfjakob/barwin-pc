@@ -16,6 +16,12 @@ Run make in the src/ or top directory:
 
 Run
 ---
+You can start the whole system using the run-all wrapper script:
+
+		./run-all.sh
+
+If that does not work, start the services in this order:
+
 1. Start the Arduino simulator (enter sudo password if asked):
 
 		bin/arduino-sim.py
