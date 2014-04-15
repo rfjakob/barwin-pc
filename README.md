@@ -18,19 +18,19 @@ Run
 ---
 1. Start the Arduino simulator (enter sudo password if asked):
 
-		./bin/arduino-sim.py
+		bin/arduino-sim.py
 
 2. Start the serial port service
 
-		./bin/runSerial.sh
+		bin/serialRMI.sh
 
 3. Start the evolutionary algorithm
 
-		./bin/runGenBot.sh
+		bin/genBot.sh
 
 4. Start the web interface
 
-		./bin/runWebInterface.sh
+		bin/play.sh
 
 5. Go to web interface
 
