@@ -10,7 +10,7 @@ This repo merges these three repos:
 
 Build
 -----
-Run make in the src/ directory:
+Run make in the src/ or top directory:
 
 	make
 
