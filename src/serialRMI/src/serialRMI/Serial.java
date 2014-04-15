@@ -295,6 +295,10 @@ public class Serial implements SerialRMIInterface {
 			str = "'" + str.replaceAll("\\n", "\\\\n").replaceAll("\\r", "\\\\r") + "'";
 		}
 		output +=  str + "\n";
+
+		// Print the log to the console, too.
+		System.out.print(output);
+
 		try {
 			file.write(output);
 			file.flush();
