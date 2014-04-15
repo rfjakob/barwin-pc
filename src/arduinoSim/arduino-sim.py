@@ -107,14 +107,40 @@ def sread(n):
 ### main() ####
 
 selftest = False
+symlinkonly = False
 
 if len(sys.argv) == 2:
 	if sys.argv[1] == "selftest":
 		print "Enabling self-test mode"
 		selftest = True
+	elif sys.argv[1] == "symlinkonly":
+		symlinkonly = True
 	else:
-		print "Command line options: selftest"
+		print "Command line options: selftest, symlinkonly"
 		exit(3)
+
+# Symlink dance:
+#
+# /dev/ttyS99 -> intermediate_symlink -> /dev/pts/X
+# ^ root only    ^ writeable by normal user
+#
+# The intermediate symlink is needed so we don't need root rights for
+# every run.
+friendly_name = "/dev/ttyS99"
+intermediate_symlink = os.path.dirname(os.path.realpath(__file__)) + "/../../var/ttyS99"
+
+# Create a symlink /dev/ttyS99 pointing to intermediate_symlink using sudo
+# if it does not exist yet
+if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != intermediate_symlink):
+	print "Creating %s symlink via sudo..." % friendly_name
+	ret = os.system("sudo ln -sfT %s %s" % (intermediate_symlink, friendly_name))
+	if ret != 0:
+		print "Failed"
+		exit(1)
+
+if symlinkonly:
+	print "Symlink %s ok" % friendly_name
+	exit(0)
 
 master_fd, slave_fd = os.openpty()
 slave_fn = os.ttyname(slave_fd)
@@ -126,14 +152,10 @@ vserial.fd = master_fd
 vserial._isOpen = True
 vserial.timeout = 0.05
 
-friendly_name = "/dev/ttyS99"
-if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != slave_fn):
-	print "Creating %s symlink via sudo..." % friendly_name
-	ret = os.system("sudo ln -sfT %s %s" % (slave_fn, friendly_name))
-	if ret != 0:
-		print "Failed"
-		exit(1)
-
+ret = os.system("ln -sfT %s %s" % (slave_fn, intermediate_symlink))
+if ret != 0:
+	print "Failed"
+	exit(1)
 print "Symlinked as:     %s" % friendly_name
 
 if selftest:
