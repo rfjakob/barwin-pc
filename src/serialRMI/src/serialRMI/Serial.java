@@ -104,9 +104,11 @@ public class Serial implements SerialRMIInterface {
 			if(!logging.isEmpty()) {
 				try {
 
-					String fileName = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-					System.out.println("Opening file '" + logFolder + fileName + ".txt' for logging");
-				    FileWriter fstream = new FileWriter(logFolder + fileName + ".txt", true);
+					//String fileName = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+					String fileName = "serialRMI.log";
+					String filePath = logFolder + "/" + fileName;
+					System.out.println("Opening file '" + filePath + "' for logging (appending)");
+				    FileWriter fstream = new FileWriter(filePath, true);
 				    file = new BufferedWriter(fstream);
 				} catch (Exception e) {
 					System.out.println("Error while trying to open log file " + e.getMessage());
