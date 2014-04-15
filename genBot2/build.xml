@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<!-- Configuration of the Ant build system to generate a Jar file --> 
-<project name="genBot2" default="CreateJar">
-	<target name="CreateJar" description="Create Jar file">
-		<jar jarfile="genBot2.jar" basedir=".." includes="genBot2/*.class">
-		</jar>
-		<copy file="genBot2.jar" todir="../../../genBotWI/lib"/>
-	</target>
-</project>

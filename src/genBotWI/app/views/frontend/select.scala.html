@@ -1,0 +1,18 @@
+@(genBotRMI: genBot.RemoteOrderInterface) 
+<div class="cocktailEntryLeft">
+	@for(i <- 0 until genBotRMI.listLoadedEvolutionStacks.length) {	
+	<div class="cocktail">
+		<div id="Cocktail@i" class="nameOfCocktail" data-name="@genBotRMI.listLoadedEvolutionStacks()(i).replace(" ","_")" data-ingredients="@for(j <- 0 until genBotRMI.getAllowedIngredients(genBotRMI.listLoadedEvolutionStacks()(i)).length){@if(j!=0){, }@genBotRMI.getAllowedIngredients(genBotRMI.listLoadedEvolutionStacks()(i))(j).getName}">
+			<div class="cocktailRow">
+				<div class="cocktailRowContent">
+					<a href="/pour#" onClick="pour(@i); return false;">@genBotRMI.listLoadedEvolutionStacks()(i)</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	@if(i == ((genBotRMI.listLoadedEvolutionStacks.length/2).toInt - 1)){
+	</div>
+	<div class="cocktailEntryRight">
+	}
+	}
+</div>

@@ -1,0 +1,41 @@
+@(item: genBot.CocktailWithName, genBotRMI: genBot.RemoteOrderInterface, str: String)
+<div data-name="@item.getName.replace(" ", "_")" class="cocktail panel @if(item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-success } 
+													 @if(!item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-danger }
+													 @if(item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-warning } 
+													 @if(!item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-default } ">
+	<div class="panel-heading">
+		<h4 class="panel-title">
+			<a data-toggle="collapse" href="#@(item.getName.replace(" ", "_"))_@str">
+				@item.getName @if(item.getCocktail.isQueued) { <span class="glyphicon glyphicon-list right"> } 
+							  @if(item.getCocktail.isPouring) { <span class="glyphicon glyphicon-record right"> } 
+							  @if(item.getCocktail.isPoured) { <span class="glyphicon glyphicon-ok-sign right"> } 
+			</a>
+		</h4>
+	</div>
+	<div id="@(item.getName.replace(" ", "_"))_@str" class="panel-collapse collapse">
+		<div class="panel-body">
+			<div class="ingredients right panel panel-default">
+				<!-- div class="panel-heading">
+					Ingredients
+				</div -->
+				<div class="panel-body">
+				@for(ingredient <- genBotRMI.getIngredients()) {
+					@if(item.getCocktail.getAmount(ingredient) > 0 ) {
+	    				<span class="iAmount">@{"%1.0f".format(Math.round(item.getCocktail.getAmount(ingredient.getName)*100).toFloat)}%</span>
+	    				<span class="iName">@ingredient.getName</span><br/>
+					}
+				}
+				</div>
+			</div>
+			<form class="form-inline form-horizontal">
+				<fieldset>
+					<label class="control-label col-sm-2">Fitness</label>
+					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isFitnessSet){@{item.getCocktail.getFitnessInput}}" />
+					<input class="setFitnessButton btn btn-@if(item.getCocktail.isFitnessSet) {danger} else {warning}" type="button" value="@if(item.getCocktail.isFitnessSet) { Overwrite } else { Set }" />
+					<input class="pourButton btn btn-info" type="button" value="Pour" />
+				</fieldset>
+			</form>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
