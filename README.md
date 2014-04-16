@@ -23,11 +23,12 @@ Maybe some symlinks in the lib folder have to be adjusted to your system specifi
 
 RXTX Library:
 
-RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar
-librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
+* RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar
+* librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
 
 Play Framework (link to folder):
-play -> /opt/play/
+
+* play -> /opt/play/
  
 
 You can start the whole system using the run-all wrapper script:
