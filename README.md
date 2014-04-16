@@ -16,6 +16,20 @@ Run make in the src/ or top directory:
 
 Run
 ---
+
+Java 7 is required! 
+
+Maybe some symlinks in the lib folder have to be adjusted to your system specific folders:
+
+RXTX Library:
+
+RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar
+librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
+
+Play Framework (link to folder):
+play -> /opt/play/
+ 
+
 You can start the whole system using the run-all wrapper script:
 
 		./run-all.sh

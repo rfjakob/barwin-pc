@@ -6,4 +6,4 @@ set -e
 cd "$(dirname "$(realpath "$0")")";
 cd ../src/genBotWI
 
-/opt/play/play run 80 -Djava.security.manager -Djava.security.policy=:../genBot2/bin/genBot2/my.policy
+../../lib/play/play run
