@@ -8,6 +8,16 @@ This repo merges these three repos:
 * https://github.com/speendo/genBot2
 * https://github.com/petres/serialRMI
 
+
+Dependencies
+------------
+
+Java 7 is required!
+
+Install some packages:
+* Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx guava
+* Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java
+
 Build
 -----
 Run make in the src/ or top directory:
@@ -16,8 +26,6 @@ Run make in the src/ or top directory:
 
 Run
 ---
-
-Java 7 is required! 
 
 Maybe some symlinks in the lib folder have to be adjusted to your system specific folders:
 
