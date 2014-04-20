@@ -1,3 +1,11 @@
+	var VoteValue = {
+	"euro":0,
+	"cent":0
+	 }
+	var LastPadKeyPressed = {
+	"euros":"#Vote0a",
+	"cents":"#Vote00a"
+	}
 	var statusCode = -1;
 	var statusMessage = "";
 	var statusCocktail = "";
@@ -7,6 +15,19 @@
 	
 	var c = 0;
 	
+	function eurosKeyPressed(id) {
+		$(LastPadKeyPressed.euros).css({'background-color': 'white', 'color': 'black'});
+		$(id).css({'background-color': 'black', 'color': 'white'});
+		LastPadKeyPressed.euros = id;
+	}
+
+	function centsKeyPressed(id) {
+                $(LastPadKeyPressed.cents).css({'background-color': 'white', 'color': 'black'});
+                $(id).css({'background-color': 'black', 'color': 'white'});
+                LastPadKeyPressed.cents = id;
+        }
+
+
 	(function updateStatus() {
 		$.ajax({
 				url: 		'/getStatus/' + Math.random().toString(36).substring(7),

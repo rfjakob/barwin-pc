@@ -8,9 +8,7 @@
 		<div id="Page">
 			<div class="barwin" onClick="window.location.href='/interface'">BARWIN</div>
 			<div id="OrderLayer" class="layer" style="display: block;">
-				<div class="stepContent">
-					@frontend.select(genBotRMI)
-				</div>
+				<div class="stepContent">@frontend.select(genBotRMI)</div>
 			</div>
 			<div id="ConfirmLayer" class="layer" style="display: none; opacity: 0;">
 				<div class="stepContent">
@@ -30,9 +28,7 @@
 			<div id="MixingLayer" class="layer" style="display: none; opacity: 0;">
 				<div class="stepContent">
 					<div id="PleaseWait">
-						<div id="PleaseWaitImage">
-							<img src="@routes.Assets.at("images/please_wait.png")"alt="Please Wait for Mixing" height="100">
-						</div>
+						<div id="PleaseWaitImage"><img src="@routes.Assets.at("images/please_wait.png")"alt="Please Wait for Mixing" height="100"></div>
 					</div>
 					<div class="printMessage">
 						<div class="SystemMessage">Please wait</div>
@@ -42,38 +38,48 @@
 			<div id="VotingLayer" class="layer" style="display: none; opacity: 0; ">
 				<div class="stepContent">
 					<div id="PleaseVote">
-						<div id="PleaseVoteLowImage">
-							<img src="@routes.Assets.at("images/low_vote.png")" alt="Low-vote" height="50">
+						<div id="PleaseVoteLowImage"><img src="@routes.Assets.at("images/low_vote.png")" alt="Low-vote" height="50"></div>
+						<div id="PleaseVoteHighImage"><img src="@routes.Assets.at("images/high_vote.png")" alt="High-vote" height="50"></div>
+					</div>
+					<div class="printMessage"><div id="VotingQuestion"></div></div>
+					<div id="VotePad">				
+						<div id="VotePadLine1">
+							<div id="Vote1" class="voteEuros"><a id="Vote1a" href="#" onclick="(VoteValue.euro = 1); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.9 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.1 ); eurosKeyPressed('#Vote1a'); return false;">1</a></div>
+							<div id="Vote2" class="voteEuros"><a id="Vote2a" href="#" onclick="(VoteValue.euro = 2); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.8 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.2 ); eurosKeyPressed('#Vote2a'); return false;">2</a></div>
+							<div id="Vote3" class="voteEuros"><a id="Vote3a" href="#" onclick="(VoteValue.euro = 3); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.7 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.3 ); eurosKeyPressed('#Vote3a'); return false;">3</a></div>
+							<div id="Vote00" class="voteCents"><a id="Vote00a" href="#" onclick="(VoteValue.cent = 0.0); centsKeyPressed('#Vote00a'); return false;">.00</a></div>
 						</div>
-						<div id="PleaseVoteHighImage">
-							<img src="@routes.Assets.at("images/high_vote.png")" alt="High-vote" height="50">
+						<div id="VotePadLine2">
+							<div id="Vote4" class="voteEuros"><a id="Vote4a" href="#" onclick="(VoteValue.euro = 4); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.6 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.4 ); eurosKeyPressed('#Vote4a'); return false;">4</a></div>
+							<div id="Vote5" class="voteEuros"><a id="Vote5a" href="#"	onclick="(VoteValue.euro = 5); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.5 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.5 ); eurosKeyPressed('#Vote5a'); return false;">5</a></div>
+							<div id="Vote6" class="voteEuros"><a id="Vote6a" href="#"	onclick="(VoteValue.euro = 6); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.4 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.6 ); eurosKeyPressed('#Vote6a'); return false;">6</a></div>
+							<div id="Vote25" class="voteCents"><a id="Vote25a" href="#" onclick="(VoteValue.cent = 0.25); centsKeyPressed('#Vote25a'); return false;">.25</a></div>
 						</div>
-					</div>
-					<div class="printMessage">
-						<div id="VotingQuestion"></div>
-					</div>
-					<div id="VotingValueDisplay">
-						<input type="text" id="VotingValueDisplayContent">
-						<!--<div id="VotingValueDisplayContent">7.5</div>-->
-					</div>
-					<div id="VotingSlider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false">
-						<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 50%;"></div>
-						<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 50%;"></a>
-					</div>
-					<div id="Vote" class="choiceButton">
-						<a href="#vote"	onclick="vote($('#VotingValueDisplayContent').val()); return false;">Submit</a>
-					</div>
-				</div>
-			</div>
-			<div id="MessageLayer" class="layer" style="display: none; opacity: 0;">
-				<div class="stepContent">
-					<div class="message">
-						<div class="messageContent"><span></span> </div>
+						<div id="VotePadLine3">
+							<div id="Vote7" class="voteEuros"><a id="Vote7a" href="#"	onclick="(VoteValue.euro = 7); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.3 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.7 ); eurosKeyPressed('#Vote7a'); return false;">7</a></div>
+							<div id="Vote8" class="voteEuros"><a id="Vote8a" href="#"	onclick="(VoteValue.euro = 8); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.2 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.8 ); eurosKeyPressed('#Vote8a'); return false;">8</a></div>
+							<div id="Vote9" class="voteEuros"><a id="Vote9a" href="#"	onclick="(VoteValue.euro = 9); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.1 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.9 ); eurosKeyPressed('#Vote9a'); return false;">9</a></div>
+							<div id="Vote50" class="voteCents"><a id="Vote50a" href="#" onclick="(VoteValue.cent = 0.50); centsKeyPressed('#Vote50a'); return false;">.50</a></div>
+						</div>
+						<div id="VotePadLine4">
+							<div id="Vote10" class="voteEuros"><a id="Vote10a" href="#"	onclick="(VoteValue.euro = 10); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.0 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 1.0 ); eurosKeyPressed('#Vote10a'); return false;">10</a></div>
+							<div id="VoteSubmit" class="voteEuros"><a href="#Vote" onclick="vote((VoteValue.euro + VoteValue.cent)); return false;">SUBMIT</a></div>
+							<div id="Vote0" class="voteEuros"><a id="Vote0a" href="#"     onclick=" (VoteValue.euro = 0); $('#PleaseVoteLowImage').fadeTo( 'fast' , 1.0 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.0 ); eurosKeyPressed('#Vote0'); return false;">0</a></div>
+							<div id="Vote75" class="voteCents"><a id="Vote75a" href="#" onclick="(VoteValue.cent = 0.75); centsKeyPressed('#Vote75a'); return false;">.75</a></div>
+						</div>				
 					</div>
 				</div>
 			</div>
 		</div>
+		<div id="MessageLayer" class="layer" style="display: none; opacity: 0;">
+			<div class="stepContent">
+				<div class="message">
+					<div class="messageContent"><span></span> </div>
+				</div>
+			</div>
+		</div>
 	</div>
+</div>
 </body>
 }
 
