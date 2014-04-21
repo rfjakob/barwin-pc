@@ -64,7 +64,7 @@ else
     (sleep 20; xdg-open http://127.0.0.1:9000/interface) &
 
     export BIN_DIR=`pwd`
-    tmux -f ../etc/tmux_barwin_simulation.conf a
+    tmux -f ../etc/tmux_barwin.conf a
 fi
 
 
