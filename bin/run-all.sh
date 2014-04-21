@@ -17,12 +17,12 @@ cd bin
 # the serial line is not ready.
 ./arduino-sim.py symlinkonly
 
-gnome-terminal -e 'bash -c "./arduino-sim.py ; exec bash"' -t arduino-sim
+gnome-terminal -e 'bash -c "./arduino-sim.py"' -t arduino-sim
 sleep 1
-gnome-terminal -e 'bash -c "./serialRMI.sh ; exec bash"' -t serialRMI
+gnome-terminal -e 'bash -c "./serialRMI.sh"' -t serialRMI
 # genBot crashes horribly if serialRMI is not ready
 sleep 3
-gnome-terminal -e 'bash -c "./genBot.sh ; exec bash"' -t genBot
-gnome-terminal -e 'bash -c "./play.sh ; exec bash"' -t play
+gnome-terminal -e 'bash -c "./genBot.sh"' -t genBot
+gnome-terminal -e 'bash -c "./play.sh"' -t play
 sleep 10
 xdg-open http://127.0.0.1:9000/interface
