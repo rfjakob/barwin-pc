@@ -18,33 +18,41 @@ Install some packages:
 * Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx guava
 * Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java
 
+
+Maybe some symlinks in the lib/ folder have to be adjusted to your system specific folders:
+
+RXTX Library: (should be created automatically)
+
+* RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar (optional)
+* librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
+
+Play Framework: (must be created manually)
+
+* play -> /opt/play
+
+If your distro does not offer any ready package, download (see 
+http://www.playframework.com/download , tested with v2.2.2) the Play 
+Framework and extract it to /opt/play. If the exectuable is not located 
+at `/opt/play/play` you can adapt the symlink in `barwin-pc/lib/play`.
+
 Build
 -----
 Run make in the src/ or top directory:
 
 	make
 
+
 Run
 ---
-
-Maybe some symlinks in the lib folder have to be adjusted to your system specific folders:
-
-RXTX Library:
-
-* RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar
-* librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
-
-Play Framework (link to folder):
-
-* play -> /opt/play/
- 
-
 You can start the whole system using the run-all wrapper script:
 
 		./run-all.sh
 
-If that does not work, start the services in this order
-(Don't forget to build first!):
+If that does not work, start the services in this order:
+
+0. Build (compile) the Java source
+
+		make
 
 1. Start the Arduino simulator (enter sudo password if asked):
 
