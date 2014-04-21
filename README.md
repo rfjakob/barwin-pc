@@ -27,14 +27,14 @@ Run make in the src/ or top directory:
 Run
 ---
 
-Maybe some symlinks in the lib folder have to be adjusted to your system specific folders:
+Maybe some symlinks in the lib/ folder have to be adjusted to your system specific folders:
 
-RXTX Library:
+RXTX Library: (should be created automatically)
 
-* RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar
+* RXTXcomm.jar -> /usr/share/java/RXTXcomm.jar (optional)
 * librxtxSerial.so -> /usr/lib/jni/librxtxSerial.so
 
-Play Framework (link to folder):
+Play Framework (link to folder): (must be created manually)
 
 * play -> /opt/play/
  
@@ -43,8 +43,11 @@ You can start the whole system using the run-all wrapper script:
 
 		./run-all.sh
 
-If that does not work, start the services in this order
-(Don't forget to build first!):
+If that does not work, start the services in this order:
+
+0. Build (compile) the Java source
+
+		make
 
 1. Start the Arduino simulator (enter sudo password if asked):
 
