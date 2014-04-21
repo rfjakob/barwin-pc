@@ -5,6 +5,21 @@ set -e
 # Make sure we are in the right directory
 cd "$(dirname "$(realpath "$0")")";
 
+# Determining simulation mode using symlink name
+if [ "$0" = "./run-barwin.sh" ]; then
+    # exporting variable, used also in tmux!
+    export SIMULATION=0
+
+    # set correct tty path for serial connection to Arduino
+    # uses Bash's autocompletion to decide between ttyACM0 and ttyACM1
+    TTY_PATH=$(echo /dev/ttyACM?|sed -e 's/[\/]/\\&/g')
+else
+    TTY_PATH=$(echo /dev/ttyS99|sed -e 's/[\/]/\\&/g')
+    export SIMULATION=1
+fi
+# changing tty path in config file, because there is no command line option
+sed -i "s/serialPort=.*/serialPort=$TTY_PATH/" ../etc/genBot.config
+
 # Rebuild
 cd ..
 make
@@ -15,10 +30,14 @@ cd bin
 # If we don't do it now, arduino-sim may ask for it later.
 # This will delay the startup, and genBot crashes immediately as
 # the serial line is not ready.
-./arduino-sim.py symlinkonly
+if [ $SIMULATION = "1" ]; then
+    ./arduino-sim.py symlinkonly
+fi
 
 if [ "$1" = "gnome-terminal" ]; then
-    gnome-terminal -e 'bash -c "./arduino-sim.py"' -t arduino-sim
+    if [ $SIMULATION = "1" ]; then
+        gnome-terminal -e 'bash -c "./arduino-sim.py"' -t arduino-sim
+    fi
     sleep 1
     gnome-terminal -e 'bash -c "./serialRMI.sh"' -t serialRMI
     # genBot crashes horribly if serialRMI is not ready
@@ -30,7 +49,7 @@ if [ "$1" = "gnome-terminal" ]; then
 
 else
     # use tmux
-    if ! type tmaux; then
+    if ! type tmux; then
         echo
         echo "tmux not installed!"
         echo "try running $0 gnome-terminal'"
