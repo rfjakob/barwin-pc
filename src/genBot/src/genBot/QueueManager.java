@@ -164,7 +164,9 @@ public class QueueManager extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
-			} 
+			}
+		// Sleep 100ms between serial polls to bring down CPU usage
+		try { Thread.sleep(100); } catch(InterruptedException edontcare) {}
 		}
 	}
 	
