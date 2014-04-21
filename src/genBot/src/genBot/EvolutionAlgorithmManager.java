@@ -217,6 +217,9 @@ public class EvolutionAlgorithmManager {
 		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
 		
 		genManager.setGeneration(nextGeneration);
+		
+		// save
+		save();
 	}
 	
 	public double getMutationStdDeviation() {
