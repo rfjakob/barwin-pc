@@ -11,11 +11,23 @@ public class CocktailGenerationManager implements Serializable {
 	private CocktailGeneration cocktailGeneration;
 	private final String evolutionStackName;
 	
-	private int maxAttemptsToMeetPriceConstraints = 300;
+	private int maxAttemptsToMeetPriceConstraints = 3000;
 
-	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients, double maxPricePerLiter) throws MaxAttemptsToMeetPriceConstraintException {
+	public CocktailGenerationManager(int initialPopulationSize, String cocktailStackName, boolean[] booleanAllowedIngredients, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws MaxAttemptsToMeetPriceConstraintException {
 		this.generationNumber = 0;
+				
+		if (booleanAllowedIngredients.length != initMeanValues.length | booleanAllowedIngredients.length != initOffsets.length) {
+			throw new IllegalArgumentException("One of the input arrays has the wrong length!");
+		}
 		
+		double sumMeanValues = 0;
+		for (int i = 0; i < initMeanValues.length; i++) {
+			sumMeanValues += initMeanValues[i];
+		}
+		if (sumMeanValues != 1) {
+			throw new IllegalArgumentException("The values of initMeanValues does not sum up to one!");
+		}
+				
 		Cocktail[] cocktails = new Cocktail[initialPopulationSize];
 		
 		int countToThrowException = 0;
@@ -24,7 +36,21 @@ public class CocktailGenerationManager implements Serializable {
 		while (i < initialPopulationSize) {
 			cocktails[i] = generateRandomCocktail(booleanAllowedIngredients);
 			
+			boolean resetCocktail = false;
+			
+			for (int j = 0; j < booleanAllowedIngredients.length; j++) {
+				double val = cocktails[i].getAmountsAsDouble()[j];
+				
+				if (val < initMeanValues[j] - initOffsets[j] | val > initMeanValues[j] + initOffsets[j]) {
+					resetCocktail = true;
+				}
+			}
+			
 			if (cocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
+				resetCocktail = true;
+			}
+			
+			if (resetCocktail = true) {
 				countToThrowException++;
 				if (countToThrowException >= maxAttemptsToMeetPriceConstraints) {
 					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. I give up now.");

@@ -61,7 +61,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
-			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double maxPricePerLiter)
+			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter)
 			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
@@ -82,7 +82,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, int populationSize,
 			int truncation, int elitism, String dbDriverPath,
-			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double maxPricePerLiter,
+			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
 			String propPath) throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
@@ -96,15 +96,15 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		// variableArea is hard coded... but it should be 0.25
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, maxPricePerLiter, propPath);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, propPath);
 	}
 
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
-			Ingredient[] allowedIngredients, double maxPricePerLiter) throws RemoteException,
+			Ingredient[] allowedIngredients, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws RemoteException,
 			SQLException, MaxAttemptsToMeetPriceConstraintException {
 		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 8, 2, 1, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, maxPricePerLiter, evolutionStackName);
+		generateEvolutionStack(evolutionStackName, allowedIngredients, 8, 2, 1, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, initMeanValues, initOffsets, maxPricePerLiter, evolutionStackName);
 	}
 	
 	@Override
@@ -190,16 +190,30 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		double maxPricePerLiter = Double.parseDouble(props.getProperty("maxPricePerLiter"));
 		String  dbDriverPath = props.getProperty("dbDriverPath");
 		String booleanAllowedIngredientsString = props.getProperty("booleanAllowedIngredients");
+
 		
-		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
+		String[] initMeanStrings = props.getProperty("initMeanValue").split(" ");
+		String[] initOffsetStrings = props.getProperty("initOffsets").split(" ");
+		
+		double[] initMeanValues = new double[booleanAllowedIngredientsString.length()];
+		double[] initOffsets = new double[booleanAllowedIngredientsString.length()];
+		
+		for (int i = 0; i < initMeanStrings.length; i++) {
+			initMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
+			initOffsets[i] = Double.parseDouble(initOffsetStrings[i]);
+		}
+		
+
+		
+		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
 	}
 
 	@Override
 	public void setProps(String evolutionStackName, int populationSize,
-			int truncation, int elitism, double stdDeviation, double maxPricePerLiter,
+			int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
 			String dbDriverPath, String booleanAllowedIngredientsString)
 			throws RemoteException {
-		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
 	}
 
 	@Override

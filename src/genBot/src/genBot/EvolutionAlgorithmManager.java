@@ -38,6 +38,8 @@ public class EvolutionAlgorithmManager {
 	private String evolutionStackName;
 	
 	private boolean[] booleanAllowedIngredients;
+	private double[] initMeanValues;
+	private double[] initOffsets;
 		
 	/*
 	 * constructor
@@ -45,9 +47,11 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double maxPricePerLiter, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {		
+	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double[] initMeanValues, double[] initOffsests, double maxPricePerLiter, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {		
 		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
 		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
+		this.initMeanValues = initMeanValues;
+		this.initOffsets = initOffsests;
 		
 		for (int i = 0; i < possibleIngredients.length; i++) {
 			this.booleanAllowedIngredients[i] = false;
@@ -67,7 +71,7 @@ public class EvolutionAlgorithmManager {
 			this.dbDriverPath = dbDriverPath;
 		}
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 		
 		convertProps();	
 		
@@ -142,13 +146,13 @@ public class EvolutionAlgorithmManager {
 			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
 
 			if (dbDriver.getLastGenerationNumber(evolutionStackName) == -1) {
-				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, maxPricePerLiter);
+				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, initMeanValues, initOffsets, maxPricePerLiter);
 			} else {				
 				this.genManager = load();
 				this.didJustLoad = true;
 			}
 		} else {
-			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, maxPricePerLiter);
+			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, initMeanValues, initOffsets, maxPricePerLiter);
 		}
 	}
 	
@@ -230,7 +234,7 @@ public class EvolutionAlgorithmManager {
 		this.stdDeviation = stdDeviation;
 		recombination.setMutationStdDeviation(stdDeviation);
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
 	public double getMaxPricePerLiter() {
@@ -241,7 +245,7 @@ public class EvolutionAlgorithmManager {
 		this.maxPricePerLiter = maxPricePerLiter;
 		recombination.setMaxPricePerLiter(maxPricePerLiter);
 		
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
+		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 	}
 	
 	public CocktailGenerationManager load() throws SQLException {
@@ -339,8 +343,38 @@ public class EvolutionAlgorithmManager {
 		return genManager;
 	}
 	
+	public double[] getInitMeanValues() {
+		return initMeanValues;
+	}
+	
+	public double[] getInitOffsets() {
+		return initOffsets;
+	}
+	
 	public boolean[] getBooleanAllowedIngredients() {
 		return booleanAllowedIngredients;
+	}
+	
+	public String initMeanValuesToString() {
+		String retString = "";
+		
+		for (int i = 0; i < getInitMeanValues().length; i++) {
+			retString += String.valueOf(getInitMeanValues()[i]) + " ";
+		}
+		retString = retString.substring(0, retString.length() - 1);
+		
+		return retString;
+	}
+	
+	public String initOffsetsToString() {
+		String retString = "";
+		
+		for (int i = 0; i < getInitOffsets().length; i++) {
+			retString += String.valueOf(getInitOffsets()[i]) + " ";
+		}
+		retString = retString.substring(0, retString.length() - 1);
+		
+		return retString;
 	}
 	
 	public String booleanAllowedIngrediensToString() {
@@ -389,13 +423,15 @@ public class EvolutionAlgorithmManager {
 		getGenManager().getCocktailByName(name).setQueued(true);
 	}
 	
-	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {		
+	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {		
 		Properties props = new Properties();
 		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
 		props.setProperty("elitism", String.valueOf(elitism));
 		props.setProperty("stdDeviation", String.valueOf(stdDeviation));
+		props.setProperty("initMeanValues", initMeanValuesToString());
+		props.setProperty("initOffsets", initOffsetsToString());
 		props.setProperty("maxPricePerLiter", String.valueOf(maxPricePerLiter));
 		if (dbDriverPath != null) {
 			props.setProperty("dbDriverPath", dbDriverPath);
