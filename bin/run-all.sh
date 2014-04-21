@@ -30,9 +30,11 @@ if [ "$1" = "gnome-terminal" ]; then
 
 else
     # use tmux
-    if ! type tmux; then
+    if ! type tmaux; then
+        echo
         echo "tmux not installed!"
-        exit
+        echo "try running $0 gnome-terminal'"
+        exit 1
     fi
     if type zenity; then
         zenity --info --text="Use [CTRL]+[B] [~] to kill all tmux panes" &
