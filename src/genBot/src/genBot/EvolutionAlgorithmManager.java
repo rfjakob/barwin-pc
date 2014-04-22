@@ -40,6 +40,8 @@ public class EvolutionAlgorithmManager {
 	private boolean[] booleanAllowedIngredients;
 	private double[] initMeanValues;
 	private double[] initOffsets;
+	
+	private boolean autoLoad;
 		
 	/*
 	 * constructor
@@ -70,12 +72,18 @@ public class EvolutionAlgorithmManager {
 		if (dbDriverPath != null) {
 			this.dbDriverPath = dbDriverPath;
 		}
+		
+		this.autoLoad = true;
 
 		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 		
 		convertProps();	
 		
 		accessDB(dbDriverPath, resetDbTable);
+	}
+	
+	public void setAutoLoad(boolean autoLoad) {
+		this.autoLoad = autoLoad;
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
@@ -113,12 +121,14 @@ public class EvolutionAlgorithmManager {
 				Integer.parseInt(props.getProperty("elitism")), 
 				Double.parseDouble(props.getProperty("stdDeviation")),
 				Double.parseDouble(props.getProperty("maxPricePerLiter")),
+				props.getProperty("initMeanValues"),
+				props.getProperty("initOffsets"),
 				props.getProperty("dbDriverPath"),
 				props.getProperty("booleanAllowedIngredients")
 				);
 	}
 	
-	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
+	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String initMeanValues, String initOffsets, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
 		this.evolutionStackName = evolutionStackName;
 		this.populationSize = populationSize;
 		this.truncation = truncation;
@@ -134,6 +144,10 @@ public class EvolutionAlgorithmManager {
 //			accessDB(dbDriverPath, true);
 //		}
 		// This is the replacement
+		
+		this.initMeanValues = readInitMeanValues(initMeanValues);
+		this.initOffsets = readInitOffsets(initOffsets);
+		
 		this.dbDriverPath = dbDriverPath;
 		
 		setMutationStdDeviation(this.stdDeviation);
@@ -391,6 +405,28 @@ public class EvolutionAlgorithmManager {
 		return retString;
 	}
 	
+	public double[] readInitMeanValues(String initMeanValues) {
+		String[] initMeanStrings = initMeanValues.split(" ");
+		
+		double[] retInitMeanValues = new double[initMeanStrings.length];
+		
+		for (int i = 0; i < initMeanStrings.length; i++) {
+			retInitMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
+		}
+		return retInitMeanValues;
+	}
+	
+	public double[] readInitOffsets(String initOffsets) {
+		String[] initOffsetsStrings = initOffsets.split(" ");
+		
+		double[] retInitOffsets = new double[initOffsetsStrings.length];
+		
+		for (int i = 0; i < initOffsetsStrings.length; i++) {
+			retInitOffsets[i] = Double.parseDouble(initOffsetsStrings[i]);
+		}
+		return retInitOffsets;
+	}
+	
 	public boolean[] readBooleanAllowedIngredients(String allowedIngredients) {
 		boolean[] retBoolean = new boolean[allowedIngredients.length()];
 		char[] allowedChars = allowedIngredients.toCharArray();
@@ -438,6 +474,13 @@ public class EvolutionAlgorithmManager {
 		}
 		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
 			
+		// should be used to define if the Coctail will be autoloaded or not
+		if (this.autoLoad) {
+			props.setProperty("autoLoad", "1");
+		} else {
+			props.setProperty("autoLoad", "0");
+		}
+		
 		try {
 			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
 		} catch (FileNotFoundException e) {
