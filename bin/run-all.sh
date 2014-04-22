@@ -56,7 +56,7 @@ else
         exit 1
     fi
     if type zenity; then
-        zenity --info --text="Use [CTRL]+[B] [~] to kill all tmux panes" &
+        zenity --info --text="Use [CTRL]+[B] [&] to kill all tmux panes" &
     fi
 
     # tmux occupies the main shell, so we need to run this first in a subshell
