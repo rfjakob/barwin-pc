@@ -32,6 +32,9 @@ def mysleep(secs):
 #           ABORT
 def pour_cocktail(parts):
 	bottle = 0
+	global cocktails_poured
+	cocktails_poured += 1
+
 	for part in parts:
 		if part == 0:
 			continue
@@ -39,8 +42,8 @@ def pour_cocktail(parts):
 		swrite("POURING %d 0\r\n" % bottle)
 		mysleep(1)
 		
-		# Simulate empty bottle in one of 13 iteration
-		if bottle == 1 and iteration % 13 == 0:
+		# Simulate empty bottle in one of 13 cocktails_poured
+		if bottle == 1 and cocktails_poured % 13 == 0:
 			# https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
 			ERROR("BOTTLE_EMPTY")
 
@@ -51,13 +54,13 @@ def pour_cocktail(parts):
 				# Got ABORT
 				return
 
-		# Simulate temporarily removed cup in of of 3 iterations
-		if bottle == 2 and iteration % 3 == 0:
+		# Simulate temporarily removed cup in of of 3 cocktails_poureds
+		if bottle == 2 and cocktails_poured % 3 == 0:
 			MSG("WAITING_FOR_CUP")
 			mysleep(0.5)
 		
-		# Simulate permanently removed cup in one of 10 iterations
-		if bottle == 5 and iteration % 10 == 0:
+		# Simulate permanently removed cup in one of 10 cocktails_poureds
+		if bottle == 5 and cocktails_poured % 10 == 0:
 			MSG("WAITING_FOR_CUP")
 			mysleep(1)
 			ERROR("CUP_TO")
@@ -161,7 +164,7 @@ print "Symlinked as:     %s" % friendly_name
 if selftest:
 		testserial = serial.Serial("/dev/ttyS99")
 
-iteration = 0
+cocktails_poured = -1
 
 while True:
 
@@ -183,7 +186,6 @@ while True:
 	else:
 		ERROR("ERROR INVAL_CMD");
 	
-	if selftest and iteration == 1:
+	if selftest and cocktails_poured == 1:
 		exit(0)
-	
-	iteration += 1
+

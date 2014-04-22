@@ -198,7 +198,7 @@
 				$("#MixingLayer").show();
 				$("#MixingLayer").animate({opacity:'1'}, effectTime);
 			} else if (step == "vote"){
-				$("#VotingQuestion").html('Please rate for this ' + $("#OrderedName").html() + '?');				
+				$("#VotingQuestion").html('Please rate this ' + $("#OrderedName").html() + ':');
 				$("#VotingLayer").show();
 				$("#VotingLayer").animate({opacity:'1'}, effectTime);
 

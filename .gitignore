@@ -3,3 +3,4 @@
 /src/*/build
 *.jar
 /var/ttyS99
+/lib/librxtxSerial.so
