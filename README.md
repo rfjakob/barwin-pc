@@ -35,6 +35,11 @@ http://www.playframework.com/download , tested with v2.2.2) the Play
 Framework and extract it to /opt/play. If the exectuable is not located 
 at `/opt/play/play` you can adapt the symlink in `barwin-pc/lib/play`.
 
+tmux is recommended to get tiled terminal windows:
+
+* sudo apt-get install tmux
+
+
 Build
 -----
 Run make in the src/ or top directory:

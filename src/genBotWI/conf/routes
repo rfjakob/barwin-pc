@@ -4,14 +4,14 @@
 
 # Home page
 
-GET     /                           controllers.Admin.index()
+GET     /admin                  	controllers.Admin.index()
 GET     /stack		                controllers.Admin.stack()
 GET     /getStatus/:rrr            	controllers.Admin.getStatus(rrr)
 POST    /stackOP                 	controllers.Admin.stackOP()
 POST    /queueOP                 	controllers.Admin.queueOP()
 GET     /sendAbort	                controllers.Admin.sendAbort()
 GET     /sendResume	                controllers.Admin.sendResume()
-GET     /interface		            controllers.User.index()
+GET     /				            controllers.User.index()
 GET     /interfaceAjax		        controllers.User.ajaxIndex()
 POST    /pourType                 	controllers.User.pourType()
 POST    /generate                   controllers.Admin.generate()

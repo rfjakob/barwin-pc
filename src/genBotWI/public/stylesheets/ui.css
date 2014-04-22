@@ -2,7 +2,7 @@
 @-webkit-viewport, @-moz-viewport, @-o-viewport {
 	width: 400px;
 	height: 680px;
-	max-zoom: 3;
+	max-zoom: 2;
 	zoom: 1;
 	min-zoom: 0.5;
 }
@@ -19,9 +19,9 @@ a{
 }
 
 .barwin{
-	color:white;
-	letter-spacing:4px;
-	font-size:2em;
+	color: white;
+	letter-spacing: 4px;
+	font-size: 1.8em;
 }
 
 .stepContent{
@@ -94,12 +94,6 @@ a{
 	text-align:center;
 }
 
-.voteEuros{
-	text-align: center;
-	display: inline-block;
-	float: left;
-}
-
 .systemMessageContainer{
 	margin-top:20px;
 
@@ -127,7 +121,7 @@ a{
 	min-width:302px;
 	max-width:800px;
 	height:93%;
-	min-height:342px;
+	min-height:440px;
 	max-height:1200px;
 	top:0;
 	right:0;
@@ -219,7 +213,7 @@ a{
 }
 
 #PleaseVote{
-	margin-top:20%;
+	margin-top: 5%;
 }
 
 #PleaseVoteMessage{
@@ -368,45 +362,89 @@ a{
 	border-radius:0.2em;
 	}
 
+#Vote10 a{
+	font-size: 0.7em;
+	padding: 0.15em 25%;
+	position: relative;
+	top: -0.15em;
+	}
+
+#CurrencyEuros, #CurrencyCents{font-weight: bold;}
+
+#WrapperVotePad{
+	margin-left: auto;
+        margin-right: auto;
+	margin-top: 5%;
+}
+
 #VotePad{
 	margin-left: auto;
 	margin-right: auto;
-	max-width: 85%;
-	margin-top: 5%;	
 	}
-#VotePad a {color:black; border-radius: 0.4em;}
+
+#VotePad a {
+	color:black;
+	border-radius: 0.4em;
+	background-color: transparent;	
+}
 
 #VotePadLine1{
 	display: block;
 	}
 
 .voteEuros{
-	width: 20%;
-	padding: 0.8em;
+	text-align: center;
+        display: inline-block;
+	width: 9%;
+	padding: 0.45em;
 	background-color: white;	
-	border: 1px solid black;
+	border: 0.1em solid white;
 	border-radius: 0.4em;
 	}
 
-.voteEuros a {padding: 5% 45%;}
+.votePadLineEnd{
+	text-align: center;
+        display: inline-block;
+        background-color: transparent;
+        border: 0.1em solid transparent;
+        }
+
+.voteEuros a {
+	background-color: white;
+	padding: 0 25%;
+	}
 
 .voteCents{
-	padding: 0.8em;
 	background-color: white;
-	border: 1px solid black;
+	border: 0.1em solid white;
 	border-radius: 0.4em;
-	float: right;
+	padding: 0.45em;
 	}
-.voteCents a {padding: 25% 2%;}
+.voteCents a {padding: 0 5%;}
 
 .voteEuros a:active, .voteCents a:active {background-color: black; border-radius: 0.4em; color: white !important;}
 
-#VoteSubmit a {padding: 5%;}
-
-#VoteSubmit{
-	position: relative;
-	top: 1em;
+#VoteEmpty{
+	background-color: black;
+	border-color: black;
 	}
+
+#VoteSubmit {
+	margin: 0.3em auto 0 auto;
+	background-color: white;
+	color: black;
+	border-radius: 0.4em;
+	width: 8em;
+	border: 0.1em solid white;
+	padding: 0.45em;
+	}
+
+#VoteSubmit a {
+	padding: 0 20%;
+	}
+
+#VoteSubmit a:active {background-color: black; border-radius: 0.4em; color: white !important;}
+
 #Vote0 {}
 
 #CancelVote a, #Vote a{
@@ -466,7 +504,7 @@ a{
 }
 
 .message{
-	font-size:1.6em;
+	font-size:1.2em;
 	margin-top:4%;
 	color:black;
 	top:25%;
@@ -493,32 +531,24 @@ a{
 }
 
 .messageContent{
-	font-size:1.6em;
+	font-size: 1em;
 	margin:auto;
 	vertical-align: middle;
 	text-align:center;
 	display: table-cell;
 	text-align: center;
-	min-width:100%;
+	min-width:80%;
 	padding:10%;
 }
 
-.ui-widget-header{
-	background:none !important;
-	border-radius:10em;
-}
+#CurrencyEuros{
+	margin-left: 0.3em;
+	float: left;
+	color: white;
+	}
 
-.ui-corner-all{
-	margin-top:10px;
-	border-radius:10em;
-}
-
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover,
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
-	background: black !important;
-	border:none;
+#CurrencyCents{
+	margin-right: 0.3em;
+	float: right;
+	color: white;
 }
