@@ -45,7 +45,7 @@ if [ "$1" = "gnome-terminal" ]; then
     gnome-terminal -e 'bash -c "./genBot.sh"' -t genBot
     gnome-terminal -e 'bash -c "./play.sh"' -t play
     sleep 10
-    xdg-open http://127.0.0.1:9000/interface
+    xdg-open http://127.0.0.1:9000
 
 else
     # use tmux
@@ -61,7 +61,7 @@ else
 
     # tmux occupies the main shell, so we need to run this first in a subshell
     # and sleep until all processes in the tmux window are ready
-    (sleep 20; xdg-open http://127.0.0.1:9000/interface) &
+    (sleep 20; xdg-open http://127.0.0.1:9000) &
 
     export BIN_DIR=`pwd`
     tmux -f ../etc/tmux_barwin.conf a
