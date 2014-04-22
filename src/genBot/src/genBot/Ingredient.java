@@ -36,7 +36,7 @@ public class Ingredient implements Serializable, Comparable<Ingredient> {
 		
 		this.pricePerLiter = bottlePrice / bottleSize;
 		
-		Properties ingProps = new Properties();
+		/* Properties ingProps = new Properties();
 		ingProps.setProperty("name", name);
 		ingProps.setProperty("bottlePrice", String.valueOf(bottlePrice));
 		ingProps.setProperty("bottleSize", String.valueOf(bottleSize));
@@ -47,7 +47,7 @@ public class Ingredient implements Serializable, Comparable<Ingredient> {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} */
 	}
 	
 	/*
