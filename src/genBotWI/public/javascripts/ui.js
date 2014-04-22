@@ -3,8 +3,8 @@
 	"cent":0
 	 }
 	var LastPadKeyPressed = {
-	"euros":"#Vote0a",
-	"cents":"#Vote00a"
+	"euros":"INIT",
+	"cents":"INIT"
 	}
 	var statusCode = -1;
 	var statusMessage = "";
@@ -16,17 +16,35 @@
 	var c = 0;
 	
 	function eurosKeyPressed(id) {
-		$(LastPadKeyPressed.euros).css({'background-color': 'white', 'color': 'black'});
-		$(id).css({'background-color': 'black', 'color': 'white'});
-		LastPadKeyPressed.euros = id;
+		if(LastPadKeyPressed.euros != id){
+			if(LastPadKeyPressed.euros=='INIT'){centsKeyPressed('#Voteoo');}
+			$(LastPadKeyPressed.euros).css({'background-color': 'white'});
+			$(LastPadKeyPressed.euros+"a").css({'color': 'black'});
+			$(id).css({'background-color': 'black'});
+			$(id+"a").css({'color': 'white'});
+			if(id=="#Vote10"){centsKeyPressed('#Voteoo');}
+			LastPadKeyPressed.euros = id;
+		}
 	}
 
 	function centsKeyPressed(id) {
-                $(LastPadKeyPressed.cents).css({'background-color': 'white', 'color': 'black'});
-                $(id).css({'background-color': 'black', 'color': 'white'});
-                LastPadKeyPressed.cents = id;
-        }
-
+		if(LastPadKeyPressed.euros != '#Vote10'){
+			if(LastPadKeyPressed.cents != id){
+				if(LastPadKeyPressed.euros=='INIT'){
+					$('#Voteo').css({'background-color': 'black'});
+					$('#Voteoa').css({'color': 'white'});
+					$('#PleaseVoteLowImage').fadeTo( 'fast' , 1.0 );
+					$('#PleaseVoteHighImage').fadeTo( 'fast' , 0.0 );
+					LastPadKeyPressed.euros = "#Voteo";
+				}
+				$(LastPadKeyPressed.cents).css({'background-color': 'white'});
+                		$(LastPadKeyPressed.cents+"a").css({'color': 'black'});
+                		$(id).css({'background-color': 'black'});
+				$(id+"a").css({'color': 'white'});
+				LastPadKeyPressed.cents = id;
+			}
+        	}
+	}
 
 	(function updateStatus() {
 		$.ajax({
