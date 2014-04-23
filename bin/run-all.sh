@@ -55,16 +55,17 @@ else
         echo "try running $0 gnome-terminal'"
         exit 1
     fi
-    if type zenity; then
-        zenity --info --text="Use [CTRL]+[B] [&] to kill all tmux panes" &
-    fi
+
+
+    echo "Use [CTRL]+[B] [&] to kill all tmux panes"
+    echo "Or just close the window"
 
     # tmux occupies the main shell, so we need to run this first in a subshell
     # and sleep until all processes in the tmux window are ready
     (sleep 20; xdg-open http://127.0.0.1:9000) &
 
     export BIN_DIR=`pwd`
-    tmux -f ../etc/tmux_barwin.conf a
+    gnome-terminal -e "tmux -f ../etc/tmux_barwin.conf a"
 fi
 
 
