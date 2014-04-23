@@ -50,7 +50,7 @@ public class CocktailGenerationManager implements Serializable {
 				resetCocktail = true;
 			}
 			
-			if (resetCocktail = true) {
+			if (resetCocktail) {
 				countToThrowException++;
 				if (countToThrowException >= maxAttemptsToMeetPriceConstraints) {
 					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. I give up now.");
