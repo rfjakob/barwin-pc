@@ -31,7 +31,7 @@ public class EvolutionAlgorithmManager {
 	
 	private String propPath;
 	private String dbDriverPath;
-	private String basePropPath = "../etc/evolutionStackSettings/";
+	private static String basePropPath = "../etc/evolutionStackSettings/";
 	
 	private boolean didJustLoad = false;
 	
@@ -41,7 +41,7 @@ public class EvolutionAlgorithmManager {
 	private double[] initMeanValues;
 	private double[] initOffsets;
 	
-	private boolean autoLoad;
+	private boolean autoLoad = true;
 		
 	/*
 	 * constructor
@@ -67,13 +67,11 @@ public class EvolutionAlgorithmManager {
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
-		this.propPath = basePropPath + propPath;
+		this.propPath = /*basePropPath + */propPath;
 		
 		if (dbDriverPath != null) {
 			this.dbDriverPath = dbDriverPath;
 		}
-		
-		this.autoLoad = true;
 
 		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 		
@@ -87,7 +85,7 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
-		this.propPath = basePropPath + propPath;		
+		this.propPath = /*basePropPath + */propPath;		
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
@@ -96,10 +94,10 @@ public class EvolutionAlgorithmManager {
 		accessDB(dbDriverPath, resetDbTable);
 	}
 	
-	public Properties loadProps() {
+	public static Properties loadProps(String propPath) {
 		Properties props = new Properties();
 		try {
-			props.load(new FileInputStream(propPath + ".properties"));
+			props.load(new FileInputStream(basePropPath + propPath + ".properties"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,7 +110,7 @@ public class EvolutionAlgorithmManager {
 	}
 	
 	private void convertProps() throws NumberFormatException, SQLException {
-		Properties props = loadProps();
+		Properties props = loadProps(propPath);
 		
 		updateProps(
 				props.getProperty("evolutionStackName"),
@@ -482,7 +480,7 @@ public class EvolutionAlgorithmManager {
 		}
 		
 		try {
-			props.store(new FileOutputStream(new File(propPath + ".properties")), null);
+			props.store(new FileOutputStream(new File(basePropPath + propPath + ".properties")), null);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

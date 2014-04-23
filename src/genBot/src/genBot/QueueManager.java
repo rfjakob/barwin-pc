@@ -142,15 +142,13 @@ public class QueueManager extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				if (serial == null)
-					Thread.sleep(10000);
-				//if (serial != null) {
-				
+				// Sleep 100ms between serial polls to bring down CPU usage
+				Thread.sleep(100);
+
 				processSerialInput();
-				//}
+				
 				if(serialIsReady()) {
 					processQueue();
-					//Thread.sleep(200);
 				}
 			} catch (SerialRMIException e) {
 				// TODO Auto-generated catch block
@@ -165,8 +163,6 @@ public class QueueManager extends Thread {
 				e.printStackTrace();
 				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
 			}
-		// Sleep 100ms between serial polls to bring down CPU usage
-		try { Thread.sleep(100); } catch(InterruptedException edontcare) {}
 		}
 	}
 	
@@ -177,15 +173,7 @@ public class QueueManager extends Thread {
 	}
 	
 	private void processSerialInput() throws SerialRMIException, RemoteException {
-		String[] sA;
-		//String[] sA = {new String("READY")};
-		if(serial != null) {
-			sA = serial.readLines();
-		} else {
-			// Only for testing, always get read
-			String[] sAT = {new String("READY 213 0 ")};
-			sA = sAT;
-		}
+		String[] sA = serial.readLines();
 		
 		if(sA.length == 0)
 			return;
@@ -195,7 +183,7 @@ public class QueueManager extends Thread {
 		for (ArduinoMessage message : messages) {
 			receivedMessages.add(message);
 			if(message.unknownMessage) {
-				System.err.println("Unknown Message " + message.raw);
+				System.err.println("Unknown Message: '" + message.raw + "'");
 				continue;
 			}
 			//System.out.println("GOT COMMAND " + me.raw);
@@ -247,61 +235,13 @@ public class QueueManager extends Thread {
 	public void pourCocktail() throws RemoteException, SerialRMIException {
 		CocktailWithName toBePoured  = queue.getAndRemoveFirstCocktail();
 		Cocktail pourCocktail = toBePoured.getCocktail();
-		String codedPourCocktail = codePour(pourCocktail);
 		
-		if (serial != null) {
-			serial.writeLine(codedPourCocktail);
-		}
+		serial.writeLine(codePour(pourCocktail));
 
 		currentlyPouring = toBePoured;
 	
 		pourCocktail.setQueued(false);
 		pourCocktail.setPouring(true);
-		
-		// ONLY FOR TESTING PURPOSES 
-		if (serial == null) {
-			simulatePourCocktail();		
-		}
-	}
-
-	private void simulatePourCocktail() {
-		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
-		try {
-			statusClientCode = 1;
-			statusClientMessage = "SIM: Place cup";
-			Thread.sleep(3000);
-
-			int[] milliLiters = new int[ings.length];
-			for (int i = 0; i < milliLiters.length; i++) {
-				milliLiters[ings[i].getArduinoOutputLine()] = (int) Math.round(currentlyPouring.getCocktail().getAmount(ings[i]) * cocktailSizeMilliliter);
-			}
-			
-			for (int i = 0; i < milliLiters.length; i++) {
-				if(milliLiters[i] > 0) {
-					statusClientMessage = "Pouring ";
-					// Get string of ingredient
-					Ingredient ci = null;
-					for(Ingredient ing : IngredientArray.getInstance().getAllIngredients()) {
-						if(ing.getArduinoOutputLine() == i) {
-							ci = ing;
-							break;
-						}
-					}
-					if(currentlyPouring != null && ci != null)
-						statusClientMessage += ci.getName();
-					
-					statusClientCode = 2;
-					Thread.sleep(3000);
-				}
-			}
-			
-			finishedPouring(milliLiters);
-			statusClientCode = 3;
-			statusClientMessage = "Take cup";
-			Thread.sleep(3000);			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	

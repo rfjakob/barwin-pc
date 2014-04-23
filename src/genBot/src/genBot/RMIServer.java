@@ -74,6 +74,23 @@ public class RMIServer {
 		queueManager = new QueueManager(queue, serialRMIAddress, serialPort, 200);
 
 		rmiImpl = new RemoteOrderImpl(queueManager);
+
+		// Load all autoloads
+		String[] cocktailTypes = rmiImpl.listPossibleEvolutionStacks();
+		System.out.println("\nAuto Load Cocktail Types ... ");
+		for (int i = 0; i < cocktailTypes.length; i++) {
+			String cocktailType = cocktailTypes[i];
+			System.out.println(" - " + cocktailType + " ");
+			Properties props = EvolutionAlgorithmManager.loadProps(cocktailType);
+			if(props.containsKey("autoLoad") && Integer.parseInt(props.getProperty("autoLoad")) == 1) {
+				System.out.println("    AUTOLOAD");
+				rmiImpl.loadEvolutionStack(cocktailType);
+			} else {
+				System.out.println("    SKIP");
+			}
+		}
+		System.out.println();
+
 		RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
 		// RemoteServer.setLog(System.out);
 		System.out.println("Starting RMI service '" + rmiServiceName + "'");

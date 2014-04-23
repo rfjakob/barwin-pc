@@ -24,7 +24,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String propPath)  throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException;
 	
-	public void loadEvolutionStack(String evolutionStackName) throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException;
+	public void loadEvolutionStack(String evolutionStackName) throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException, FileNotFoundException;
 	
 	public String[] listPossibleEvolutionStacks() throws RemoteException;
 	

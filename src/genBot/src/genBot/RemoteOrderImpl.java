@@ -138,7 +138,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void loadEvolutionStack(String evolutionStackName)
-			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
+			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException, FileNotFoundException {
 		
 		String[] possibleNames = listPossibleEvolutionStacks();
 		boolean containsName = false;
@@ -155,7 +155,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		
-		Properties props = loadProps(evolutionStackName);
+		Properties props = getProps(evolutionStackName);
 		
 		// variableArea is hard coded... but it should be 0.25
 		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")), Double.parseDouble(props.getProperty("maxPricePerLiter")));
@@ -175,7 +175,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException {
-		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).loadProps();
+		return EvolutionAlgorithmManager.loadProps(evolutionStackName);
 	}
 	
 
@@ -202,8 +202,6 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			initMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
 			initOffsets[i] = Double.parseDouble(initOffsetStrings[i]);
 		}
-		
-
 		
 		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
 	}
@@ -301,7 +299,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMaxPricePerLiter(maxPricePerLiter);
 	}	
 	
-	private Properties loadProps(String propFile) {
+	/*private Properties loadProps(String propFile) {
 		Properties props = new Properties();
 		
 		try {
@@ -315,7 +313,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		
 		return props;
-	}
+	}*/
 
 	@Override
 	public boolean isEvolutionStackNameLoaded(String evolutionStackName)
@@ -352,7 +350,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		
 		// get the database file
-		Properties props = loadProps(evolutionStackName);
+		Properties props = EvolutionAlgorithmManager.loadProps(evolutionStackName);
 		String dbFile = props.getProperty("dbDriverPath");
 		
 		DataBaseDriver dbDriver = DataBaseDriver.getInstance(dbFile);
