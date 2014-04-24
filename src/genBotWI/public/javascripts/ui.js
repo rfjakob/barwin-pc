@@ -17,12 +17,23 @@
 	
 	function eurosKeyPressed(id) {
 		if(LastPadKeyPressed.euros != id){
-			if(LastPadKeyPressed.euros=='INIT'){centsKeyPressed('#Voteoo');}
+			if(LastPadKeyPressed.euros=='INIT'){
+				$('#Voteoo').css({'background-color': 'black'});
+				$('#Voteooa').css({'color': 'white'});
+				LastPadKeyPressed.cents = "#Voteoo";		
+			}
 			$(LastPadKeyPressed.euros).css({'background-color': 'white'});
 			$(LastPadKeyPressed.euros+"a").css({'color': 'black'});
 			$(id).css({'background-color': 'black'});
 			$(id+"a").css({'color': 'white'});
-			if(id=="#Vote10"){centsKeyPressed('#Voteoo');}
+			if(id=="#Vote10"){
+				$(LastPadKeyPressed.cents).css({'background-color': 'white'});
+                                $(LastPadKeyPressed.cents+"a").css({'color': 'black'});
+				$('#Voteoo').css({'background-color': 'black'});
+				$('#Voteooa').css({'color': 'white'});
+				LastPadKeyPressed.cents = "#Voteoo";
+				VoteValue.cent = .0;
+			}
 			LastPadKeyPressed.euros = id;
 		}
 	}
@@ -123,7 +134,9 @@
 				//window.location.href = "#mix";
 				setTimeout(checkStatus, 1000)
 			} else if (statusCode == 2){
-				
+				if(statusMessage.indexOf("ERROR") > -1){
+				statusMessage="Please wait while being refilled";
+				}	
 				$("#MixingLayer .SystemMessage").html(statusMessage);
 				timesTo--;
 				window.location.href = "#mix2"; // implement error page
