@@ -1,0 +1,13 @@
+/* for screens minimum 400px wide */
+
+body{
+	font-size: 20px;
+}
+
+.message{
+	font-size: 1.2em;
+}
+
+.cocktailRowContent a {
+	line-height: 2em;
+}
