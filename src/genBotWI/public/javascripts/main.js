@@ -103,20 +103,13 @@ $(function() {
 		});
 	})
 
-	$("body").on('click', '#resumeB', function(e){
+	$("body").on('click', '.directMessage', function(e){
 		e.preventDefault()
-		$.get("/sendResume" , function(data) {
+		$.get("/send/" + $( this ).attr('data-message') , function(data) {
 			gb.stdActions(data);
 		});
 	})
 
-	$("body").on('click', '#abortB', function(e){
-		e.preventDefault()
-		$.get("/sendAbort" , function(data) {
-			gb.stdActions(data);
-		});
-	})
-	
 	$("body").on('click', '#createForm button', function(e){
 		e.preventDefault()
 		$.post("/generate", $("#createForm").serialize(), function(data) {

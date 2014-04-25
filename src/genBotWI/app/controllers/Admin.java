@@ -121,7 +121,7 @@ public class Admin extends AbstractController {
 			}
 			String name = parameters.get("name")[0];
 			double maxPrice = Double.parseDouble(parameters.get("maxPrice")[0]);
-			genBotRMI.generateEvolutionStack(name, selectedIngredients, maxPrice);
+			//genBotRMI.generateEvolutionStack(name, selectedIngredients, maxPrice);
 
 			return getStack(genBotRMI, "Created", name);
 		} catch (Exception e) {
@@ -184,26 +184,26 @@ public class Admin extends AbstractController {
 		}
 	}
 
-	public static Result sendResume() {
+	public static Result send(String message) {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			genBotRMI.sendToSerial("RESUME");
+			genBotRMI.sendToSerial(message);
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
-			result.put("message", "Resume sent");
+			result.put("message", "'" + message + "' sent");
 			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);
 		}
 	}
 
-	public static Result sendAbort() {
+	public static Result sendDance() {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			genBotRMI.sendToSerial("ABORT");
+			genBotRMI.sendToSerial("DANCE");
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
-			result.put("message", "Abort sent");
+			result.put("message", "Bottles sent");
 			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);

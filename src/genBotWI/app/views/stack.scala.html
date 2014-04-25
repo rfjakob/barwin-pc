@@ -8,8 +8,9 @@
 		<li><a href="#_settings" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a></li>
 		<li><a href="#_create" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span></a></li>
 		<a class="btn action" href="#" id="refreshB"><span class="glyphicon glyphicon-refresh"></a>
-		<a class="btn action" href="#" id="resumeB"><span class="glyphicon glyphicon-forward"></a>
-		<a class="btn action" href="#" id="abortB"><span class="glyphicon glyphicon-bell"></a>
+		<a class="btn action directMessage" href="#" id="resumeB" data-message="RESUME"><span class="glyphicon glyphicon-forward"></a>
+		<a class="btn action directMessage" href="#" id="abortB" data-message="ABORT"><span class="glyphicon glyphicon-bell"></a>
+		<a class="btn action directMessage" href="#" id="danceB" data-message="DANCE"><span class="glyphicon glyphicon-star"></a>
 	</ul>
 	<div class="tab-content">
 		@for(name <- names) {
