@@ -1,12 +1,13 @@
 package genBot;
 
 import java.net.MalformedURLException;
+import java.util.LinkedList;
+import java.util.Queue;
+//import java.util.Scanner;
+import java.util.Properties;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
 
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface;
@@ -35,20 +36,17 @@ public class QueueManager extends Thread {
 	
 	private Status status;
 
-	public QueueManager(CocktailQueue queue, String server, String portName, int cocktailSizeMilliliter)
-		throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException
-	{
+	public QueueManager(Properties prop)
+		throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException {
 		setDaemon(true);
-		
-		this.queue = queue;
-		this.protocol = ArduinoProtocol.getInstance();
-		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 
-		System.out.println("Connecting to RMI: " + server);
-		this.serial = (SerialRMIInterface) Naming.lookup(server);
-		System.out.println("Connecting to tty: " + portName);
-		this.serial.connect(portName);
-		this.status = Status.unknown;
+		
+		this.queue = new CocktailQueue();	;
+		this.protocol = ArduinoProtocol.getInstance();
+
+		this.cocktailSizeMilliliter = 200;
+		if(prop.containsKey("cocktailSize"))
+	    	cocktailSizeMilliliter = Integer.parseInt(prop.getProperty("cocktailSize"));
 
 		/*
 		Scanner scanner = new Scanner(System.in);
@@ -136,6 +134,11 @@ public class QueueManager extends Thread {
 		
 		this.status = Status.unknown;
 		*/
+	}
+
+	public void setSerial(SerialRMIInterface serial) {
+		this.serial = serial;
+		this.status = Status.unknown;
 	}
 
 	@Override

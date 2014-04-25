@@ -33,7 +33,7 @@ public class IngredientArray {
 		ArrayList<String> fileNames = new ArrayList<String>();
 		
 		for (int i = 0; i < listOfFiles.length; i++) {
-			System.out.println(listOfFiles[i].getName());
+			//System.out.println(listOfFiles[i].getName());
 			if (listOfFiles[i].isFile()) {
 				files = listOfFiles[i].getName();
 
