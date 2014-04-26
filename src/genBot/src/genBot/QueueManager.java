@@ -3,7 +3,6 @@ package genBot;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.Queue;
-//import java.util.Scanner;
 import java.util.Properties;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -40,7 +39,6 @@ public class QueueManager extends Thread {
 		throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException {
 		setDaemon(true);
 
-		
 		this.queue = new CocktailQueue();	;
 		this.protocol = ArduinoProtocol.getInstance();
 
@@ -48,92 +46,6 @@ public class QueueManager extends Thread {
 		if(prop.containsKey("cocktailSize"))
 	    	cocktailSizeMilliliter = Integer.parseInt(prop.getProperty("cocktailSize"));
 
-		/*
-		Scanner scanner = new Scanner(System.in);
-		System.out.println();
-		System.out.println("------------------------------------");
-		System.out.println("- Specify serialRMI server address -");
-		System.out.println("------------------------------------");
-		System.out.println("--- default: " + server);
-		System.out.println("--- use 'none' for simulating");
-		System.out.println("--------------------------------");
-		System.out.print("--- Address: ");
-		String serverI = scanner.nextLine();
-		System.out.println("--------------------------------");
-		System.out.println();
-		
-		if(serverI.isEmpty()) {
-			serverI = server;
-			System.out.println("Using default: " + server);
-		}
-		
-		if(serverI.equals("none")) {
-			System.out.println("No server specified.");
-			System.out.println();
-			System.out.println("------------------------------------");
-			System.out.println("- STARTING SIMULATION MODE ---------");
-			System.out.println("------------------------------------");
-			this.serial = null;
-		} else {
-			server = serverI;
-			try {
-				System.out.println("Trying to connect to " + server + " ... ");
-				this.serial = (SerialRMIInterface) Naming.lookup(server);
-				System.out.println("Connected!");
-			} catch (RemoteException e) {
-				System.out.println();
-				System.out.println("------------------------------------");
-				System.out.println("- ERROR WHILE CONNECTING -----------");
-				System.out.println("------------------------------------");
-				e.printStackTrace();
-				System.out.println("------------------------------------");
-				scanner.close();
-				throw e;
-			}
-			
-			System.out.println();
-			System.out.println("--------------------------------");
-			System.out.println("- Specify serial port ----------");
-			System.out.println("--------------------------------");
-			int i = 0;
-			String[] availablePorts = this.serial.getSerialPorts();
-			if(availablePorts.length > 1) {
-				for(String tName: availablePorts) {
-					i++;
-					System.out.print("--- " + i + ": " + tName);
-					if (portName.equals(tName)) {
-						System.out.print(" (default)");
-					}
-					System.out.println();
-				}
-				System.out.println("--------------------------------");
-				System.out.println("--- Use number to specify: ");
-				if(scanner.hasNextInt()) {
-					portName = availablePorts[scanner.nextInt() - 1];
-				} 
-				System.out.println("--------------------------------");
-			} else if(availablePorts.length == 1) {
-				if(!portName.equals(availablePorts[0])) {
-					System.out.print("--- WARNING: Port " + portName + " not available, using port " + availablePorts[0]);
-					portName = availablePorts[0];
-				}  
-			} else {
-				System.out.println();
-				System.out.println("------------------------------------");
-				System.out.println("- ERROR NO SERIAL PORT -------------");
-				System.out.println("------------------------------------");
-				scanner.close();
-				throw new SerialRMIException("ERROR NO SERIAL PORT");
-			}
-			
-			
-			serial.connect(portName);
-		}
-		scanner.close();
-		
-		
-		this.status = Status.unknown;
-		*/
 	}
 
 	public void setSerial(SerialRMIInterface serial) {
@@ -143,28 +55,20 @@ public class QueueManager extends Thread {
 
 	@Override
 	public void run() {
+		System.out.println("RUNNING");
 		while (true) {
 			try {
-				// Sleep 100ms between serial polls to bring down CPU usage
 				Thread.sleep(100);
 
 				processSerialInput();
 				
-				if(serialIsReady()) {
+				if(status == Status.ready) 
 					processQueue();
-				}
-			} catch (SerialRMIException e) {
-				// TODO Auto-generated catch block
+				
+			} catch (Exception e) {
 				e.printStackTrace();
-				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				try { Thread.sleep(2000); } catch(InterruptedException e91) {}
+				try { Thread.sleep(2000); } 
+				catch(InterruptedException ie) {}
 			}
 		}
 	}
@@ -239,7 +143,7 @@ public class QueueManager extends Thread {
 		CocktailWithName toBePoured  = queue.getAndRemoveFirstCocktail();
 		Cocktail pourCocktail = toBePoured.getCocktail();
 		
-		serial.writeLine(codePour(pourCocktail));
+		sendToSerial(codePour(pourCocktail));
 
 		currentlyPouring = toBePoured;
 	
@@ -279,14 +183,6 @@ public class QueueManager extends Thread {
 		return m.raw;
 	}
 	
-	public boolean serialIsReady() {
-		if (status == Status.ready) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	public CocktailQueue getQueue() {
 		return queue;
 	}
@@ -318,8 +214,6 @@ public class QueueManager extends Thread {
 	}
 
 	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
-		if (serial != null) {
-			serial.writeLine(s);
-		}
+		serial.writeLine(s);
 	}
 }

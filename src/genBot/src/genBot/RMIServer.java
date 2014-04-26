@@ -14,6 +14,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Scanner;
 
 import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface;
@@ -65,11 +66,57 @@ public class RMIServer {
 	    if(prop.containsKey("serialPort"))
 	    	serialPort = prop.getProperty("serialPort");
 
-	    System.out.println("Connecting to RMI: " + serialRMIAddress);
+	    System.out.println("--------------------------------");
+	    System.out.println("--- SERIAL RMI CONNECTION ------");
+	    System.out.println("--------------------------------");
+	    System.out.println("- CONFIG VAULES -----[---------- ");
+	    System.out.println("- RMI Server: " + serialRMIAddress);
+	    System.out.println("- Serial Port: " + serialPort);
+	    System.out.println("--------------------------------");
+	    System.out.println("- RMI SERVER -------------------");
+	    System.out.print(  "- Connecting ... ");
 		SerialRMIInterface serial = (SerialRMIInterface) Naming.lookup(serialRMIAddress);
+		System.out.println("Done");
+		System.out.println("--------------------------------");
+		System.out.println("- SERIAL PORT ------------------");
+		String[] availablePorts = serial.getSerialPorts();
+		if(availablePorts.length > 0) {
+			System.out.println("- Available ports: ");
+			System.out.println("-----");
+			int i = 0;
+			boolean exist = false; 
+			for(String tName: availablePorts) {
+				i++;
+				System.out.println("- " + i + ": " + tName);
+				if (serialPort.equals(tName)) 
+					exist = true;
+			}
+			System.out.println("-----");
+			if(!exist && !serialPort.equals("select")) 
+				System.out.println("- Serial port " + serialPort + " not available");
+			
+			if(!exist) {
+				System.out.print("- Use number to specify: ");
+				Scanner scanner = new Scanner(System.in);
+				if(scanner.hasNextInt()) {
+					serialPort = availablePorts[scanner.nextInt() - 1];
+				}
+				scanner.close();
+				System.out.println();
+				System.out.println("-----");
+			}
+			
 
-		System.out.println("Connecting to tty: " + serialPort);
+		} else {
+			System.out.println("- No serial port available");
+			System.out.println("------------------------------------");
+			throw new SerialRMIException("ERROR NO SERIAL PORT");
+		}
+
+		System.out.print(  "- Connecting to " + serialPort + " ... ");
 		serial.connect(serialPort);
+		System.out.println("Done");
+		System.out.println("--------------------------------\n\n\n");
 
 		return serial;
 	}
