@@ -40,11 +40,14 @@ public class RMIServer {
 	}
 
 	private static void autoload(RemoteOrderImpl rmiImpl) throws Exception {
+		System.out.println("--------------------------------");
+	    System.out.println("--- AUTOLOADING GENERATIONS ----");
+	    System.out.println("--------------------------------");
+
 		String[] cocktailTypes = rmiImpl.listPossibleEvolutionStacks();
-		System.out.println("\nAuto Load Cocktail Types ... ");
 		for (int i = 0; i < cocktailTypes.length; i++) {
 			String cocktailType = cocktailTypes[i];
-			System.out.println(" - " + cocktailType + " ");
+			System.out.print("- " + String.format("%-30s", cocktailType));
 			Properties props = EvolutionAlgorithmManager.loadProps(cocktailType);
 			if(props.containsKey("autoLoad") && Integer.parseInt(props.getProperty("autoLoad")) == 1) {
 				System.out.println("    AUTOLOAD");
@@ -53,7 +56,7 @@ public class RMIServer {
 				System.out.println("    SKIP");
 			}
 		}
-		System.out.println();
+		System.out.println("--------------------------------\n\n\n");
 	}
 
 
@@ -69,7 +72,7 @@ public class RMIServer {
 	    System.out.println("--------------------------------");
 	    System.out.println("--- SERIAL RMI CONNECTION ------");
 	    System.out.println("--------------------------------");
-	    System.out.println("- CONFIG VAULES -----[---------- ");
+	    System.out.println("- CONFIG VAULES ----------------");
 	    System.out.println("- RMI Server: " + serialRMIAddress);
 	    System.out.println("- Serial Port: " + serialPort);
 	    System.out.println("--------------------------------");
@@ -136,16 +139,26 @@ public class RMIServer {
 	    if(prop.containsKey("rmiServiceName"))
 	    	rmiServiceName = prop.getProperty("rmiServiceName");
 
+	    System.out.println("--------------------------------");
+	    System.out.println("--- OFFER GENBOT RMI CONNECTION ");
+	    System.out.println("--------------------------------");
+	    System.out.println("- CONFIG VAULES ----------------");
+	    System.out.println("- Interface: " + rmiInterface);
+	    System.out.println("- Registry: " + rmiRegistry);
+	    System.out.println("- Registry Port: " + rmiRegistryPort);
+	    System.out.println("- Service Name: " + rmiServiceName);
+	    System.out.println("--------------------------------");
+
 		Registry registry;
 		
 		if(rmiRegistry) {
-			System.out.println("Starting RMI registry on port " + rmiRegistryPort);
+			System.out.println("- Starting RMI registry on port " + rmiRegistryPort);
 			registry = LocateRegistry.createRegistry(rmiRegistryPort);
 			Enumeration<NetworkInterface> ifs = NetworkInterface.getNetworkInterfaces();
 			String ipAddress = Inet4Address.getLocalHost().getHostAddress();
 			if(rmiInterface != null) {
-				System.out.println("Trying to obtain address of interface '" + rmiInterface + "'");
-				System.out.print("Available interfaces: ");
+				System.out.println("- Trying to obtain address of interface '" + rmiInterface + "'");
+				System.out.print("- Available interfaces: ");
 				boolean found = false;
 				for (Enumeration<NetworkInterface> e = ifs; e.hasMoreElements();) {
 					NetworkInterface ni = e.nextElement();
@@ -164,23 +177,25 @@ public class RMIServer {
 				}
 				System.out.println();
 				if(!found)
-					System.out.println("Interface not found, using host address");
+					System.out.println("- Interface not found, using host address");
 			} else {
-				System.out.println("No interface specified in config file");
+				System.out.println("- No interface specified in config file");
 			}
 			
-			System.out.println("Setting java.rmi.server.hostname to: " + ipAddress);
-			System.setProperty("java.rmi.server.hostname", ipAddress);
+			System.out.println("- Setting java.rmi.server.hostname to: " + ipAddress);
+			System.setProperty("- java.rmi.server.hostname", ipAddress);
 		} else {
-			System.out.println("Using running RMI registry");
+			System.out.println("- Using running RMI registry");
 			registry = LocateRegistry.getRegistry();
 		}
 
 		RemoteOrderImpl rmiImpl = new RemoteOrderImpl(queueManager);
 		RemoteOrderInterface stub = (RemoteOrderInterface) UnicastRemoteObject.exportObject(rmiImpl, 0);
 		// RemoteServer.setLog(System.out);
-		System.out.println("Starting RMI service '" + rmiServiceName + "'");
+		System.out.println("- Starting RMI service '" + rmiServiceName + "'");
 		registry.rebind(rmiServiceName, stub);
+
+		System.out.println("--------------------------------\n\n\n");
 
 		return rmiImpl;
 	}

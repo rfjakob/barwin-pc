@@ -67,7 +67,7 @@ public class EvolutionAlgorithmManager {
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
-		this.propPath = /*basePropPath + */propPath;
+		this.propPath = propPath;
 		
 		if (dbDriverPath != null) {
 			this.dbDriverPath = dbDriverPath;
@@ -84,8 +84,18 @@ public class EvolutionAlgorithmManager {
 		this.autoLoad = autoLoad;
 	}
 	
+	/*public EvolutionAlgorithmManager(String evolutionStackName) throws MaxAttemptsToMeetPriceConstraintException {
+		this.propPath = propPath;		
+		this.fitnessCheck = fitnessCheck;
+		this.recombination = recombination;
+		
+		convertProps();
+			
+		accessDB(dbDriverPath, resetDbTable);
+	}*/
+
 	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
-		this.propPath = /*basePropPath + */propPath;		
+		this.propPath = propPath;		
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
