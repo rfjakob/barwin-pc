@@ -77,8 +77,8 @@ If that does not work, start the services in this order:
 
 5. Go to web interface
 
-	* Front-end: http://127.0.0.1:9000/interface
-	* Back-end: http://127.0.0.1:9000
+	* Front-end: http://127.0.0.1:9000/
+	* Back-end: http://127.0.0.1:9000/admin
 
 
 See Also
