@@ -33,6 +33,8 @@ public class CocktailGeneration implements Serializable {
 		
 		this.randomPopulationPosition = 0;
 	}
+
+
 		
 	/*
 	 * This method returns the numbers 0 to populationSize - 1 in random order
@@ -268,7 +270,7 @@ public class CocktailGeneration implements Serializable {
 		return out;
 	}
 	
-	public String randomToString() {
+	/*public String randomToString() {
 		String out = "";
 		
 		for (int i = 0; i < getPopulationSize(); i++) {
@@ -286,5 +288,27 @@ public class CocktailGeneration implements Serializable {
 		}
 		
 		return out;
+	}*/
+
+
+
+	public static CocktailGeneration loadFromString(String gStr) {
+		String cStr[] = gStr.split("\\r?\\n");
+
+		Cocktail[] population = new Cocktail[cStr.length];
+		int i = 0;
+		for(String t: cStr) {
+			System.out.println(t);
+			population[i++] = Cocktail.loadFromString(t);
+		}
+
+		return new CocktailGeneration(population);
+	}
+
+	public String getSaveString() {
+		String str = "";
+		for (Cocktail c: population)
+			str += c.getSaveString() + "\n";
+		return str;
 	}
 }

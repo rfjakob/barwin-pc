@@ -3,6 +3,7 @@ package genBot;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
+import java.text.DecimalFormat;
 
 /*
  * A cocktail consists of a multiple IngredientAmounts (each ingredient in
@@ -274,5 +275,53 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		} else {
 			return false;
 		}
+	}
+
+
+	public static Cocktail loadFromString(String cStr) {
+		String aStr[] = cStr.split("\\t");
+
+		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
+
+		double amounts[] = new double[ingredients.length];
+
+		int i = 0;
+		for(Ingredient ing: ingredients) {
+			System.out.println(aStr[i]);
+			amounts[i] = Double.valueOf(aStr[i]);
+			i++;
+		}
+
+		Cocktail c = new Cocktail(amounts);
+
+		String fitnessInput = aStr[i++];
+		if(!fitnessInput.equals("-"))
+			c.fitnessInput = Double.valueOf(fitnessInput);
+
+		String fitness = aStr[i++];
+		if(!fitness.equals("-")) {
+			c.fitness = Double.valueOf(fitness);
+			c.fitnessIsSet = true;
+		}
+
+		return c;
+	}
+
+	public String getSaveString() {
+		String str = "";
+
+		DecimalFormat df = new DecimalFormat("#.##");
+
+		for (IngredientAmount d: ingredientAmounts)
+			str += df.format(d.getAmount()) + "\t";
+
+
+		if(fitnessIsSet) {
+			str += df.format(fitnessInput) + "\t";
+			str += df.format(fitness); 
+		} else {
+			str += "-\t-";
+		}
+		return str;
 	}
 }

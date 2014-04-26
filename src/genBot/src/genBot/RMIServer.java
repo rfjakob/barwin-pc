@@ -45,11 +45,10 @@ public class RMIServer {
 	    System.out.println("--------------------------------");
 
 		String[] cocktailTypes = rmiImpl.listPossibleEvolutionStacks();
-		for (int i = 0; i < cocktailTypes.length; i++) {
-			String cocktailType = cocktailTypes[i];
+		for(String cocktailType: cocktailTypes) {
 			System.out.print("- " + String.format("%-30s", cocktailType));
 			Properties props = EvolutionAlgorithmManager.loadProps(cocktailType);
-			if(props.containsKey("autoLoad") && Integer.parseInt(props.getProperty("autoLoad")) == 1) {
+			if(props.containsKey("autoLoad") && Boolean.parseBoolean("autoLoad")) {
 				System.out.println("    AUTOLOAD");
 				rmiImpl.loadEvolutionStack(cocktailType);
 			} else {

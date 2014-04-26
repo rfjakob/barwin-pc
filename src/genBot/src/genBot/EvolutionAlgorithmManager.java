@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /*
@@ -17,31 +16,21 @@ public class EvolutionAlgorithmManager {
 	
 	private CocktailGenerationManager genManager;
 	
-	private int truncation;
-	private int elitism;
-	
 	private double stdDeviation;
 	
 	private double maxPricePerLiter;
 	
-	private int populationSize;
 	private CheckFitness fitnessCheck;
 	private Recombination recombination;
-	private DataBaseDriver dbDriver;
 	
-	private String propPath;
-	private String dbDriverPath;
 	private static String basePropPath = "../etc/evolutionStackSettings/";
-	
-	private boolean didJustLoad = false;
+	private static String baseStorePath = "../var/genBot/";
 	
 	private String evolutionStackName;
 	
 	private boolean[] booleanAllowedIngredients;
 	private double[] initMeanValues;
 	private double[] initOffsets;
-	
-	private boolean autoLoad = true;
 		
 	/*
 	 * constructor
@@ -49,7 +38,7 @@ public class EvolutionAlgorithmManager {
 	 * @param generationSize how many Cocktails should be in the generation
 	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
 	 */
-	public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double[] initMeanValues, double[] initOffsests, double maxPricePerLiter, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {		
+	/*public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double[] initMeanValues, double[] initOffsests, double maxPricePerLiter, String propPath) throws MaxAttemptsToMeetPriceConstraintException {		
 		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
 		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
 		this.initMeanValues = initMeanValues;
@@ -69,57 +58,69 @@ public class EvolutionAlgorithmManager {
 		
 		this.propPath = propPath;
 		
-		if (dbDriverPath != null) {
-			this.dbDriverPath = dbDriverPath;
-		}
+
 
 		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
 		
 		convertProps();	
-		
-		accessDB(dbDriverPath, resetDbTable);
-	}
-	
-	public void setAutoLoad(boolean autoLoad) {
-		this.autoLoad = autoLoad;
-	}
-	
-	/*public EvolutionAlgorithmManager(String evolutionStackName) throws MaxAttemptsToMeetPriceConstraintException {
-		this.propPath = propPath;		
-		this.fitnessCheck = fitnessCheck;
-		this.recombination = recombination;
-		
-		convertProps();
-			
-		accessDB(dbDriverPath, resetDbTable);
 	}*/
+	
+	public boolean getAutoLoad() {
+		return Boolean.parseBoolean(props.getProperty("autoLoad"));
+	}
 
-	public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
+	public void setAutoLoad(boolean autoLoad) {
+		props.setProperty("autoLoad", String.valueOf(autoLoad));
+		saveProps();
+	}
+
+	public int getTruncation() {
+		return Integer.parseInt(props.getProperty("truncation"));
+	}
+
+	public int getElitism() {
+		return Integer.parseInt(props.getProperty("elitsm"));
+	}
+
+	public int getPopulationSize() {
+		return Integer.parseInt(props.getProperty("populationSize"));
+	}
+	
+
+	public double getMutationStdDeviation() {
+		return recombination.getMutationStdDeviation();
+	}
+	
+
+	public void setMutationStdDeviation(double stdDeviation) {
+		this.stdDeviation = stdDeviation;
+		recombination.setMutationStdDeviation(stdDeviation);
+
+		//storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, booleanAllowedIngrediensToString());
+	}
+	
+	public double getMaxPricePerLiter() {
+		return recombination.getMaxPricePerLiter();
+	}
+	
+	public void setMaxPricePerLiter(double maxPricePerLiter) {
+		this.maxPricePerLiter = maxPricePerLiter;
+		recombination.setMaxPricePerLiter(maxPricePerLiter);
+		
+		//storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, booleanAllowedIngrediensToString());
+	}
+
+	/*public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws MaxAttemptsToMeetPriceConstraintException {
 		this.propPath = propPath;		
 		this.fitnessCheck = fitnessCheck;
 		this.recombination = recombination;
 		
 		convertProps();
-			
-		accessDB(dbDriverPath, resetDbTable);
-	}
+	}*/
 	
-	public static Properties loadProps(String propPath) {
-		Properties props = new Properties();
-		try {
-			props.load(new FileInputStream(basePropPath + propPath + ".properties"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return props;
-	}
+
 	
-	private void convertProps() throws NumberFormatException, SQLException {
+	/*private void convertProps() throws NumberFormatException {
 		Properties props = loadProps(propPath);
 		
 		updateProps(
@@ -131,12 +132,11 @@ public class EvolutionAlgorithmManager {
 				Double.parseDouble(props.getProperty("maxPricePerLiter")),
 				props.getProperty("initMeanValues"),
 				props.getProperty("initOffsets"),
-				props.getProperty("dbDriverPath"),
 				props.getProperty("booleanAllowedIngredients")
 				);
 	}
 	
-	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String initMeanValues, String initOffsets, String dbDriverPath, String booleanAllowedIngredientsString) throws SQLException {
+	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String initMeanValues, String initOffsets, String booleanAllowedIngredientsString) {
 		this.evolutionStackName = evolutionStackName;
 		this.populationSize = populationSize;
 		this.truncation = truncation;
@@ -156,30 +156,12 @@ public class EvolutionAlgorithmManager {
 		this.initMeanValues = readInitMeanValues(initMeanValues);
 		this.initOffsets = readInitOffsets(initOffsets);
 		
-		this.dbDriverPath = dbDriverPath;
-		
 		setMutationStdDeviation(this.stdDeviation);
 		setMaxPricePerLiter(this.maxPricePerLiter);
-	}
-
-	private void accessDB(String dbDriverPath, boolean resetTable) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
-		if (dbDriverPath != null) {
-			this.dbDriver = DataBaseDriver.getInstance(dbDriverPath);
-			this.dbDriver.setup(dbDriverPath, resetTable, evolutionStackName);
-
-			if (dbDriver.getLastGenerationNumber(evolutionStackName) == -1) {
-				this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, initMeanValues, initOffsets, maxPricePerLiter);
-			} else {				
-				this.genManager = load();
-				this.didJustLoad = true;
-			}
-		} else {
-			this.genManager = new CocktailGenerationManager(populationSize, evolutionStackName, booleanAllowedIngredients, initMeanValues, initOffsets, maxPricePerLiter);
-		}
-	}
+	}*/
 	
 	public boolean canEvolve() {
-		if (getGenManager().getCocktailGeneration().getRankedPopulation().length <= (truncation + elitism)) {
+		if (getGenManager().getCocktailGeneration().getRankedPopulation().length <= (getTruncation() + getElitism())) {
 			return false;
 		} else {
 			return true;
@@ -193,45 +175,32 @@ public class EvolutionAlgorithmManager {
 	 * @param elitism number of cocktails to come to enter the next generation
 	 * @return the new cocktail generation
 	 */
-	public void evolve() throws SQLException, NotEnoughRatedCocktailsException {
-		if (didJustLoad) {
-			didJustLoad = false;
-		} else {
-			if (dbDriver != null) {
-				save();
-			}
-		}
-		
-		// load properties - they may have been updated
-		convertProps();
-		
-		// reduce generation to the rated cocktails
+	public void evolve() throws NotEnoughRatedCocktailsException {		
 		Cocktail[] ratedCocktails = getGenManager().getCocktailGeneration().getRankedPopulation();
 		
 		// throw an exception if not enough cocktails are rated
-		if (!canEvolve()) {
-			throw new NotEnoughRatedCocktailsException("Only " + ratedCocktails.length + " cocktails are rated. As " + truncation + " cocktails should be truncated and the best " + elitism + "cocktails should be copied to the next generation we would need at least " + (truncation + elitism + 1) + " rated cocktails.");
-		}
+		if (!canEvolve())
+			throw new NotEnoughRatedCocktailsException("Only " + ratedCocktails.length + " cocktails are rated. As " + getTruncation() + " cocktails should be truncated and the best " + getElitism() + "cocktails should be copied to the next generation we would need at least " + (getTruncation() + getElitism() + 1) + " rated cocktails.");
 
 		genManager.increaseGenerationNumber();
 		
 		CocktailGeneration nextGeneration = new CocktailGeneration(ratedCocktails);
 
 		// Truncation
-		nextGeneration = truncation(truncation, nextGeneration);
+		nextGeneration = truncate(nextGeneration);
 
 		// Crossover & Mutation
 		try {
 			boolean recombinationSucceeded = false;
 			while (!recombinationSucceeded) {
 				try {
-					nextGeneration = recombination.recombine(nextGeneration, populationSize, getBooleanAllowedIngredients());
+					nextGeneration = recombination.recombine(nextGeneration, getPopulationSize(), getBooleanAllowedIngredients());
 					recombinationSucceeded = true;
 				} catch (MaxAttemptsToMeetPriceConstraintException e) {
 					e.printStackTrace();
 					
 					recombinationSucceeded = false;
-					convertProps();
+					//convertProps();
 				}
 			}
 		} catch (FitnessNotSetException e) {
@@ -240,7 +209,7 @@ public class EvolutionAlgorithmManager {
 		}
 
 		// Elitism
-		nextGeneration = applyElitism(elitism, genManager.getCocktailGeneration(), nextGeneration);
+		nextGeneration = applyElitism(genManager.getCocktailGeneration(), nextGeneration);
 		
 		genManager.setGeneration(nextGeneration);
 		
@@ -248,68 +217,10 @@ public class EvolutionAlgorithmManager {
 		save();
 	}
 	
-	public double getMutationStdDeviation() {
-		return recombination.getMutationStdDeviation();
-	}
-	
-	public void setMutationStdDeviation(double stdDeviation) {
-		this.stdDeviation = stdDeviation;
-		recombination.setMutationStdDeviation(stdDeviation);
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
-	}
-	
-	public double getMaxPricePerLiter() {
-		return recombination.getMaxPricePerLiter();
-	}
-	
-	public void setMaxPricePerLiter(double maxPricePerLiter) {
-		this.maxPricePerLiter = maxPricePerLiter;
-		recombination.setMaxPricePerLiter(maxPricePerLiter);
-		
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
-	}
-	
-	public CocktailGenerationManager load() throws SQLException {
-		return load(dbDriver.getLastGenerationNumber(evolutionStackName));
-	}
-	
-	public CocktailGenerationManager load(int number) throws SQLException {
-		return dbDriver.select(evolutionStackName, number);
-	}
-	
-	public void loadFromDB(int number) throws SQLException {
-		genManager = load(number);
-		
-		didJustLoad = true;
-	}
-	
-	public void loadLastFromDB() throws SQLException {
-		genManager = load();
-		
-		didJustLoad = true;
-	}
-	
-	public void save() throws SQLException {
-		dbDriver.insertOrUpdate(evolutionStackName, genManager.getGenerationNumber(), genManager);
-	}
-		
-	/*
-	 * checks the fitness for the whole cocktail generation
-	 */
-//	public void evaluate() {
-//		if (genManager.getCocktailGeneration().hasNextRandomNamedCocktail()) {
-//			genManager.getCocktailGeneration().getNextRandomNamedCocktail(evolutionStackName, getGenManager().getGenerationNumber()).getCocktail().setFitness(fitnessCheck);
-//		}
-//	}
 
-	/*
-	 * applies truncation to the generation - the worst cocktails are removed from the
-	 * generation
-	 * @param truncation how many cocktails should be removed from the generation
-	 * @param cocktailGeneration 
-	 */
-	public CocktailGeneration truncation(int truncation, CocktailGeneration cocktailGeneration) {
+	public CocktailGeneration truncate(CocktailGeneration cocktailGeneration) {
+		int truncation = getTruncation();
 		if (truncation < 0) {
 			throw new IllegalArgumentException("Invalid number of truncated cocktails (" + truncation + ")!");
 		} else if (truncation >= cocktailGeneration.getPopulationSize()) {
@@ -334,11 +245,11 @@ public class EvolutionAlgorithmManager {
 	 * @param newCocktailGeneration the new cocktail generation
 	 * @return a cocktail generation with elitism applied
 	 */
-	public CocktailGeneration applyElitism(int elitism, CocktailGeneration oldCocktailGeneration, CocktailGeneration newCocktailGeneration) {
+	public CocktailGeneration applyElitism(CocktailGeneration oldCocktailGeneration, CocktailGeneration newCocktailGeneration) {
+		int elitism = getElitism();
 		if (elitism < 0) {
 			throw new IllegalArgumentException("Invalid number of elite-Cocktails (" + elitism + ")!");
 		}
-
 		
 		if (elitism > newCocktailGeneration.getPopulationSize()) {
 			elitism = newCocktailGeneration.getPopulationSize();
@@ -452,23 +363,18 @@ public class EvolutionAlgorithmManager {
 		return retBoolean;
 	}
 	
-	public void setFitness(String name, double cocktailSize, double fitnessInput) throws SQLException {
+	public void setFitness(String name, double cocktailSize, double fitnessInput) {
 		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, cocktailSize, fitnessInput);
 		save();
 	}
 	
-	public CocktailGenerationManager getOldGeneration(int generationNumber) throws SQLException {
-		return dbDriver.select(evolutionStackName, generationNumber);
-	}
-	
 	public void queue(String name) {
-// TODO Implement this method
-//		getGenManager().getCocktailByName(name).pour;
+		// TODO Implement this method
+		//		getGenManager().getCocktailByName(name).pour;
 		getGenManager().getCocktailByName(name).setQueued(true);
 	}
 	
-	public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) {		
-		Properties props = new Properties();
+	/*public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String booleanAllowedIngredientsString) {		
 		props.setProperty("evolutionStackName", evolutionStackName);
 		props.setProperty("populationSize", String.valueOf(populationSize));
 		props.setProperty("truncation", String.valueOf(truncation));
@@ -477,17 +383,9 @@ public class EvolutionAlgorithmManager {
 		props.setProperty("initMeanValues", initMeanValuesToString());
 		props.setProperty("initOffsets", initOffsetsToString());
 		props.setProperty("maxPricePerLiter", String.valueOf(maxPricePerLiter));
-		if (dbDriverPath != null) {
-			props.setProperty("dbDriverPath", dbDriverPath);
-		}
 		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
 			
-		// should be used to define if the Coctail will be autoloaded or not
-		if (this.autoLoad) {
-			props.setProperty("autoLoad", "1");
-		} else {
-			props.setProperty("autoLoad", "0");
-		}
+
 		
 		try {
 			props.store(new FileOutputStream(new File(basePropPath + propPath + ".properties")), null);
@@ -498,9 +396,64 @@ public class EvolutionAlgorithmManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-	}
+	}*/
 
 	public String getName() {
 		return evolutionStackName;
 	}
+
+	private Properties props;
+
+	public EvolutionAlgorithmManager(String evolutionStackName) throws Exception {
+		this.evolutionStackName = evolutionStackName;
+		this.props = loadProps(evolutionStackName);
+		load();
+	}
+
+	/*** SAVING AND LOADING ***/ 
+
+	public void save() {
+		try {
+			genManager.save(baseStorePath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public CocktailGenerationManager load() throws Exception {
+		return CocktailGenerationManager.load(evolutionStackName, baseStorePath);
+	}
+
+	public CocktailGenerationManager load(int generation) throws Exception {
+		return CocktailGenerationManager.load(evolutionStackName, baseStorePath, generation);
+	}
+
+	/*** PROPERTIES ***/ 
+
+	public static Properties loadProps(String evolutionStackName) {
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream(basePropPath + evolutionStackName + ".properties"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return props;
+	}
+
+	public Properties getProps() {
+		return props;
+	}
+
+	public void saveProps() {
+		try {
+			props.store(new FileOutputStream(new File(basePropPath + evolutionStackName + ".properties")), null);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

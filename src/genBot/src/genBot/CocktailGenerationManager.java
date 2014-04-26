@@ -4,12 +4,22 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+import java.util.Properties;
+
 public class CocktailGenerationManager implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int generationNumber;
 	private CocktailGeneration cocktailGeneration;
-	private final String evolutionStackName;
+	private String evolutionStackName;
 	
 	private int maxAttemptsToMeetPriceConstraints = 3000;
 
@@ -64,6 +74,10 @@ public class CocktailGenerationManager implements Serializable {
 		this.cocktailGeneration = new CocktailGeneration(cocktails);
 		
 		this.evolutionStackName = cocktailStackName;
+	}
+
+	public CocktailGenerationManager() {
+
 	}
 	
 	/*
@@ -163,13 +177,13 @@ public class CocktailGenerationManager implements Serializable {
 
 	/*
 	 * prints the cocktail generation in random order
-	 */
+	 
 	public String randomToString() {
 		String out = "Generation number " + getGenerationNumber() + ":\n";
 		out += getCocktailGeneration().randomToString();
 		
 		return out;
-	}
+	}*/
 	
 	public CocktailWithName[] getRatedNamedCocktailGeneration() {
 		return getCocktailGeneration().getRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
@@ -177,5 +191,41 @@ public class CocktailGenerationManager implements Serializable {
 	
 	public CocktailWithName[] getUnRatedNamedCocktailGeneration() {
 		return getCocktailGeneration().getUnRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
+	}
+
+	public static CocktailGenerationManager load(String evolutionStackName, String basePath) throws FileNotFoundException, IOException {
+		Properties props = new Properties();
+		props.load(new FileInputStream(basePath + evolutionStackName + "/info.txt"));
+	    int generation = Integer.parseInt(props.getProperty("currentGeneration"));
+		return CocktailGenerationManager.load(evolutionStackName, basePath, generation);
+	}
+
+	public static CocktailGenerationManager load(String evolutionStackName, String basePath, int generation) throws FileNotFoundException{
+		String fileName = basePath + evolutionStackName + "/" + String.format("%03d", generation) + ".txt";
+		//String content = new String(Files.readAllBytes(Paths.get(fileName)));
+		String content = new Scanner(new File(fileName)).useDelimiter("\\Z").next();
+		
+		CocktailGenerationManager cgm = new CocktailGenerationManager();
+		cgm.generationNumber = generation;
+		cgm.evolutionStackName = evolutionStackName;
+		cgm.cocktailGeneration =  CocktailGeneration.loadFromString(content);
+
+		return cgm;
+	}
+
+	public void save(String basePath) throws FileNotFoundException, IOException {
+		File directory = new File(basePath + evolutionStackName);
+	    if (!directory.exists())
+	    	directory.mkdir();
+	    //System.out.println(cocktailGeneration);
+	    String fileName = basePath + evolutionStackName + "/" + String.format("%03d", generationNumber) + ".txt";
+
+		PrintWriter out = new PrintWriter(fileName);
+		out.print(cocktailGeneration.getSaveString());
+		out.close();
+
+		Properties props = new Properties();
+		props.setProperty("currentGeneration", String.valueOf(generationNumber));
+		props.store(new FileOutputStream(new File(basePath + evolutionStackName + "/info.txt")), null);
 	}
 }

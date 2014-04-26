@@ -30,7 +30,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException, SQLException {
+	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException {
 		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
 
 		evoAlgMngr.setFitness(name, queueManager.getCocktailSizeMilliliter() / 1000, fitnessInput);
@@ -45,7 +45,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 	@Override
-	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException, SQLException {
+	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager().getCocktailByName(name).setPoured(false);
 	}
 
@@ -55,14 +55,14 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void evolve(String evolutionStackName) throws RemoteException, SQLException, NotEnoughRatedCocktailsException {
+	public void evolve(String evolutionStackName) throws RemoteException, NotEnoughRatedCocktailsException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).evolve();
 	}
 
-	@Override
+	/*@Override
 	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
 			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter)
-			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
+			throws RemoteException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
@@ -83,7 +83,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			Ingredient[] allowedIngredients, int populationSize,
 			int truncation, int elitism, String dbDriverPath,
 			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
-			String propPath) throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException {
+			String propPath) throws RemoteException, MaxAttemptsToMeetPriceConstraintException {
 		CheckFitness fitnessCheck = new EfficientCocktail();
 		if (!fitnessCheckName.equals("EfficientCocktail")) {
 			fitnessCheck = null;
@@ -102,10 +102,10 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public void generateEvolutionStack(String evolutionStackName,
 			Ingredient[] allowedIngredients, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws RemoteException,
-			SQLException, MaxAttemptsToMeetPriceConstraintException {
+			MaxAttemptsToMeetPriceConstraintException {
 		
 		generateEvolutionStack(evolutionStackName, allowedIngredients, 8, 2, 1, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, initMeanValues, initOffsets, maxPricePerLiter, evolutionStackName);
-	}
+	}*/
 	
 	@Override
 	public String[] listPossibleEvolutionStacks() throws RemoteException {		
@@ -138,9 +138,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public void loadEvolutionStack(String evolutionStackName)
-			throws RemoteException, SQLException, MaxAttemptsToMeetPriceConstraintException, FileNotFoundException {
+			throws Exception {
 		
-		String[] possibleNames = listPossibleEvolutionStacks();
+		/*String[] possibleNames = listPossibleEvolutionStacks();
 		boolean containsName = false;
 		
 		for (int i = 0; i < possibleNames.length; i++) {
@@ -160,7 +160,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		// variableArea is hard coded... but it should be 0.25
 		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")), Double.parseDouble(props.getProperty("maxPricePerLiter")));
 		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);
+		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);*/
+		evolutionStackController.load(evolutionStackName);
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 
-	@Override
+	/*@Override
 	public void setProps(Properties props)
 			throws RemoteException {
 		String evolutionStackName = props.getProperty("evolutionStackName");
@@ -204,15 +205,15 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		}
 		
 		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void setProps(String evolutionStackName, int populationSize,
 			int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
 			String dbDriverPath, String booleanAllowedIngredientsString)
 			throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
-	}
+	}*/
 
 	@Override
 	public void queueCocktail(String evolutionStackName, String cocktailName)
@@ -237,8 +238,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws RemoteException, SQLException {
-		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getOldGeneration(generationNumber);
+	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws Exception {
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).load(generationNumber);
 	}
 
 	@Override
@@ -341,49 +342,12 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void deleteEvolutionStack(String evolutionStackName)
-			throws RemoteException, SQLException {
-		
+	public void deleteEvolutionStack(String evolutionStackName) throws RemoteException {
 		// unload stack if it is loaded
 		if (isEvolutionStackNameLoaded(evolutionStackName)) {
 			removeEvolutionStack(evolutionStackName);
 		}
 		
-		// get the database file
-		Properties props = EvolutionAlgorithmManager.loadProps(evolutionStackName);
-		String dbFile = props.getProperty("dbDriverPath");
-		
-		DataBaseDriver dbDriver = DataBaseDriver.getInstance(dbFile);
-		
-		// delete from data base
-		dbDriver.delete(evolutionStackName);
-
-		// delete from directory
-		File f = new File(propertiesPath + evolutionStackName + ".properties");
-
-	    // Make sure the file or directory exists and isn't write protected
-	    if (!f.exists())
-	      throw new IllegalArgumentException(
-	          "Delete: no such file or directory: " + evolutionStackName + ".properties");
-
-	    if (!f.canWrite())
-	      throw new IllegalArgumentException("Delete: write protected: "
-	          + evolutionStackName + ".properties");
-
-	    // If it is a directory, make sure it is empty
-	    if (f.isDirectory()) {
-	      String[] files = f.list();
-	      if (files.length > 0)
-	        throw new IllegalArgumentException(
-	            "Delete: directory not empty: " + evolutionStackName + ".properties");
-	    }
-	    
-	    // Attempt to delete it
-	    boolean success = f.delete();
-
-	    if (!success) {
-	    	throw new IllegalArgumentException("Delete: deletion failed");
-	    }
 	}
 	
 	@Override
@@ -423,8 +387,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public Ingredient[] getIngredients() throws RemoteException {
-		return IngredientArray.getInstance()
-				.getAllIngredients();
+		return IngredientArray.getInstance().getAllIngredients();
 	}
 
 }

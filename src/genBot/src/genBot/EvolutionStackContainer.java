@@ -45,21 +45,13 @@ public class EvolutionStackContainer {
 		evolutionMap.put(name, evoAlgMngr);
 	}
 
-	public void addEvolutionAlgorithmManager(String name, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
-		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, propPath);
-
-		addEvolutionAlgorithmManager(name, evoAlgMngr);
-	}
-	
-	public void addEvolutionAlgorithmManager(String name, CheckFitness fitnessCheck, Recombination recombination, boolean reset, String propPath) throws SQLException, MaxAttemptsToMeetPriceConstraintException {
-		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(fitnessCheck, recombination, reset, propPath);
-		
+	public void load(String name) throws Exception {
+		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name);
 		addEvolutionAlgorithmManager(name, evoAlgMngr);
 	}
 		
 	public String[] listEvolutionStacks() {
 		String[] keys = (String[])(evolutionMap.keySet().toArray(new String[evolutionMap.size()]));
-
 		return keys;
 	}
 	
