@@ -8,9 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class CocktailQueue implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private LinkedList<CocktailWithName> queue;
 	private final Lock lock;
@@ -22,11 +19,8 @@ public class CocktailQueue implements Serializable {
 	
 	public void addCocktail(CocktailWithName cocktail) {
 		cocktail.getCocktail().setQueued(true);
-		
 		lock.lock();
-		
 		queue.addLast(cocktail);
-		
 		lock.unlock();
 	}
 		
@@ -50,9 +44,7 @@ public class CocktailQueue implements Serializable {
 		CocktailWithName retCocktail =  queue.getFirst();
 		
 		lock.lock();
-	
 		queue.removeFirst();
-		
 		lock.unlock();
 		
 		return retCocktail;
