@@ -20,8 +20,6 @@ public class QueueManager extends Thread {
 
 	Queue<ArduinoMessage> receivedMessages = new LinkedList<ArduinoMessage>();
 	
-	private int cocktailSizeMilliliter;
-	
 	private CocktailWithName currentlyPouring;
 	
 	private enum Status {
@@ -37,15 +35,10 @@ public class QueueManager extends Thread {
 
 	public QueueManager(Properties prop)
 		throws MalformedURLException, RemoteException, NotBoundException, SerialRMIException {
-		setDaemon(true);
+		//setDaemon(true);
 
 		this.queue = new CocktailQueue();	;
 		this.protocol = ArduinoProtocol.getInstance();
-
-		this.cocktailSizeMilliliter = 200;
-		if(prop.containsKey("cocktailSize"))
-	    	cocktailSizeMilliliter = Integer.parseInt(prop.getProperty("cocktailSize"));
-
 	}
 
 	public void setSerial(SerialRMIInterface serial) {
@@ -176,7 +169,7 @@ public class QueueManager extends Thread {
 		
 		int[] milliLiters = new int[ings.length];
 		for (int i = 0; i < milliLiters.length; i++) {
-			milliLiters[ings[i].getArduinoOutputLine()] = (int) Math.round(pourCocktail.getAmount(ings[i]) * cocktailSizeMilliliter);
+			milliLiters[ings[i].getArduinoOutputLine()] = (int) Math.round(pourCocktail.getAmount(ings[i]) * GenBotConfig.cocktailSize);
 		}
 		
 		ArduinoMessage m = new ArduinoMessage("POUR", milliLiters);
@@ -189,14 +182,6 @@ public class QueueManager extends Thread {
 
 	public CocktailWithName getCurrentlyPouringCocktail() {
 		return currentlyPouring;
-	}
-	
-	public int getCocktailSizeMilliliter() {
-		return cocktailSizeMilliliter;
-	}
-
-	public void setCocktailSizeMilliliter(int cocktailSizeMilliliter) {
-		this.cocktailSizeMilliliter = cocktailSizeMilliliter;
 	}
 
 	public String getStatusMessage() {

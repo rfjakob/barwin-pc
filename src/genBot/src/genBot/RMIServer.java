@@ -20,8 +20,6 @@ import serialRMI.SerialRMIException;
 import serialRMI.SerialRMIInterface;
 
 public class RMIServer {
-
-	static int cocktailSize = 200;
 	
 	public static void main(String[] args) throws Exception, SerialRMIException {
 	    String fileName = "../etc/genBot.config";
@@ -48,7 +46,7 @@ public class RMIServer {
 		for(String cocktailType: cocktailTypes) {
 			System.out.print("- " + String.format("%-30s", cocktailType));
 			Properties props = EvolutionAlgorithmManager.loadProps(cocktailType);
-			if(props.containsKey("autoLoad") && Boolean.parseBoolean("autoLoad")) {
+			if(props.containsKey("autoLoad") && Boolean.parseBoolean(props.getProperty("autoLoad"))) {
 				System.out.println("    AUTOLOAD");
 				rmiImpl.loadEvolutionStack(cocktailType);
 			} else {
@@ -204,6 +202,17 @@ public class RMIServer {
 	    InputStream is = new FileInputStream(fileName);
 	    prop.load(is);
 	    is.close();
+
+		if(prop.containsKey("ingredientsPath"))
+	    	GenBotConfig.ingredientsPath = prop.getProperty("ingredientsPath");
+	    if(prop.containsKey("storePath"))
+	    	GenBotConfig.storePath = prop.getProperty("storePath"); 
+	    if(prop.containsKey("stackPath"))
+	    	GenBotConfig.stackPath = prop.getProperty("stackPath");
+
+		if(prop.containsKey("cocktailSize"))
+	    	GenBotConfig.cocktailSize = Integer.parseInt(prop.getProperty("cocktailSize"));
+
 	    return prop;
 	}
 }

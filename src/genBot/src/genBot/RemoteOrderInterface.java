@@ -1,6 +1,6 @@
 package genBot;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -32,7 +32,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
 	
-	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException;
+	public Properties getProps(String evolutionStackName) throws RemoteException, IOException;
 	
 	//public void setProps(Properties props) throws RemoteException;
 	

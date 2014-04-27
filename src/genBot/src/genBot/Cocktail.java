@@ -287,7 +287,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 
 		int i = 0;
 		for(Ingredient ing: ingredients) {
-			System.out.println(aStr[i]);
+			//System.out.println(aStr[i]);
 			amounts[i] = Double.valueOf(aStr[i]);
 			i++;
 		}
@@ -295,12 +295,21 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		Cocktail c = new Cocktail(amounts);
 
 		String fitnessInput = aStr[i++];
-		if(!fitnessInput.equals("-"))
-			c.fitnessInput = Double.valueOf(fitnessInput);
+		if(!fitnessInput.equals("-")) {
+			try {
+				c.fitnessInput = Double.valueOf(fitnessInput);
+			} catch (NumberFormatException e) {
+
+			}
+		}
 
 		String fitness = aStr[i++];
 		if(!fitness.equals("-")) {
-			c.fitness = Double.valueOf(fitness);
+			try {
+				c.fitness = Double.valueOf(fitness);
+			} catch (NumberFormatException e) {
+
+			}
 			c.fitnessIsSet = true;
 		}
 

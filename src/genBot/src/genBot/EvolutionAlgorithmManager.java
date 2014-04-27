@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.ArrayList;
 
 /*
  * some kind of a container class - this class is responsible for generating a new
@@ -13,57 +14,43 @@ import java.util.Properties;
  * this class stores the generation number.
  */
 public class EvolutionAlgorithmManager {
-	
-	private CocktailGenerationManager genManager;
-	
-	private double stdDeviation;
-	
-	private double maxPricePerLiter;
-	
-	private CheckFitness fitnessCheck;
-	private Recombination recombination;
-	
-	private static String basePropPath = "../etc/evolutionStackSettings/";
-	private static String baseStorePath = "../var/genBot/";
-	
 	private String evolutionStackName;
-	
-	private boolean[] booleanAllowedIngredients;
-	private double[] initMeanValues;
-	private double[] initOffsets;
-		
-	/*
-	 * constructor
-	 * @param generationNumber the number of the generation
-	 * @param generationSize how many Cocktails should be in the generation
-	 * @param fitnessCheck a class that implements CheckFitness and performs a fitness check
-	 */
-	/*public EvolutionAlgorithmManager(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, CheckFitness fitnessCheck, Recombination recombination, double stdDeviation, double[] initMeanValues, double[] initOffsests, double maxPricePerLiter, String propPath) throws MaxAttemptsToMeetPriceConstraintException {		
-		Ingredient[] possibleIngredients = IngredientArray.getInstance().getAllIngredients();
-		this.booleanAllowedIngredients = new boolean[possibleIngredients.length];
-		this.initMeanValues = initMeanValues;
-		this.initOffsets = initOffsests;
-		
-		for (int i = 0; i < possibleIngredients.length; i++) {
-			this.booleanAllowedIngredients[i] = false;
-			for (int j = 0; j < allowedIngredients.length; j++) {
-				if (possibleIngredients[i].equals(allowedIngredients[j])) {
-					this.booleanAllowedIngredients[i] = true;
-				}
+	private Properties props;
+	private CocktailGenerationManager genManager;
+
+	/*** CONSTRUCTOR ***/
+
+	public EvolutionAlgorithmManager(String evolutionStackName) throws Exception {
+		this.evolutionStackName = evolutionStackName;
+		try {
+			this.props = loadProps(evolutionStackName);
+			if(getCurrentGenerationNumber() == -1) {
+				this.genManager = new CocktailGenerationManager(getPopulationSize(), evolutionStackName, getAllowedIngredients(), 
+												getInitMeanValues(), getInitOffsets(), getMaxPricePerLiter());
+			} else {
+				this.genManager = load();
 			}
+		} catch (IOException ex) {
+
 		}
-		
-		this.fitnessCheck = fitnessCheck;
-		this.recombination = recombination;
-		
-		this.propPath = propPath;
-		
+	}
 
+	public EvolutionAlgorithmManager(String evolutionStackName, Properties props) throws Exception {
+		this.evolutionStackName = evolutionStackName;
+		try {
+			this.props = loadProps(evolutionStackName);
+		} catch (IOException ex) {
 
-		storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngrediensToString());
-		
-		convertProps();	
-	}*/
+		}
+
+		try {
+			this.genManager = load();
+		} catch (IOException ex) {
+
+		}
+	}
+
+	/*** SETTER AND GETTER ***/
 	
 	public boolean getAutoLoad() {
 		return Boolean.parseBoolean(props.getProperty("autoLoad"));
@@ -79,93 +66,122 @@ public class EvolutionAlgorithmManager {
 	}
 
 	public int getElitism() {
-		return Integer.parseInt(props.getProperty("elitsm"));
+		return Integer.parseInt(props.getProperty("elitism"));
 	}
 
 	public int getPopulationSize() {
 		return Integer.parseInt(props.getProperty("populationSize"));
 	}
-	
 
 	public double getMutationStdDeviation() {
-		return recombination.getMutationStdDeviation();
+		return Double.parseDouble(props.getProperty("mutationStdDeviation"));
 	}
-	
 
-	public void setMutationStdDeviation(double stdDeviation) {
-		this.stdDeviation = stdDeviation;
-		recombination.setMutationStdDeviation(stdDeviation);
+	public void setMutationStdDeviation(double rate) {
+		props.setProperty("mutationStdDeviation", String.valueOf(rate));
+		saveProps();
+	}
 
-		//storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, booleanAllowedIngrediensToString());
+	public String getRecombination() {
+		return props.getProperty("recombination");
 	}
 	
 	public double getMaxPricePerLiter() {
-		return recombination.getMaxPricePerLiter();
-	}
-	
-	public void setMaxPricePerLiter(double maxPricePerLiter) {
-		this.maxPricePerLiter = maxPricePerLiter;
-		recombination.setMaxPricePerLiter(maxPricePerLiter);
-		
-		//storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, booleanAllowedIngrediensToString());
+		return Double.parseDouble(props.getProperty("maxPricePerLiter"));
 	}
 
-	/*public EvolutionAlgorithmManager(CheckFitness fitnessCheck, Recombination recombination, boolean resetDbTable, String propPath) throws MaxAttemptsToMeetPriceConstraintException {
-		this.propPath = propPath;		
-		this.fitnessCheck = fitnessCheck;
-		this.recombination = recombination;
-		
-		convertProps();
-	}*/
-	
-
-	
-	/*private void convertProps() throws NumberFormatException {
-		Properties props = loadProps(propPath);
-		
-		updateProps(
-				props.getProperty("evolutionStackName"),
-				Integer.parseInt(props.getProperty("populationSize")), 
-				Integer.parseInt(props.getProperty("truncation")), 
-				Integer.parseInt(props.getProperty("elitism")), 
-				Double.parseDouble(props.getProperty("stdDeviation")),
-				Double.parseDouble(props.getProperty("maxPricePerLiter")),
-				props.getProperty("initMeanValues"),
-				props.getProperty("initOffsets"),
-				props.getProperty("booleanAllowedIngredients")
-				);
+	public void setMaxPricePerLiter(double price) {
+		props.setProperty("maxPricePerLiter", String.valueOf(price));
+		saveProps();
 	}
-	
-	private void updateProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double maxPricePerLiter, String initMeanValues, String initOffsets, String booleanAllowedIngredientsString) {
-		this.evolutionStackName = evolutionStackName;
-		this.populationSize = populationSize;
-		this.truncation = truncation;
-		this.elitism = elitism;
-		this.stdDeviation = stdDeviation;
-		this.maxPricePerLiter = maxPricePerLiter;
-		this.booleanAllowedIngredients = readBooleanAllowedIngredients(booleanAllowedIngredientsString);
+
+	public double[] getInitMeanValues() {
+		String[] initMeanStrings = props.getProperty("initMeanValues").split(" ");
+		double[] retInitMeanValues = new double[initMeanStrings.length];
 		
-		// This part is old - I think it just adds an error without helping at all
-//		if (!dbDriverPath.equals(this.dbDriverPath)) {
-//			this.dbDriverPath = dbDriverPath;
-			
-//			accessDB(dbDriverPath, true);
-//		}
-		// This is the replacement
-		
-		this.initMeanValues = readInitMeanValues(initMeanValues);
-		this.initOffsets = readInitOffsets(initOffsets);
-		
-		setMutationStdDeviation(this.stdDeviation);
-		setMaxPricePerLiter(this.maxPricePerLiter);
-	}*/
-	
-	public boolean canEvolve() {
-		if (getGenManager().getCocktailGeneration().getRankedPopulation().length <= (getTruncation() + getElitism())) {
-			return false;
-		} else {
-			return true;
+		for (int i = 0; i < initMeanStrings.length; i++) {
+			retInitMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
 		}
+		return retInitMeanValues;
+	}
+	
+	public void setInitMeanValuesToString(double[] means) {
+		String retString = "";
+		
+		for (int i = 0; i < means.length; i++)
+			retString += String.valueOf(means[i]) + " ";
+
+		retString = retString.substring(0, retString.length() - 1);
+		
+		props.setProperty("initMeanValues", retString);
+		saveProps();
+	}
+	
+	public double[] getInitOffsets() {
+		String[] initOffsetsStrings = props.getProperty("initOffsets").split(" ");
+		double[] retInitOffsets = new double[initOffsetsStrings.length];
+		
+		for (int i = 0; i < initOffsetsStrings.length; i++) {
+			retInitOffsets[i] = Double.parseDouble(initOffsetsStrings[i]);
+		}
+		return retInitOffsets;
+	}
+
+	public void setInitOffsetsToString(double[] offsets) {
+		String retString = "";
+		
+		for (int i = 0; i < offsets.length; i++)
+			retString += String.valueOf(offsets[i]) + " ";
+
+		retString = retString.substring(0, retString.length() - 1);
+
+		props.setProperty("initOffsets", retString);
+		saveProps();
+	}
+
+	public void setAllowedIngrediens(boolean[] allowedIngredients) {
+		String retString = "";
+		
+		for (int i = 0; i < allowedIngredients.length; i++) {
+			if (allowedIngredients[i]) {
+				retString += "1";
+			} else {
+				retString += "0";
+			}
+		}
+		props.setProperty("allowedIngredients", retString);
+
+		saveProps();
+	}
+
+	
+	public boolean[] getAllowedIngredients() {
+		String allowedIngredients = props.getProperty("allowedIngredients");
+		boolean[] retBoolean = new boolean[allowedIngredients.length()];
+		char[] allowedChars = allowedIngredients.toCharArray();
+		
+		for (int i = 0; i < retBoolean.length; i++) {
+			if (allowedChars[i] == '0') {
+				retBoolean[i] = false;
+			} else if (allowedChars[i] == '1') {
+				retBoolean[i] = true;
+			} else {
+				throw new IllegalArgumentException("Argument was neither 1 nor 0!");
+			}
+		}
+		
+		return retBoolean;
+	}
+
+	public String getName() {
+		return evolutionStackName;
+	}
+
+	/**************************************************/
+
+
+	public boolean canEvolve() {
+		return (getGenManager().getCocktailGeneration().getRankedPopulation().length <= (getTruncation() + getElitism())); 
 	}
 		
 	/*
@@ -189,12 +205,24 @@ public class EvolutionAlgorithmManager {
 		// Truncation
 		nextGeneration = truncate(nextGeneration);
 
+		Recombination recombination;
+		String recombinationName = getRecombination();
+		double stdDeviation = getMutationStdDeviation();
+		double maxPricePerLiter = getMaxPricePerLiter();
+		if (recombinationName.equals("StandardMutation")) {
+			recombination = new StandardMutation(stdDeviation, maxPricePerLiter);
+		} else if (recombinationName.equals("IntermediateRecombination")) {
+			recombination = new IntermediateRecombination(0.25, maxPricePerLiter);
+		} else {
+			recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation, maxPricePerLiter);
+		}
+
 		// Crossover & Mutation
 		try {
 			boolean recombinationSucceeded = false;
 			while (!recombinationSucceeded) {
 				try {
-					nextGeneration = recombination.recombine(nextGeneration, getPopulationSize(), getBooleanAllowedIngredients());
+					nextGeneration = recombination.recombine(nextGeneration, getPopulationSize(), getAllowedIngredients());
 					recombinationSucceeded = true;
 				} catch (MaxAttemptsToMeetPriceConstraintException e) {
 					e.printStackTrace();
@@ -217,8 +245,6 @@ public class EvolutionAlgorithmManager {
 		save();
 	}
 	
-
-
 	public CocktailGeneration truncate(CocktailGeneration cocktailGeneration) {
 		int truncation = getTruncation();
 		if (truncation < 0) {
@@ -237,14 +263,6 @@ public class EvolutionAlgorithmManager {
 		return new CocktailGeneration(truncatedCocktails);
 	}
 
-	/*
-	 * applies elitism to the generation - some random cocktails are replaced with the
-	 * best cocktails from the previous generation
-	 * @param elitism number of cocktails to be replaced
-	 * @param oldCocktailGeneration the previous cocktail generation
-	 * @param newCocktailGeneration the new cocktail generation
-	 * @return a cocktail generation with elitism applied
-	 */
 	public CocktailGeneration applyElitism(CocktailGeneration oldCocktailGeneration, CocktailGeneration newCocktailGeneration) {
 		int elitism = getElitism();
 		if (elitism < 0) {
@@ -276,94 +294,10 @@ public class EvolutionAlgorithmManager {
 		return genManager;
 	}
 	
-	public double[] getInitMeanValues() {
-		return initMeanValues;
-	}
-	
-	public double[] getInitOffsets() {
-		return initOffsets;
-	}
-	
-	public boolean[] getBooleanAllowedIngredients() {
-		return booleanAllowedIngredients;
-	}
-	
-	public String initMeanValuesToString() {
-		String retString = "";
-		
-		for (int i = 0; i < getInitMeanValues().length; i++) {
-			retString += String.valueOf(getInitMeanValues()[i]) + " ";
-		}
-		retString = retString.substring(0, retString.length() - 1);
-		
-		return retString;
-	}
-	
-	public String initOffsetsToString() {
-		String retString = "";
-		
-		for (int i = 0; i < getInitOffsets().length; i++) {
-			retString += String.valueOf(getInitOffsets()[i]) + " ";
-		}
-		retString = retString.substring(0, retString.length() - 1);
-		
-		return retString;
-	}
-	
-	public String booleanAllowedIngrediensToString() {
-		String retString = "";
-		
-		for (int i = 0; i < getBooleanAllowedIngredients().length; i++) {
-			if (getBooleanAllowedIngredients()[i]) {
-				retString += "1";
-			} else {
-				retString += "0";
-			}
-		}
-		
-		return retString;
-	}
-	
-	public double[] readInitMeanValues(String initMeanValues) {
-		String[] initMeanStrings = initMeanValues.split(" ");
-		
-		double[] retInitMeanValues = new double[initMeanStrings.length];
-		
-		for (int i = 0; i < initMeanStrings.length; i++) {
-			retInitMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
-		}
-		return retInitMeanValues;
-	}
-	
-	public double[] readInitOffsets(String initOffsets) {
-		String[] initOffsetsStrings = initOffsets.split(" ");
-		
-		double[] retInitOffsets = new double[initOffsetsStrings.length];
-		
-		for (int i = 0; i < initOffsetsStrings.length; i++) {
-			retInitOffsets[i] = Double.parseDouble(initOffsetsStrings[i]);
-		}
-		return retInitOffsets;
-	}
-	
-	public boolean[] readBooleanAllowedIngredients(String allowedIngredients) {
-		boolean[] retBoolean = new boolean[allowedIngredients.length()];
-		char[] allowedChars = allowedIngredients.toCharArray();
-		
-		for (int i = 0; i < retBoolean.length; i++) {
-			if (allowedChars[i] == '0') {
-				retBoolean[i] = false;
-			} else if (allowedChars[i] == '1') {
-				retBoolean[i] = true;
-			} else {
-				throw new IllegalArgumentException("Argument was neither 1 nor 0!");
-			}
-		}
-		
-		return retBoolean;
-	}
+
 	
 	public void setFitness(String name, double cocktailSize, double fitnessInput) {
+		CheckFitness fitnessCheck = new EfficientCocktail();
 		getGenManager().getCocktailByName(name).setFitness(fitnessCheck, cocktailSize, fitnessInput);
 		save();
 	}
@@ -373,72 +307,36 @@ public class EvolutionAlgorithmManager {
 		//		getGenManager().getCocktailByName(name).pour;
 		getGenManager().getCocktailByName(name).setQueued(true);
 	}
-	
-	/*public void storeProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String booleanAllowedIngredientsString) {		
-		props.setProperty("evolutionStackName", evolutionStackName);
-		props.setProperty("populationSize", String.valueOf(populationSize));
-		props.setProperty("truncation", String.valueOf(truncation));
-		props.setProperty("elitism", String.valueOf(elitism));
-		props.setProperty("stdDeviation", String.valueOf(stdDeviation));
-		props.setProperty("initMeanValues", initMeanValuesToString());
-		props.setProperty("initOffsets", initOffsetsToString());
-		props.setProperty("maxPricePerLiter", String.valueOf(maxPricePerLiter));
-		props.setProperty("booleanAllowedIngredients", booleanAllowedIngrediensToString());
-			
 
-		
-		try {
-			props.store(new FileOutputStream(new File(basePropPath + propPath + ".properties")), null);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}*/
 
-	public String getName() {
-		return evolutionStackName;
-	}
-
-	private Properties props;
-
-	public EvolutionAlgorithmManager(String evolutionStackName) throws Exception {
-		this.evolutionStackName = evolutionStackName;
-		this.props = loadProps(evolutionStackName);
-		load();
-	}
 
 	/*** SAVING AND LOADING ***/ 
 
 	public void save() {
 		try {
-			genManager.save(baseStorePath);
+			genManager.save();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public CocktailGenerationManager load() throws Exception {
-		return CocktailGenerationManager.load(evolutionStackName, baseStorePath);
+	public CocktailGenerationManager load() throws IOException {
+		return CocktailGenerationManager.load(evolutionStackName);
 	}
 
-	public CocktailGenerationManager load(int generation) throws Exception {
-		return CocktailGenerationManager.load(evolutionStackName, baseStorePath, generation);
+	public CocktailGenerationManager load(int generation) throws IOException {
+		return CocktailGenerationManager.load(evolutionStackName, generation);
+	}
+
+	public int getCurrentGenerationNumber() throws IOException {
+		return CocktailGenerationManager.getCurrentGenerationNumber(evolutionStackName);
 	}
 
 	/*** PROPERTIES ***/ 
 
-	public static Properties loadProps(String evolutionStackName) {
+	public static Properties loadProps(String evolutionStackName) throws IOException {
 		Properties props = new Properties();
-		try {
-			props.load(new FileInputStream(basePropPath + evolutionStackName + ".properties"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		props.load(new FileInputStream(GenBotConfig.stackPath + evolutionStackName + ".properties"));
 		return props;
 	}
 
@@ -448,12 +346,11 @@ public class EvolutionAlgorithmManager {
 
 	public void saveProps() {
 		try {
-			props.store(new FileOutputStream(new File(basePropPath + evolutionStackName + ".properties")), null);
+			props.store(new FileOutputStream(new File(GenBotConfig.stackPath + evolutionStackName + ".properties")), null);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
 }

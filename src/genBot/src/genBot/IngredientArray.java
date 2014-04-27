@@ -16,7 +16,6 @@ import java.util.Properties;
 
 public class IngredientArray {
 	private static IngredientArray ingredientArray = null;
-	private static String ingredientFolder = "../etc/ingredients/";
 	
 	private Ingredient[] ingredients;
 	
@@ -27,7 +26,7 @@ public class IngredientArray {
 	private IngredientArray() {
 		String files;
 		//File folder = new File(".");
-		File folder = new File(ingredientFolder);
+		File folder = new File(GenBotConfig.ingredientsPath);
 		File[] listOfFiles = folder.listFiles();
 		
 		ArrayList<String> fileNames = new ArrayList<String>();
@@ -48,14 +47,13 @@ public class IngredientArray {
 		
 		try {
 			for (int i = 0; i < ingredients.length; i++) {
-				ingProps.load(new FileInputStream(ingredientFolder + fileNames.get(i)));
+				ingProps.load(new FileInputStream(GenBotConfig.ingredientsPath + fileNames.get(i)));
 				
 				ingredients[i] = new Ingredient(
 						ingProps.getProperty("name"),
 						Double.parseDouble(ingProps.getProperty("bottlePrice")),
 						Double.parseDouble(ingProps.getProperty("bottleSize")),
-						Integer.parseInt(ingProps.getProperty("arduinoOutputLine")),
-						ingredientFolder
+						Integer.parseInt(ingProps.getProperty("arduinoOutputLine"))
 						);
 			}
 		} catch (IOException e) {
@@ -79,7 +77,7 @@ public class IngredientArray {
 	}
 	
 	public static void newIngredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine) {
-		new Ingredient(name, bottlePrice, bottleSize, arduinoOutputLine, ingredientFolder);
+		new Ingredient(name, bottlePrice, bottleSize, arduinoOutputLine);
 		
 		IngredientArray ingredientArray = getInstance();
 		ingredientArray.loadIngredients();

@@ -269,28 +269,6 @@ public class CocktailGeneration implements Serializable {
 		
 		return out;
 	}
-	
-	/*public String randomToString() {
-		String out = "";
-		
-		for (int i = 0; i < getPopulationSize(); i++) {
-			out += "Cocktail " + randomPopulationOrder[i] + ": " + population[randomPopulationOrder[i]].toString() + "\n";
-		}
-		
-		return out;
-	}
-	
-	public String randomToString(String evolutionStackName, int generationNumber) {
-		String out = "";
-		
-		for (int i = 0; i < getPopulationSize(); i++) {
-			out += "Cocktail " + randomPopulationOrder[i] + ": " + getNamedCocktail(randomPopulationOrder[i], evolutionStackName, generationNumber).toString() + "\n";
-		}
-		
-		return out;
-	}*/
-
-
 
 	public static CocktailGeneration loadFromString(String gStr) {
 		String cStr[] = gStr.split("\\r?\\n");

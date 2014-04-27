@@ -33,7 +33,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException {
 		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
 
-		evoAlgMngr.setFitness(name, queueManager.getCocktailSizeMilliliter() / 1000, fitnessInput);
+		evoAlgMngr.setFitness(name, GenBotConfig.cocktailSize / 1000, fitnessInput);
 		
 		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
 			try {
@@ -109,58 +109,11 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	@Override
 	public String[] listPossibleEvolutionStacks() throws RemoteException {		
-		String files;
-		
-		/*File folder2 = new File(".");
-		File[] listOfFiles2 = folder2.listFiles();
-		for (int i = 0; i < listOfFiles2.length; i++) {
-			System.out.println(listOfFiles2[i].getName());
-		}*/
-
-		File folder = new File(propertiesPath);
-		File[] listOfFiles = folder.listFiles();
-		
-		ArrayList<String> fileNames = new ArrayList<String>();
-		
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				files = listOfFiles[i].getName();
-				
-				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
-					String files1 = files.substring(0, files.lastIndexOf('.'));
-					fileNames.add(files1);
-				}
-			}
-		}
-		
-		return fileNames.toArray(new String[fileNames.size()]);
+		return evolutionStackController.getListOfAvailableStacks();
 	}
 
 	@Override
-	public void loadEvolutionStack(String evolutionStackName)
-			throws Exception {
-		
-		/*String[] possibleNames = listPossibleEvolutionStacks();
-		boolean containsName = false;
-		
-		for (int i = 0; i < possibleNames.length; i++) {
-			if (possibleNames[i].equals(evolutionStackName)) {
-				containsName = true;
-			}
-		}
-		
-		if (!containsName) {
-			throw new IllegalArgumentException(evolutionStackName + " is not a .properties file in the folder");
-		}
-		
-		CheckFitness fitnessCheck = new EfficientCocktail();
-		
-		Properties props = getProps(evolutionStackName);
-		
-		// variableArea is hard coded... but it should be 0.25
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, Double.parseDouble(props.getProperty("stdDeviation")), Double.parseDouble(props.getProperty("maxPricePerLiter")));
-		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, false, evolutionStackName);*/
+	public void loadEvolutionStack(String evolutionStackName) throws Exception {
 		evolutionStackController.load(evolutionStackName);
 	}
 
@@ -175,45 +128,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public Properties getProps(String evolutionStackName) throws RemoteException, FileNotFoundException {
+	public Properties getProps(String evolutionStackName) throws RemoteException, IOException {
 		return EvolutionAlgorithmManager.loadProps(evolutionStackName);
 	}
-	
-
-	/*@Override
-	public void setProps(Properties props)
-			throws RemoteException {
-		String evolutionStackName = props.getProperty("evolutionStackName");
-		int populationSize = Integer.parseInt(props.getProperty("populationSize"));
-		int truncation = Integer.parseInt(props.getProperty("truncation"));
-		int elitism = Integer.parseInt(props.getProperty("elitism"));
-		double stdDeviation = Double.parseDouble(props.getProperty("stdDeviation"));
-		double maxPricePerLiter = Double.parseDouble(props.getProperty("maxPricePerLiter"));
-		String  dbDriverPath = props.getProperty("dbDriverPath");
-		String booleanAllowedIngredientsString = props.getProperty("booleanAllowedIngredients");
-
-		
-		String[] initMeanStrings = props.getProperty("initMeanValue").split(" ");
-		String[] initOffsetStrings = props.getProperty("initOffsets").split(" ");
-		
-		double[] initMeanValues = new double[booleanAllowedIngredientsString.length()];
-		double[] initOffsets = new double[booleanAllowedIngredientsString.length()];
-		
-		for (int i = 0; i < initMeanStrings.length; i++) {
-			initMeanValues[i] = Double.parseDouble(initMeanStrings[i]);
-			initOffsets[i] = Double.parseDouble(initOffsetStrings[i]);
-		}
-		
-		setProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
-	}*/
-
-	/*@Override
-	public void setProps(String evolutionStackName, int populationSize,
-			int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
-			String dbDriverPath, String booleanAllowedIngredientsString)
-			throws RemoteException {
-		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).storeProps(evolutionStackName, populationSize, truncation, elitism, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, dbDriverPath, booleanAllowedIngredientsString);
-	}*/
 
 	@Override
 	public void queueCocktail(String evolutionStackName, String cocktailName)
@@ -270,12 +187,12 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public int getCocktailSize() throws RemoteException {
-		return queueManager.getCocktailSizeMilliliter();
+		return GenBotConfig.cocktailSize;
 	}
 
 	@Override
 	public void setCocktailSize(int milliLiters) throws RemoteException {
-		queueManager.setCocktailSizeMilliliter(milliLiters);
+		GenBotConfig.cocktailSize = milliLiters;
 	}
 
 	@Override
@@ -298,7 +215,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void setMaxPricePerLiter(String evolutionStackName, double maxPricePerLiter)
 			throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMaxPricePerLiter(maxPricePerLiter);
-	}	
+	}
 	
 	/*private Properties loadProps(String propFile) {
 		Properties props = new Properties();
@@ -352,7 +269,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	@Override
 	public Ingredient[] getAllowedIngredients(String evolutionStackName) throws RemoteException {
-		boolean[] allIngsBool = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getBooleanAllowedIngredients();
+		boolean[] allIngsBool = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getAllowedIngredients();
 		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
 		
 		int numOfAllowed = 0;

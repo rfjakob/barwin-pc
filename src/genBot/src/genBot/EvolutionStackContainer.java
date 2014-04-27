@@ -1,8 +1,8 @@
 package genBot;
 
-import java.sql.SQLException;
 import java.util.HashMap;
-
+import java.io.File;
+import java.util.ArrayList;
 /*
  * EvolutionStackContainer is a singleton to store the different EvolutionStacks
  */
@@ -41,13 +41,18 @@ public class EvolutionStackContainer {
 		}
 	}
 	
-	private void addEvolutionAlgorithmManager(String name, EvolutionAlgorithmManager evoAlgMngr) {
+	private void add(String name, EvolutionAlgorithmManager evoAlgMngr) {
 		evolutionMap.put(name, evoAlgMngr);
 	}
 
 	public void load(String name) throws Exception {
 		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name);
-		addEvolutionAlgorithmManager(name, evoAlgMngr);
+		add(name, evoAlgMngr);
+	}
+
+	public void create(String name) throws Exception {
+		EvolutionAlgorithmManager evoAlgMngr = new EvolutionAlgorithmManager(name);
+		add(name, evoAlgMngr);
 	}
 		
 	public String[] listEvolutionStacks() {
@@ -61,5 +66,28 @@ public class EvolutionStackContainer {
 
 	public void remove(String evolutionStackName) {
 		evolutionMap.remove(evolutionStackName);
+	}
+
+	/*** GET LIST OF PROPERTY FILES***/
+	public String[] getListOfAvailableStacks() {		
+		String files;
+		//System.out.println(GenBotConfig.storePath);
+		File folder = new File(GenBotConfig.stackPath);
+		File[] listOfFiles = folder.listFiles();
+		
+		ArrayList<String> fileNames = new ArrayList<String>();
+		
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				files = listOfFiles[i].getName();
+				
+				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
+					String files1 = files.substring(0, files.lastIndexOf('.'));
+					fileNames.add(files1);
+				}
+			}
+		}
+		
+		return fileNames.toArray(new String[fileNames.size()]);
 	}
 }

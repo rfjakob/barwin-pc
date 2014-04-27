@@ -30,24 +30,11 @@ public class Ingredient implements Serializable, Comparable<Ingredient> {
 	 * generate the pricePerLiter
 	 * @param arduinoOutput Arduino Output
 	 */
-	public Ingredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine, String ingredientFolder) {
+	public Ingredient(String name, double bottlePrice, double bottleSize, int arduinoOutputLine) {
 		this.name = name;
 		this.arduinoOutputLine = arduinoOutputLine;
 		
 		this.pricePerLiter = bottlePrice / bottleSize;
-		
-		/* Properties ingProps = new Properties();
-		ingProps.setProperty("name", name);
-		ingProps.setProperty("bottlePrice", String.valueOf(bottlePrice));
-		ingProps.setProperty("bottleSize", String.valueOf(bottleSize));
-		ingProps.setProperty("arduinoOutputLine", String.valueOf(arduinoOutputLine));
-		
-		try {
-			ingProps.store(new FileOutputStream(ingredientFolder + name + ".properties"), "Be careful, there is no sanity-check!");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} */
 	}
 	
 	/*
