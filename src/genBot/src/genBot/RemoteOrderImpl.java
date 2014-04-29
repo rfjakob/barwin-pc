@@ -26,7 +26,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 
 	@Override
 	public CocktailWithName[] getNamedPopulation(String evolutionStackName) throws RemoteException {
-		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager().getNamedCocktailGeneration();
+		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getNamedCocktailGeneration();
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	
 	@Override
 	public void setCocktailToUnpoured(String evolutionStackName, String name) throws RemoteException {
-		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager().getCocktailByName(name).setPoured(false);
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getCocktailByName(name).setPoured(false);
 	}
 
 	@Override
@@ -97,10 +97,10 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 		queueManager.getQueue().reorder(cocktailNameList);
 	}
 
-	@Override
-	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws Exception {
-		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).load(generationNumber);
-	}
+	/*@Override
+	public void getGeneration(String evolutionStackName, int generationNumber) throws Exception {
+		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).load(generationNumber);
+	}*/
 
 	@Override
 	public CocktailQueue getQueue() throws RemoteException {
@@ -115,12 +115,6 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	@Override
 	public int getStatusCode() throws RemoteException {
 		return queueManager.getStatusCode();
-	}
-
-	@Override
-	public CocktailGenerationManager readGenerationManager(
-			String evolutionStackName) throws RemoteException {
-		return evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).getGenManager();
 	}
 
 	@Override

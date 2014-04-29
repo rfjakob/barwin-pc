@@ -18,12 +18,6 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public void evolve(String evolutionStackName) throws RemoteException, NotEnoughRatedCocktailsException;
 	
-	/*public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws RemoteException, MaxAttemptsToMeetPriceConstraintException;
-	
-	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName, String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws RemoteException, MaxAttemptsToMeetPriceConstraintException;
-	
-	public void generateEvolutionStack(String evolutionStackName, Ingredient[] allowedIngredients, int populationSize, int truncation, int elitism, String dbDriverPath, boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String propPath)  throws RemoteException, MaxAttemptsToMeetPriceConstraintException;*/
-	
 	public void loadEvolutionStack(String evolutionStackName) throws Exception;
 	
 	public String[] listPossibleEvolutionStacks() throws RemoteException;
@@ -33,10 +27,6 @@ public interface RemoteOrderInterface extends Remote {
 	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
 	
 	public Properties getProps(String evolutionStackName) throws RemoteException, IOException;
-	
-	//public void setProps(Properties props) throws RemoteException;
-	
-	//public void setProps(String evolutionStackName, int populationSize, int truncation, int elitism, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter, String dbDriverPath, String booleanAllowedIngredientsString) throws RemoteException;
 	
 	public void queueCocktail(CocktailWithName cocktail) throws RemoteException;
 	
@@ -50,9 +40,9 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public CocktailWithName getCurrentlyPouringCocktail() throws RemoteException;
 
-	public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws Exception;
+	//public CocktailGenerationManager getOldGeneration(String evolutionStackName, int generationNumber) throws Exception;
 	
-	public CocktailGenerationManager readGenerationManager(String evolutionStackName) throws RemoteException;
+	//public CocktailGenerationManager readGenerationManager(String evolutionStackName) throws RemoteException;
 	
 	public int getCocktailSize() throws RemoteException;
 	

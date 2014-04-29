@@ -25,7 +25,7 @@ public class CocktailQueue implements Serializable {
 	}
 		
 	public void addCocktail(String evolutionAlgorithmManager, String cocktailName) {
-		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getNamedCocktailGeneration();
+		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getNamedCocktailGeneration();
 		boolean cocktailFound = false;
 		
 		for (int i = 0; i < cocktails.length; i++) {
@@ -71,7 +71,7 @@ public class CocktailQueue implements Serializable {
 	}
 	
 	public void deleteCocktail(String evolutionAlgorithmManager, String cocktailName) {
-		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getGenManager().getNamedCocktailGeneration();
+		CocktailWithName[] cocktails = EvolutionStackContainer.getInstance().getEvolutionAlgorithmManager(evolutionAlgorithmManager).getNamedCocktailGeneration();
 		boolean cocktailFound = false;
 		
 		for (int i = 0; i < cocktails.length; i++) {

@@ -7,11 +7,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class EvolutionAlgorithmManager {
 	private String evolutionStackName;
 	private Properties props;
-	private CocktailGenerationManager genManager;
+
+	private CocktailGeneration cocktailGeneration;
+	private int generationNumber;
+
+	private int maxAttemptsToMeetPriceConstraints = 3000;
 
 	/*** CONSTRUCTOR ***/
 
@@ -19,10 +25,10 @@ public class EvolutionAlgorithmManager {
 		this.evolutionStackName = evolutionStackName;
 		this.props = loadProps(evolutionStackName);
 		try {
-			this.genManager = load();
+			load();
 		} catch (IOException ex) {
-			this.genManager = new CocktailGenerationManager(getPopulationSize(), evolutionStackName, getAllowedIngredients(), 
-											getInitMeanValues(), getInitOffsets(), getMaxPricePerLiter());
+			this.generationNumber = 0;
+			generateCocktailGeneration();
 			save();
 		}
 	}
@@ -31,9 +37,8 @@ public class EvolutionAlgorithmManager {
 		this.evolutionStackName = evolutionStackName;
 		this.props = props;
 		saveProps();
-
-		this.genManager = new CocktailGenerationManager(getPopulationSize(), evolutionStackName, getAllowedIngredients(), 
-												getInitMeanValues(), getInitOffsets(), getMaxPricePerLiter());
+		this.generationNumber = 0;
+		generateCocktailGeneration();
 		save();
 	}
 
@@ -167,17 +172,73 @@ public class EvolutionAlgorithmManager {
 		return evolutionStackName;
 	}
 
+	public int getGenerationNumber() {
+		return generationNumber;
+	}
+
 	/**************************************************/
 
+	private void generateCocktailGeneration() throws MaxAttemptsToMeetPriceConstraintException {
+		boolean[] booleanAllowedIngredients = getAllowedIngredients();
+		double[] initMeanValues = getInitMeanValues();
+		double[] initOffsets = getInitOffsets();
+
+		if (booleanAllowedIngredients.length != initMeanValues.length | booleanAllowedIngredients.length != initOffsets.length) {
+			throw new IllegalArgumentException("One of the input arrays has the wrong length!");
+		}
+		
+		double sumMeanValues = 0;
+		for (int i = 0; i < initMeanValues.length; i++) {
+			sumMeanValues += initMeanValues[i];
+		}
+		if (sumMeanValues != 1) {
+			throw new IllegalArgumentException("The values of initMeanValues does not sum up to one!");
+		}
+				
+		Cocktail[] cocktails = new Cocktail[getPopulationSize()];
+		
+		int countToThrowException = 0;
+		
+		int i = 0;
+		while (i < getPopulationSize()) {
+			cocktails[i] = Cocktail.newRandomCocktail(booleanAllowedIngredients);
+			
+			boolean resetCocktail = false;
+			
+			for (int j = 0; j < booleanAllowedIngredients.length; j++) {
+				double val = cocktails[i].getAmountsAsDouble()[j];
+				
+				if (val < initMeanValues[j] - initOffsets[j] | val > initMeanValues[j] + initOffsets[j]) {
+					resetCocktail = true;
+				}
+			}
+			
+			if (cocktails[i].pricePerLiterHigherAs(getMaxPricePerLiter())) {
+				resetCocktail = true;
+			}
+			
+			if (resetCocktail) {
+				countToThrowException++;
+				if (countToThrowException >= maxAttemptsToMeetPriceConstraints) {
+					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost constraint of " + getMaxPricePerLiter() + " Euros per Liter. Didn't succeed. I give up now.");
+				}
+			} else {
+				i++;
+				countToThrowException = 0;
+			}
+		}
+		cocktailGeneration = new CocktailGeneration(cocktails);
+	}
+
 	public boolean canEvolve() {
-		return (getGenManager().getCocktailGeneration().getRatedPopulationSize() > (getTruncation() + getElitism())); 
+		return (cocktailGeneration.getRatedPopulationSize() > (getTruncation() + getElitism())); 
 	}
 		
 	public void evolve() throws NotEnoughRatedCocktailsException {		
 		if (!canEvolve())
-			throw new NotEnoughRatedCocktailsException("Only " + getGenManager().getCocktailGeneration().getRatedPopulationSize() + " cocktails are rated. As " + getTruncation() + " cocktails should be truncated and the best " + getElitism() + "cocktails should be copied to the next generation we would need at least " + (getTruncation() + getElitism() + 1) + " rated cocktails.");
+			throw new NotEnoughRatedCocktailsException("Only " + cocktailGeneration.getRatedPopulationSize() + " cocktails are rated. As " + getTruncation() + " cocktails should be truncated and the best " + getElitism() + "cocktails should be copied to the next generation we would need at least " + (getTruncation() + getElitism() + 1) + " rated cocktails.");
 
-		Cocktail[] ratedCocktails = getGenManager().getCocktailGeneration().getRatedPopulation();
+		Cocktail[] ratedCocktails = cocktailGeneration.getRatedPopulation();
 
 		CheckFitness fitnessCheck;
 		String checkFitnessName = getCheckFitness();
@@ -193,7 +254,6 @@ public class EvolutionAlgorithmManager {
 			if(c.isRated())
 				fitnessCheck.setFitness(c);
 
-		
 		CocktailGeneration nextGeneration = new CocktailGeneration(ratedCocktails);
 		nextGeneration = truncate(nextGeneration);
 
@@ -230,10 +290,10 @@ public class EvolutionAlgorithmManager {
 			e.printStackTrace();
 		}
 
-		nextGeneration = applyElitism(genManager.getCocktailGeneration(), nextGeneration);
-		save();
-		genManager.increaseGenerationNumber();
-		genManager.setGeneration(nextGeneration);
+		nextGeneration = applyElitism(cocktailGeneration, nextGeneration);
+		save(); // LAST TIME THE OLD GENERATION
+		generationNumber++;
+		cocktailGeneration = nextGeneration;
 		save();
 	}
 	
@@ -287,41 +347,80 @@ public class EvolutionAlgorithmManager {
 		return new CocktailGeneration(newPopulation);
 	}
 	
-	public CocktailGenerationManager getGenManager() {
-		return genManager;
-	}
-	
 	public void setRating(String name, double rating) {
-		getGenManager().getCocktailByName(name).setRating(rating);
+		getCocktailByName(name).setRating(rating);
 		save();
 	}
+
+	public CocktailGeneration getCocktailGeneration() {
+		return cocktailGeneration;
+	}
 	
+	public CocktailWithName[] getNamedCocktailGeneration() {
+		return cocktailGeneration.getNamedPopulation(evolutionStackName, getGenerationNumber());
+	}
+	
+	public Cocktail getCocktailByName(String name) {
+		CocktailWithName[] namedCocktails = getNamedCocktailGeneration();
+		
+		for (int i = 0; i < namedCocktails.length; i++) {
+			if (namedCocktails[i].getName().equals(name)) {
+				return namedCocktails[i].getCocktail();
+			}
+		}
+		throw new IllegalArgumentException("No Cocktail with name " + name);
+	}	
+
 	public void queue(String name) {
 		// TODO Implement this method
 		//		getGenManager().getCocktailByName(name).pour;
-		getGenManager().getCocktailByName(name).setQueued(true);
+		getCocktailByName(name).setQueued(true);
 	}
 
 	/*** SAVING AND LOADING ***/ 
 
 	public void save() {
 		try {
-			genManager.save();
+			File directory = new File(GenBotConfig.storePath + evolutionStackName);
+		    if (!directory.exists())
+		    	directory.mkdir();
+		    //System.out.println(cocktailGeneration);
+		    String fileName = GenBotConfig.storePath + evolutionStackName + "/" + String.format("%03d", generationNumber) + ".txt";
+
+			PrintWriter out = new PrintWriter(fileName);
+			out.print(cocktailGeneration.getSaveString());
+			out.close();
+
+			Properties props = new Properties();
+			props.setProperty("currentGeneration", String.valueOf(generationNumber));
+			props.store(new FileOutputStream(new File(GenBotConfig.storePath + evolutionStackName + "/info.txt")), null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public CocktailGenerationManager load() throws IOException {
-		return CocktailGenerationManager.load(evolutionStackName);
+	public void load() throws IOException {
+		int generation = readGenerationNumber();
+		load(generation);
 	}
 
-	public CocktailGenerationManager load(int generation) throws IOException {
-		return CocktailGenerationManager.load(evolutionStackName, generation);
+	public void load(int generation) throws IOException {
+		String fileName = GenBotConfig.storePath + evolutionStackName + "/" + String.format("%03d", generation) + ".txt";
+		//String content = new String(Files.readAllBytes(Paths.get(fileName)));
+		String content = new Scanner(new File(fileName)).useDelimiter("\\Z").next();
+		
+
+		generationNumber   = generation;
+		cocktailGeneration = CocktailGeneration.loadFromString(content);
 	}
 
-	public int getCurrentGenerationNumber() throws IOException {
-		return CocktailGenerationManager.getCurrentGenerationNumber(evolutionStackName);
+	private int readGenerationNumber() throws IOException {
+		Properties props2 = new Properties();
+		props2.load(new FileInputStream(GenBotConfig.storePath + evolutionStackName + "/info.txt"));
+		if(props2.containsKey("currentGeneration"))
+	    	return Integer.parseInt(props2.getProperty("currentGeneration"));
+	    else
+	    	return -1;
 	}
 
 	/*** PROPERTIES ***/ 

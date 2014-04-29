@@ -93,6 +93,51 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		
 		return new Cocktail(ingredientAmounts);
 	}
+
+	public static Cocktail newRandomCocktail(boolean[] booleanAllowedIngredients) {
+		int ingredientNumber = IngredientArray.getInstance().getNumberOfIngredients();
+		
+		int numberOfAllowedIngredients = 0;
+		for (int i = 0; i < booleanAllowedIngredients.length; i++) {
+			if (booleanAllowedIngredients[i]) {
+				numberOfAllowedIngredients++;
+			}
+		}
+		
+		double[] allowedIngredientShare = new double[numberOfAllowedIngredients + 1];
+		
+		Random rnd = new Random();
+		
+		for (int i = 0; i < allowedIngredientShare.length - 2; i++) {
+			allowedIngredientShare[i] = rnd.nextDouble();
+		}
+		allowedIngredientShare[allowedIngredientShare.length - 2] = 0;
+		allowedIngredientShare[allowedIngredientShare.length - 1] = 1;
+		
+		Arrays.sort(allowedIngredientShare);
+		
+		double[] allowedCocktailIngredients = new double[allowedIngredientShare.length - 1];
+		
+		for (int i = 0; i < allowedCocktailIngredients.length; i++) {
+			allowedCocktailIngredients[i] = allowedIngredientShare[i + 1] - allowedIngredientShare[i];
+		}
+		
+		double[] cocktailIngredients = new double[ingredientNumber];
+		int iAllowedCocktailIngredients = 0;
+		
+		for (int i = 0; i < cocktailIngredients.length; i++) {
+			if (booleanAllowedIngredients[i]) {
+				cocktailIngredients[i] = allowedCocktailIngredients[iAllowedCocktailIngredients];
+				iAllowedCocktailIngredients++;
+			} else {
+				cocktailIngredients[i] = 0;
+			}
+		}
+		
+		Cocktail cocktail = new Cocktail(cocktailIngredients);
+		
+		return cocktail;
+	}
 	
 	public IngredientAmount[] getIngredientAmounts() {
 		return ingredientAmounts;
@@ -262,7 +307,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			return false;
 		}
 	}
-
 
 	public static Cocktail loadFromString(String cStr) {
 		String aStr[] = cStr.split("\\t");
