@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.lang.Math;
 
 public class EvolutionAlgorithmManager {
 	private String evolutionStackName;
@@ -191,7 +192,7 @@ public class EvolutionAlgorithmManager {
 		for (int i = 0; i < initMeanValues.length; i++) {
 			sumMeanValues += initMeanValues[i];
 		}
-		if (sumMeanValues != 1) {
+		if (Math.round(sumMeanValues*100) != 100) {
 			throw new IllegalArgumentException("The values of initMeanValues does not sum up to one!");
 		}
 				
