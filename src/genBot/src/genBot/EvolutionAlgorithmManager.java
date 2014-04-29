@@ -290,59 +290,52 @@ public class EvolutionAlgorithmManager {
 			e.printStackTrace();
 		}
 
-		nextGeneration = applyElitism(cocktailGeneration, nextGeneration);
+		nextGeneration = applyElitism(new CocktailGeneration(ratedCocktails), nextGeneration);
 		save(); // LAST TIME THE OLD GENERATION
 		generationNumber++;
 		cocktailGeneration = nextGeneration;
 		save();
 	}
 	
-	public CocktailGeneration truncate(CocktailGeneration cocktailGeneration) {
+	public CocktailGeneration truncate(CocktailGeneration tmpCocktailGeneration) {
 		int truncation = getTruncation();
 
-		if (truncation < 0) {
+		if (truncation < 0) 
 			throw new IllegalArgumentException("Invalid number of truncated cocktails (" + truncation + ")!");
-		} else if (truncation >= cocktailGeneration.getPopulationSize()) {
+		else if (truncation >= tmpCocktailGeneration.getPopulationSize())
 			throw new IllegalArgumentException("You try to truncate all cocktails of the generation. This is impossible");
-		}
 
-		Cocktail[] rankedCocktails = cocktailGeneration.rankCocktails();
+		Cocktail[] rankedCocktails = tmpCocktailGeneration.rankCocktails();
 		Cocktail[] truncatedCocktails = new Cocktail[rankedCocktails.length - truncation];
 		
-		for (int i = 0; i < rankedCocktails.length - truncation; i++) {
+		for (int i = 0; i < rankedCocktails.length - truncation; i++)
 			truncatedCocktails[i] = rankedCocktails[i];
-		}
 
-		for (int i = rankedCocktails.length - truncation; i < rankedCocktails.length; i++) {
+		for (int i = rankedCocktails.length - truncation; i < rankedCocktails.length; i++)
 			rankedCocktails[i].setTruncated(true);
-		}
 		
 		return new CocktailGeneration(truncatedCocktails);
 	}
 
 	public CocktailGeneration applyElitism(CocktailGeneration oldCocktailGeneration, CocktailGeneration newCocktailGeneration) {
 		int elitism = getElitism();
-		if (elitism < 0) {
+
+		if (elitism < 0)
 			throw new IllegalArgumentException("Invalid number of elite-Cocktails (" + elitism + ")!");
-		}
 		
-		if (elitism > newCocktailGeneration.getPopulationSize()) {
+		if (elitism > newCocktailGeneration.getPopulationSize()) 
 			elitism = newCocktailGeneration.getPopulationSize();
-		}
-		if (elitism > oldCocktailGeneration.getPopulationSize()) {
+		if (elitism > oldCocktailGeneration.getPopulationSize())
 			elitism = oldCocktailGeneration.getPopulationSize();
-		}
 		
-		// rank
 		Cocktail[] oldCocktails = oldCocktailGeneration.rankCocktails();
 		
 		Cocktail[] newPopulation = newCocktailGeneration.getPopulation();
 		int[] randomOrder = newCocktailGeneration.generateRandomPopulationOrder();
 		
 		// now we have the previous cocktails ranked. Now replace <elitism> cocktails in the current population
-		for (int i = 0; i < elitism; i++) {
+		for (int i = 0; i < elitism; i++)
 			newPopulation[randomOrder[i]] = oldCocktails[i].copyElite();
-		}
 		
 		return new CocktailGeneration(newPopulation);
 	}
