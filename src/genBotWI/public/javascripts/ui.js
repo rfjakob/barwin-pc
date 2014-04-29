@@ -134,7 +134,7 @@
 				//window.location.href = "#mix";
 				setTimeout(checkStatus, 1000)
 			} else if (statusCode == 2){
-				if(statusMessage.indexOf("ERROR") > -1){
+				if(statusMessage.indexOf("BOTTLE_EMPTY") > -1){
 				statusMessage="Please wait while being refilled";
 				}	
 				$("#MixingLayer .SystemMessage").html(statusMessage);
