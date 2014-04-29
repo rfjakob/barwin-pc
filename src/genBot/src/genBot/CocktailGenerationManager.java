@@ -14,9 +14,10 @@ import java.util.Scanner;
 
 import java.util.Properties;
 
-public class CocktailGenerationManager implements Serializable {
+/* THIS CLASS SHOULD BE MERGED WITH EvolutionAlgorithmManager */
 
-	private static final long serialVersionUID = 1L;
+public class CocktailGenerationManager {
+
 	private int generationNumber;
 	private CocktailGeneration cocktailGeneration;
 	private String evolutionStackName;
@@ -174,25 +175,7 @@ public class CocktailGenerationManager implements Serializable {
 		
 		return out;
 	}
-
-	/*
-	 * prints the cocktail generation in random order
-	 
-	public String randomToString() {
-		String out = "Generation number " + getGenerationNumber() + ":\n";
-		out += getCocktailGeneration().randomToString();
-		
-		return out;
-	}*/
 	
-	public CocktailWithName[] getRatedNamedCocktailGeneration() {
-		return getCocktailGeneration().getRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
-	}
-	
-	public CocktailWithName[] getUnRatedNamedCocktailGeneration() {
-		return getCocktailGeneration().getUnRankedPopulationWithName(getEvolutionStackName(), getGenerationNumber());
-	}
-
 	public static CocktailGenerationManager load(String evolutionStackName) throws FileNotFoundException, IOException {
 		int generation = CocktailGenerationManager.getCurrentGenerationNumber(evolutionStackName);
 		return CocktailGenerationManager.load(evolutionStackName, generation);

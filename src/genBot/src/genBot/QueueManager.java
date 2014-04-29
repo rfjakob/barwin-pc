@@ -48,7 +48,7 @@ public class QueueManager extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("RUNNING");
+		System.out.println("--- Believe it, finally I'm RUNNING\n\n\n");
 		while (true) {
 			try {
 				Thread.sleep(100);
@@ -83,7 +83,7 @@ public class QueueManager extends Thread {
 		for (ArduinoMessage message : messages) {
 			receivedMessages.add(message);
 			if(message.unknownMessage) {
-				System.err.println("Unknown Message: '" + message.raw + "'");
+				System.err.println("WARNING: Unknown Message '" + message.raw + "'");
 				continue;
 			}
 			//System.out.println("GOT COMMAND " + me.raw);
@@ -107,7 +107,7 @@ public class QueueManager extends Thread {
 					break;
 				case "ERROR":
 					statusClientMessage = message.raw;
-					//System.out.println("ERROR" + message.raw);
+					System.out.println("Arduino is complaining: '" + message.raw + "'");
 					status = Status.error;
 					break;
 				case "POURING":
@@ -136,6 +136,8 @@ public class QueueManager extends Thread {
 		CocktailWithName toBePoured  = queue.getAndRemoveFirstCocktail();
 		Cocktail pourCocktail = toBePoured.getCocktail();
 		
+		System.err.println("Lets mix a cocktail: " + toBePoured.getName());
+
 		sendToSerial(codePour(pourCocktail));
 
 		currentlyPouring = toBePoured;
@@ -160,6 +162,8 @@ public class QueueManager extends Thread {
 					currentlyPouring.getCocktail().changeAmounts(realDoubles);
 				}
 			}*/
+			System.err.println("Enjoy it: " + currentlyPouring.getName());
+
 			currentlyPouring = null;
 		}
 	}
@@ -199,6 +203,7 @@ public class QueueManager extends Thread {
 	}
 
 	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
+		System.out.println("Hey Ardu: '" + s + "'");
 		serial.writeLine(s);
 	}
 }

@@ -19,14 +19,15 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private IngredientAmount[] ingredientAmounts;
-	private double fitness;
-	private boolean fitnessIsSet;
+	private Double fitness;
+	private boolean rated;
 	private boolean poured;
 	private boolean pouring;
 	private boolean queued;
 	private boolean eliteCocktail;
+	private boolean truncated;
 	
-	private double fitnessInput;
+	private double rating;
 	
 	/*
 	 * Constructor
@@ -58,11 +59,12 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			ingredientAmounts[i] = new IngredientAmount(ingredients[i], amount[i] / sum);
 		}
 		
-		this.fitnessIsSet = false;
-		this.poured = false;
-		this.pouring = false;
-		this.queued = false;
+		this.rated 		= false;
+		this.poured 	= false;
+		this.pouring 	= false;
+		this.queued 	= false;
 		this.eliteCocktail = false;
+		this.truncated = false;
 	}
 	
 	/*
@@ -124,8 +126,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		}
 	}
 
-	public boolean isFitnessSet() {
-		return fitnessIsSet;
+	public boolean isRated() {
+		return rated;
 	}
 	
 	public boolean isPoured() {
@@ -151,22 +153,24 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	 * @return Coctails fitness
 	 */
 	public double getFitness() throws FitnessNotSetException {
-		if (isFitnessSet()) {
+		if (rated) {
 			return fitness;
 		} else {
 			throw new FitnessNotSetException("Fitness was not set yet!");
 		}
 	}
 	
-	public void setFitness(CheckFitness fitnessCheck, double cocktailSize, double fitnessInput) {
-		fitness = fitnessCheck.checkFitness(this, cocktailSize, fitnessInput);
-		fitnessIsSet = true;
-		
-		this.fitnessInput = fitnessInput;
+	public void setFitness(double fitness) {
+		this.fitness = fitness;
 	}
 	
-	public double getFitnessInput() {
-		return fitnessInput;
+	public double getRating() {
+		return rating;
+	}
+
+	public void setRating(double rating) {
+		rated = true;
+		this.rating = rating;
 	}
 	
 	public double[] getAmountsAsDouble() {
@@ -181,14 +185,18 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	public boolean isEliteCocktail() {
 		return eliteCocktail;
 	}
-	
-	public void setEliteCocktailTrue() {
-		this.eliteCocktail = true;
+
+	public boolean isTruncated() {
+		return truncated;
+	}
+
+	public void setTruncated(boolean t) {
+		this.truncated = t;
 	}
 	
 	public Cocktail copyElite() {
 		Cocktail retCocktail = copy();
-		retCocktail.setEliteCocktailTrue();
+		this.eliteCocktail = true;
 		
 		return retCocktail;
 	}
@@ -202,31 +210,9 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		for (int i = 0; i < IngredientArray.getInstance().getNumberOfIngredients(); i++) {
 			costs += getIngredientAmounts()[i].getAmountPrice();
 		}
-		
 		return costs;
 	}
 
-	public String toString() {
-			String out = "";
-			
-			for (int i = 0; i < ingredientAmounts.length; i++) {
-				out += ingredientAmounts[i].toString();
-	//			if (i < ingredientAmounts.length - 1) {
-					out += ", ";
-	//			}
-			}
-			out += "Costs: " + getCosts() + " ";
-			out += "Rating: " + getFitnessInput() + " ";
-			out += "Fitness: " + fitness;
-			
-			return out;
-		}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 * This should maybe also be moved to another class
-	 */
 	@Override
 	public int compareTo(Cocktail otherCocktail) {
 		try {
@@ -294,13 +280,15 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 
 		Cocktail c = new Cocktail(amounts);
 
-		String fitnessInput = aStr[i++];
-		if(!fitnessInput.equals("-")) {
+		String rating = aStr[i++];
+		if(!rating.equals("-")) {
 			try {
-				c.fitnessInput = Double.valueOf(fitnessInput);
+				c.rating = Double.valueOf(rating);
 			} catch (NumberFormatException e) {
 
 			}
+			c.rated = true;
+			c.poured = true;
 		}
 
 		String fitness = aStr[i++];
@@ -310,7 +298,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 			} catch (NumberFormatException e) {
 
 			}
-			c.fitnessIsSet = true;
 		}
 
 		return c;
@@ -324,12 +311,22 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		for (IngredientAmount d: ingredientAmounts)
 			str += df.format(d.getAmount()) + "\t";
 
-
-		if(fitnessIsSet) {
-			str += df.format(fitnessInput) + "\t";
-			str += df.format(fitness); 
+		if(rated) {
+			str += df.format(rating) + "\t";
 		} else {
-			str += "-\t-";
+			str += "-\t";
+		}
+
+		if(fitness != null)
+			str += df.format(fitness) + "\t";
+		else
+			str += "-\t";
+
+		str += df.format(getCosts()) + "\t";
+
+		if(fitness != null) {
+			str += Boolean.toString(isEliteCocktail()) + "\t";
+			str += Boolean.toString(isTruncated()) + "\t";
 		}
 		return str;
 	}

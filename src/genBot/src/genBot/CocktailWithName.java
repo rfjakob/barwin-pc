@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 public class CocktailWithName implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private final String evolutionStackName;
 	private final int generationNumber;
@@ -40,16 +37,5 @@ public class CocktailWithName implements Serializable {
 	
 	public Cocktail getCocktail() {
 		return cocktail;
-	}
-	
-	public String toString() {
-		String returnString = 
-			getName() + ": " + 
-			getCocktail().toString() + ", " + 
-			((getCocktail().isEliteCocktail()) ? "Elite" : "Not-Elite") + ", " + 
-			((getCocktail().isPoured()) ? "poured" : "not poured") + ", "+
-			((getCocktail().isFitnessSet()) ? "rated" : "not rated")
-			;
-		return returnString;
 	}
 }

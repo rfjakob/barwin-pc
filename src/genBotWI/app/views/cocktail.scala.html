@@ -1,8 +1,8 @@
 @(item: genBot.CocktailWithName, genBotRMI: genBot.RemoteOrderInterface, str: String)
-<div data-name="@item.getName.replace(" ", "_")" class="cocktail panel @if(item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-success } 
-													 @if(!item.getCocktail.isPoured && item.getCocktail.isFitnessSet) { panel-danger }
-													 @if(item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-warning } 
-													 @if(!item.getCocktail.isPoured && !item.getCocktail.isFitnessSet) { panel-default } ">
+<div data-name="@item.getName.replace(" ", "_")" class="cocktail panel @if(item.getCocktail.isPoured && item.getCocktail.isRated) { panel-success } 
+													 @if(!item.getCocktail.isPoured && item.getCocktail.isRated) { panel-danger }
+													 @if(item.getCocktail.isPoured && !item.getCocktail.isRated) { panel-warning } 
+													 @if(!item.getCocktail.isPoured && !item.getCocktail.isRated) { panel-default } ">
 	<div class="panel-heading">
 		<h4 class="panel-title">
 			<a data-toggle="collapse" href="#@(item.getName.replace(" ", "_"))_@str">
@@ -30,8 +30,8 @@
 			<form class="form-inline form-horizontal">
 				<fieldset>
 					<label class="control-label col-sm-2">Fitness</label>
-					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isFitnessSet){@{item.getCocktail.getFitnessInput}}" />
-					<input class="setFitnessButton btn btn-@if(item.getCocktail.isFitnessSet) {danger} else {warning}" type="button" value="@if(item.getCocktail.isFitnessSet) { Overwrite } else { Set }" />
+					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isRated){@{item.getCocktail.getRating}}" />
+					<input class="setFitnessButton btn btn-@if(item.getCocktail.isRated) {danger} else {warning}" type="button" value="@if(item.getCocktail.isRated) { Overwrite } else { Set }" />
 					<input class="pourButton btn btn-info" type="button" value="Pour" />
 				</fieldset>
 			</form>

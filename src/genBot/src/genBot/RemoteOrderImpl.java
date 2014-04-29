@@ -30,18 +30,9 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 
 	@Override
-	public void setCocktailFitness(String evolutionStackName, String name, double fitnessInput) throws RemoteException {
+	public void setCocktailFitness(String evolutionStackName, String name, double rating) throws RemoteException {
 		EvolutionAlgorithmManager evoAlgMngr = evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName);		
-
-		evoAlgMngr.setFitness(name, GenBotConfig.cocktailSize / 1000, fitnessInput);
-		
-		if (evoAlgMngr.getGenManager().getUnRatedNamedCocktailGeneration().length == 0) {
-			try {
-				evoAlgMngr.evolve();
-			} catch (NotEnoughRatedCocktailsException e) {
-				e.printStackTrace();
-			}
-		}
+		evoAlgMngr.setRating(name, rating);
 	}
 	
 	@Override
@@ -58,54 +49,6 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public void evolve(String evolutionStackName) throws RemoteException, NotEnoughRatedCocktailsException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).evolve();
 	}
-
-	/*@Override
-	public void generateEvolutionStack(String evolutionStackName, String fitnessCheckName,
-			String recombinationName, boolean resetDbTable, String propPath, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter)
-			throws RemoteException, MaxAttemptsToMeetPriceConstraintException {
-		CheckFitness fitnessCheck = new EfficientCocktail();
-		if (!fitnessCheckName.equals("EfficientCocktail")) {
-			fitnessCheck = null;
-		}
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation, maxPricePerLiter);
-		if (recombinationName.equals("StandardMutation")) {
-			recombination = new StandardMutation(stdDeviation, maxPricePerLiter);
-		} else if (recombinationName.equals("IntermediateRecombination")) {
-			recombination = new IntermediateRecombination(0.25, maxPricePerLiter);
-		}
-		// variableArea is hard coded... but it should be 0.25
-
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, fitnessCheck, recombination, resetDbTable, propPath);
-	}
-
-	@Override
-	public void generateEvolutionStack(String evolutionStackName,
-			Ingredient[] allowedIngredients, int populationSize,
-			int truncation, int elitism, String dbDriverPath,
-			boolean resetDbTable, String fitnessCheckName, String recombinationName, double stdDeviation, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter,
-			String propPath) throws RemoteException, MaxAttemptsToMeetPriceConstraintException {
-		CheckFitness fitnessCheck = new EfficientCocktail();
-		if (!fitnessCheckName.equals("EfficientCocktail")) {
-			fitnessCheck = null;
-		}
-		Recombination recombination = new MutationAndIntermediateRecombination(0.25, stdDeviation, maxPricePerLiter);
-		if (recombinationName.equals("StandardMutation")) {
-			recombination = new StandardMutation(stdDeviation, maxPricePerLiter);
-		} else if (recombinationName.equals("IntermediateRecombination")) {
-			recombination = new IntermediateRecombination(0.25, maxPricePerLiter);
-		}
-		// variableArea is hard coded... but it should be 0.25
-		
-		evolutionStackController.addEvolutionAlgorithmManager(evolutionStackName, allowedIngredients, populationSize, truncation, elitism, dbDriverPath, resetDbTable, fitnessCheck, recombination, stdDeviation, initMeanValues, initOffsets, maxPricePerLiter, propPath);
-	}
-
-	@Override
-	public void generateEvolutionStack(String evolutionStackName,
-			Ingredient[] allowedIngredients, double[] initMeanValues, double[] initOffsets, double maxPricePerLiter) throws RemoteException,
-			MaxAttemptsToMeetPriceConstraintException {
-		
-		generateEvolutionStack(evolutionStackName, allowedIngredients, 8, 2, 1, "cocktailDataBase", true, "EfficientCocktail", "", 0.05, initMeanValues, initOffsets, maxPricePerLiter, evolutionStackName);
-	}*/
 	
 	@Override
 	public String[] listPossibleEvolutionStacks() throws RemoteException {		
@@ -216,22 +159,6 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 			throws RemoteException {
 		evolutionStackController.getEvolutionAlgorithmManager(evolutionStackName).setMaxPricePerLiter(maxPricePerLiter);
 	}
-	
-	/*private Properties loadProps(String propFile) {
-		Properties props = new Properties();
-		
-		try {
-			props.load(new FileInputStream(propertiesPath + propFile + ".properties"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return props;
-	}*/
 
 	@Override
 	public boolean isEvolutionStackNameLoaded(String evolutionStackName)

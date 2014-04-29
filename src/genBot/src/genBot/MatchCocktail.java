@@ -11,7 +11,7 @@ public class MatchCocktail implements CheckFitness {
 	}
 
 	@Override
-	public double checkFitness(Cocktail cocktail, double cocktailSize, double fitnessInput) {
+	public void setFitness(Cocktail cocktail) {
 		Ingredient[] ingredients = IngredientArray.getInstance().getAllIngredients();
 		
 		double squaredDistance = 0;
@@ -24,7 +24,7 @@ public class MatchCocktail implements CheckFitness {
 		
 		squaredDistance = squaredDistance + rnd.nextGaussian();
 		
-		return ((-1) * squaredDistance);
+		cocktail.setFitness((-1) * squaredDistance);
 	}
 
 }

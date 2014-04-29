@@ -61,20 +61,16 @@ public class CocktailGeneration implements Serializable {
 		return getPopulation().length;
 	}
 	
-	public int getRankedPopulationSize() {
+	public int getRatedPopulationSize() {
 		Cocktail[] cocktails = getPopulation();
 		int ret = 0;
 		
 		for (int i = 0; i< cocktails.length; i++) {
-			if (cocktails[i].isFitnessSet()) {
+			if (cocktails[i].isRated()) {
 				ret++;
 			}
 		}
 		return ret;
-	}
-	
-	public int getUnRankedPopulationSize() {
-		return getPopulationSize() - getRankedPopulationSize();
 	}
 	
 	public Cocktail[] getPopulation() {
@@ -91,63 +87,17 @@ public class CocktailGeneration implements Serializable {
 		return retCocktails;
 	}
 	
-	public Cocktail[] getRankedPopulation() {
+	public Cocktail[] getRatedPopulation() {
 		Cocktail[] cocktails = getPopulation();
-		Cocktail[] retCocktails = new Cocktail[getRankedPopulationSize()];
+		Cocktail[] retCocktails = new Cocktail[getRatedPopulationSize()];
 		int j = 0;
 		
 		for (int i = 0; i < cocktails.length; i++) {
-			if (cocktails[i].isFitnessSet()) {
+			if (cocktails[i].isRated()) {
 				retCocktails[j] = cocktails[i];
 				j++;
 			}
 		}
-		return retCocktails;
-	}
-	
-	public CocktailWithName[] getRankedPopulationWithName(String evolutionStackName, int generationNumber) {
-		CocktailWithName[] namedPopulation = getNamedPopulation(evolutionStackName, generationNumber);
-		CocktailWithName[] retCocktails = new CocktailWithName[getRankedPopulation().length];
-		
-		int j = 0;
-		
-		for (int i = 0; i < namedPopulation.length; i++) {
-			if (namedPopulation[i].getCocktail().isFitnessSet()) {
-				retCocktails[j] = namedPopulation[i];
-				j++;
-			}
-		}
-		
-		return retCocktails;
-	}
-
-	public Cocktail[] getUnRankedPopulation() {
-		Cocktail[] cocktails = getPopulation();
-		Cocktail[] retCocktails = new Cocktail[getUnRankedPopulationSize()];
-		int j = 0;
-		
-		for (int i = 0; i < cocktails.length; i++) {
-			if (!cocktails[i].isFitnessSet()) {
-				retCocktails[j] = cocktails[i];
-				j++;
-			}
-		}
-		return retCocktails;
-	}
-
-	public CocktailWithName[] getUnRankedPopulationWithName(String evolutionStackName, int generationNumber) {
-		CocktailWithName[] namedPopulation = getNamedPopulation(evolutionStackName, generationNumber);
-		CocktailWithName[] retCocktails = new CocktailWithName[getUnRankedPopulationSize()];
-		
-		int j = 0;
-		
-		for (int i = 0; i < namedPopulation.length; i++) {
-			if (!namedPopulation[i].getCocktail().isFitnessSet()) {
-				retCocktails[j] = namedPopulation[i];
-				j++;
-			}
-		}
-
 		return retCocktails;
 	}
 	
@@ -193,19 +143,6 @@ public class CocktailGeneration implements Serializable {
 		return theCocktail;
 	}
 	
-	public CocktailWithName getNextRandomNamedCocktail(String evolutionStackName, int generationNumber) {
-		Cocktail theCocktail = getNextRandomCocktail();
-		int cocktailNumber = -1;
-		
-		for (int i = 0; i < getPopulationSize(); i++) {
-			if (getPopulation()[i].equals(theCocktail)) {
-				cocktailNumber = i;
-			}
-		}
-		
-		return new CocktailWithName(evolutionStackName, generationNumber, cocktailNumber, theCocktail);
-	}
-	
 //	public CocktailGeneration clone() {
 //		CocktailGeneration nextGen = new CocktailGeneration(getPopulationSize(), getPopulation());
 //		
@@ -234,48 +171,21 @@ public class CocktailGeneration implements Serializable {
 		
 		return rankedCocktails;
 	}
-	
-	public CocktailWithName[] rankNamedCocktails(String evolutionStackName, int generationNumber) {
-		Cocktail[] rankedCocktails = rankCocktails();
-		CocktailWithName[] rankedCocktailsWithName = new CocktailWithName[rankedCocktails.length];
-		
-		for (int i = 0; i < rankedCocktails.length; i++) {
-			for (int j = 0; i < getPopulationSize(); i++) {
-				if (rankedCocktails[i].equals(getPopulation()[j])) {
-					rankedCocktailsWithName[i] = new CocktailWithName(evolutionStackName, generationNumber, i, rankedCocktails[i]);
-				}
-			}
-		}
-		
-		return rankedCocktailsWithName;
-	}
-	
-	public String toString() {
-		String out = "";
-		
-		for (int i = 0; i < getPopulationSize(); i++) {
-			out += "Cocktail " + i + ": " + population[i].toString() + "\n";
-		}
-		
-		return out;
-	}
-	
-	public String toString(String evolutionStackName, int generationNumber) {
-		String out = "";
-		
-		for (int i = 0; i < getPopulationSize(); i++) {
-			out += "Cocktail " + i + ": " + getNamedCocktail(i, evolutionStackName, generationNumber).toString() + "\n";
-		}
-		
-		return out;
-	}
 
 	public static CocktailGeneration loadFromString(String gStr) {
 		String cStr[] = gStr.split("\\r?\\n");
 
-		Cocktail[] population = new Cocktail[cStr.length];
+		int j = 0;
+		for(String t: cStr) {
+			if(t.charAt(0) == '#')
+				j++;
+		}
+
+		Cocktail[] population = new Cocktail[cStr.length - j];
 		int i = 0;
 		for(String t: cStr) {
+			if(t.charAt(0) == '#')
+				continue;
 			System.out.println(t);
 			population[i++] = Cocktail.loadFromString(t);
 		}
@@ -284,9 +194,9 @@ public class CocktailGeneration implements Serializable {
 	}
 
 	public String getSaveString() {
-		String str = "";
+		String str = "#I0\tI1\tI2\tI3\tI4\tI5\tI6\tRating\tFitn.\tCosts\tElite\tTrunc.\n";
 		for (Cocktail c: population)
-			str += c.getSaveString() + "\n";
+			str += " " + c.getSaveString() + "\n";
 		return str;
 	}
 }

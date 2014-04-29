@@ -43,7 +43,7 @@ public abstract class RouletteWheelSelection {
 	public double getFitnessSum(Cocktail[] cocktails) throws FitnessNotSetException {
 		double fitnessSum = 0;
 		for (int i = 0; i < cocktails.length; i++) {
-			if (cocktails[i].isFitnessSet()) {
+			if (cocktails[i].isRated()) {
 				fitnessSum = fitnessSum + cocktails[i].getFitness();
 			}
 			else {

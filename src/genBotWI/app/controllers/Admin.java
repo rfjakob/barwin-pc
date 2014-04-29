@@ -236,7 +236,7 @@ public class Admin extends AbstractController {
 		return ok(result);
 	}
 	
-	public static HashMap<String, Double> getMinMaxMedianThirdQuartMean(String evolutionStackName, int generationNumber) throws Exception, FitnessNotSetException {
+	/*public static HashMap<String, Double> getMinMaxMedianThirdQuartMean(String evolutionStackName, int generationNumber) throws Exception, FitnessNotSetException {
 		RemoteOrderInterface genBotRMI;
 		genBotRMI = genBotRMIConnect();
 		
@@ -280,5 +280,5 @@ public class Admin extends AbstractController {
 		returnMap.put("mean", (sum / genMngr.getCocktailGeneration().getRankedPopulationSize()));
 		
 		return returnMap;
-	}
+	}*/
 }

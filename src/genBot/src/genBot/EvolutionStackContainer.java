@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 /*
  * EvolutionStackContainer is a singleton to store the different EvolutionStacks
+ * THIS CLASS SHOULD EXTEND HASHMAP
+ * COULD ALSO BE INTEGRATED WITH EvolutionAlgorithmManager
  */
 
 public class EvolutionStackContainer {

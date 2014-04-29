@@ -6,17 +6,17 @@ public class EfficientCocktail implements CheckFitness {
 	}
 
 	@Override
-	public double checkFitness(Cocktail cocktail, double cocktailSize, double fitnessInput) {
-		double cocktailCosts = cocktail.getCosts() * cocktailSize;
+	public void setFitness(Cocktail c) {
+		double cocktailCosts = c.getCosts() * GenBotConfig.cocktailSize;
 		
-		double absoluteEfficiency = fitnessInput - cocktailCosts;
+		double absoluteEfficiency = c.getRating() - cocktailCosts;
 		if (absoluteEfficiency < 0) {
 			absoluteEfficiency = 0;
 		}
 		
-		double efficiencyPerML = absoluteEfficiency / cocktailSize;
+		double efficiencyPerML = absoluteEfficiency / GenBotConfig.cocktailSize;
 		
-		return efficiencyPerML;
+		c.setFitness(efficiencyPerML);
 	}
 
 }
