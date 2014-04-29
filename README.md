@@ -15,8 +15,8 @@ Dependencies
 Java 7 is required!
 
 Install some packages:
-* Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx guava
-* Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java
+* Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx guava tmux
+* Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java tmux
 
 
 Maybe some symlinks in the lib/ folder have to be adjusted to your system specific folders:
@@ -49,33 +49,38 @@ Run make in the src/ or top directory:
 
 Run
 ---
-You can start the whole system using the run-all wrapper script:
+You can start the whole system using the wrapper script (this will
+also trigger a build):
 
-		./run-all.sh
+		./run-simulation.sh
+
+or, if you have the actual hardware connected:
+
+		./run-barwin.sh
 
 If that does not work, start the services in this order:
 
-0. Build (compile) the Java source
+1. Build (compile) the Java source
 
 		make
 
-1. Start the Arduino simulator (enter sudo password if asked):
+2. Start the Arduino simulator (enter sudo password if asked):
 
 		bin/arduino-sim.py
 
-2. Start the serial port service
+3. Start the serial port service
 
 		bin/serialRMI.sh
 
-3. Start the evolutionary algorithm
+4. Start the evolutionary algorithm
 
 		bin/genBot.sh
 
-4. Start the web interface
+5. Start the web interface
 
 		bin/play.sh
 
-5. Go to web interface
+6. Go to web interface
 
 	* Front-end: http://127.0.0.1:9000/
 	* Back-end: http://127.0.0.1:9000/admin
