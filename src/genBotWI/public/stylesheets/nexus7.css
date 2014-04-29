@@ -1,0 +1,16 @@
+/* for nexus 7 (version 2012) tablet */
+
+@-webkit-viewport, @-moz-viewport, @-o-viewport {
+        width: 606px;
+        height: 601px;
+        max-zoom: 0;
+        zoom: 0;
+        min-zoom: 0;
+}
+
+#Page{
+	padding-top: 3%;
+	width:89%;
+        height:93%;
+}
+

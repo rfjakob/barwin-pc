@@ -15,6 +15,17 @@
 	
 	var c = 0;
 	
+	function goFullScreen(id){
+		var element = document.getElementById(id);
+		if (element.mozRequestFullScreen){
+			element.mozRequestFullScreen();
+		}
+		else if (element.webkitRequestFullScreen){
+			element.webkitRequestFullScreen();
+		}
+		
+	}
+		
 	function eurosKeyPressed(id) {
 		if(LastPadKeyPressed.euros != id){
 			if(LastPadKeyPressed.euros=='INIT'){
@@ -233,6 +244,7 @@
 	});
 	window.onload = function() {
 		readAndSetStep();
+		goFullScreen($('#Page'));
 		if ($(window).height() < 963){
 			
 		}
