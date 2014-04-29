@@ -107,6 +107,14 @@ def sread(n):
 	print 'RX: \033[32m%s\033[0m' % escapern(msg)
 	return msg
 
+def dancing_bottles():
+	DEBUG_MSG_LN(":D-<")
+	time.sleep(0.5)
+	DEBUG_MSG_LN(":D|-<")
+	time.sleep(0.5)
+	DEBUG_MSG_LN(":D/-<")
+	time.sleep(0.5)
+
 ### main() ####
 
 selftest = False
@@ -183,6 +191,8 @@ while True:
 		c = c[5:]
 		parts = c.split(" ")
 		pour_cocktail(parts)
+	if c == 'DANCE\r\n':
+		dancing_bottles()
 	else:
 		ERROR("ERROR INVAL_CMD");
 	
