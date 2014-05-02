@@ -114,7 +114,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 	 * makes all crossovers for the Generation
 	 * @return a new cocktail generation
 	 */
-	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
+	public CocktailGeneration allCrossovers(CocktailGeneration cocktailGeneration, int newPopulationSize) throws FitnessNotSetException, GeneratingRandomCocktailsException {
 		Cocktail[] population = new Cocktail[newPopulationSize];
 		
 		int attempts = 0;
@@ -126,7 +126,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 				if ((children[j].pricePerLiterHigherAs(maxPricePerLiter))) {
 					attempts++;
 					if (attempts >= maxAttemptsToMeetCostsConstraint) {
-						throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. Giving up now. You can try to decrease the value in the specific properties file.");
+						throw new GeneratingRandomCocktailsException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " Euros per Liter. Didn't succeed. Giving up now. You can try to decrease the value in the specific properties file.");
 					}
 				} else {
 					if (i < newPopulationSize) {
@@ -141,7 +141,7 @@ public class IntermediateRecombination extends RouletteWheelSelection implements
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, GeneratingRandomCocktailsException {
 		return allCrossovers(population, newPopulationSize);
 	}
 

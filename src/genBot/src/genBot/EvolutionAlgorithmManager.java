@@ -281,7 +281,7 @@ public class EvolutionAlgorithmManager {
 				try {
 					nextGeneration = recombination.recombine(nextGeneration, getPopulationSize(), getAllowedIngredients());
 					recombinationSucceeded = true;
-				} catch (MaxAttemptsToMeetPriceConstraintException e) {
+				} catch (GeneratingRandomCocktailsException e) {
 					e.printStackTrace();
 					recombinationSucceeded = false;
 				}

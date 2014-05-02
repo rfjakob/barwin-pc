@@ -186,7 +186,7 @@ public class CocktailGeneration implements Serializable {
 		for(String t: cStr) {
 			if(t.charAt(0) == '#')
 				continue;
-			System.out.println(t);
+			//System.out.println(t);
 			population[i++] = Cocktail.loadFromString(t);
 		}
 

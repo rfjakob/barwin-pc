@@ -101,7 +101,7 @@ public class StandardMutation implements Recombination {
 	 * class)
 	 */
 	
-	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws MaxAttemptsToMeetPriceConstraintException {		
+	public CocktailGeneration mutateCocktails(CocktailGeneration population, int newPopulationSize, boolean[] booleanAllowedIngredients) throws GeneratingRandomCocktailsException {		
 		Cocktail[] newCocktails = new Cocktail[newPopulationSize];
 		int[] randomOrder = population.generateRandomPopulationOrder();
 		
@@ -112,7 +112,7 @@ public class StandardMutation implements Recombination {
 			if (newCocktails[i].pricePerLiterHigherAs(maxPricePerLiter)) {
 				attempts++;
 				if (attempts >= maxAttemptsToMeetCostsConstraint) {
-					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " per liter. Giving up now. You can decrease the value in the respective properties file.");
+					throw new GeneratingRandomCocktailsException("Tried " + maxAttemptsToMeetCostsConstraint + " times to meet the maximum costs constraint of " + maxPricePerLiter + " per liter. Giving up now. You can decrease the value in the respective properties file.");
 				}
 			} else {
 				i++;
@@ -125,7 +125,7 @@ public class StandardMutation implements Recombination {
 
 	@Override
 	public CocktailGeneration recombine(CocktailGeneration population,
-			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, MaxAttemptsToMeetPriceConstraintException {
+			int newPopulationSize, boolean[] booleanAllowedIngredients) throws FitnessNotSetException, GeneratingRandomCocktailsException {
 		return mutateCocktails(population, newPopulationSize, booleanAllowedIngredients);
 	}
 
