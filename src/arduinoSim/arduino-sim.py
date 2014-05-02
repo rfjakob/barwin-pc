@@ -191,7 +191,7 @@ while True:
 		c = c[5:]
 		parts = c.split(" ")
 		pour_cocktail(parts)
-	if c == 'DANCE\r\n':
+	elif c == 'DANCE\r\n':
 		dancing_bottles()
 	else:
 		ERROR("ERROR INVAL_CMD");

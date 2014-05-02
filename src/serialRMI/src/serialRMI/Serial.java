@@ -103,7 +103,6 @@ public class Serial implements SerialRMIInterface {
 			
 			if(!logging.isEmpty()) {
 				try {
-
 					//String fileName = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
 					String fileName = "serialRMI.log";
 					String filePath = logFolder + "/" + fileName;

@@ -18,11 +18,11 @@ public class EvolutionAlgorithmManager {
 	private CocktailGeneration cocktailGeneration;
 	private int generationNumber;
 
-	private int maxAttemptsToMeetPriceConstraints = 3000;
+	private int maxAttemptsToMeetPriceConstraints = 10000;
 
 	/*** CONSTRUCTOR ***/
 
-	public EvolutionAlgorithmManager(String evolutionStackName) throws Exception {
+	public EvolutionAlgorithmManager(String evolutionStackName) throws GeneratingRandomCocktailsException, IOException {
 		this.evolutionStackName = evolutionStackName;
 		this.props = loadProps(evolutionStackName);
 		try {
@@ -34,7 +34,7 @@ public class EvolutionAlgorithmManager {
 		}
 	}
 
-	public EvolutionAlgorithmManager(String evolutionStackName, Properties props) throws Exception {
+	public EvolutionAlgorithmManager(String evolutionStackName, Properties props) throws GeneratingRandomCocktailsException {
 		this.evolutionStackName = evolutionStackName;
 		this.props = props;
 		saveProps();
@@ -179,7 +179,7 @@ public class EvolutionAlgorithmManager {
 
 	/**************************************************/
 
-	private void generateCocktailGeneration() throws MaxAttemptsToMeetPriceConstraintException {
+	private void generateCocktailGeneration() throws GeneratingRandomCocktailsException {
 		boolean[] booleanAllowedIngredients = getAllowedIngredients();
 		double[] initMeanValues = getInitMeanValues();
 		double[] initOffsets = getInitOffsets();
@@ -201,32 +201,31 @@ public class EvolutionAlgorithmManager {
 		int countToThrowException = 0;
 		
 		int i = 0;
+		outerloop:
 		while (i < getPopulationSize()) {
-			cocktails[i] = Cocktail.newRandomCocktail(booleanAllowedIngredients);
+			if (countToThrowException >= maxAttemptsToMeetPriceConstraints) 
+					throw new GeneratingRandomCocktailsException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost and content constraints.");
+			
+			Cocktail c = Cocktail.newRandomCocktail(booleanAllowedIngredients);
 			
 			boolean resetCocktail = false;
 			
 			for (int j = 0; j < booleanAllowedIngredients.length; j++) {
-				double val = cocktails[i].getAmountsAsDouble()[j];
+				double val = c.getAmountsAsDouble()[j];
 				
-				if (val < initMeanValues[j] - initOffsets[j] | val > initMeanValues[j] + initOffsets[j]) {
-					resetCocktail = true;
+				if (val < initMeanValues[j] - initOffsets[j] || val > initMeanValues[j] + initOffsets[j]) {
+					countToThrowException++;
+					continue outerloop;
 				}
 			}
 			
-			if (cocktails[i].pricePerLiterHigherAs(getMaxPricePerLiter())) {
-				resetCocktail = true;
-			}
-			
-			if (resetCocktail) {
+			if (c.pricePerLiterHigherAs(getMaxPricePerLiter())) {
 				countToThrowException++;
-				if (countToThrowException >= maxAttemptsToMeetPriceConstraints) {
-					throw new MaxAttemptsToMeetPriceConstraintException("Tried " + maxAttemptsToMeetPriceConstraints + " times to find a cocktail that meets the cost constraint of " + getMaxPricePerLiter() + " Euros per Liter. Didn't succeed. I give up now.");
-				}
-			} else {
-				i++;
-				countToThrowException = 0;
+				continue;
 			}
+			
+			cocktails[i++] = c;
+			countToThrowException = 0;
 		}
 		cocktailGeneration = new CocktailGeneration(cocktails);
 	}
