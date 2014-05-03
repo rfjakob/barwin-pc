@@ -194,7 +194,7 @@ while True:
 	elif c == 'DANCE\r\n':
 		dancing_bottles()
 	else:
-		ERROR("ERROR INVAL_CMD");
+		ERROR("INVAL_CMD");
 	
 	if selftest and cocktails_poured == 1:
 		exit(0)
