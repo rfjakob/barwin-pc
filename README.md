@@ -16,7 +16,7 @@ Java 7 is required!
 
 Install some packages:
 * Fedora: sudo yum install java-1.7.0-openjdk-devel rxtx guava tmux
-* Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java tmux
+* Debian: sudo apt-get install openjdk-7-jdk librxtx-java libguava-java tmux realpath
 
 
 Maybe some symlinks in the lib/ folder have to be adjusted to your system specific folders:
