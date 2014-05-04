@@ -38,6 +38,7 @@ def pour_cocktail(parts):
 	cocktails_poured += 1
 
 	for part in parts:
+		part = int(part)
 		if part == 0:
 			continue
 
@@ -125,6 +126,7 @@ def dancing_bottles():
 
 selftest = False
 symlinkonly = False
+bottles_nr = 7
 
 if len(sys.argv) == 2:
 	if sys.argv[1] == "selftest":
@@ -196,6 +198,12 @@ while True:
 	if c.startswith('POUR '):
 		c = c[5:]
 		parts = c.split(" ")
+
+		if len(parts) != bottles_nr:
+			DEBUG_MSG_LN("Got %d values instead of %d" % (len(parts), bottles_nr))
+			ERROR("INVAL_CMD")
+			continue
+
 		pour_cocktail(parts)
 	elif c == 'DANCE\r\n':
 		dancing_bottles()
