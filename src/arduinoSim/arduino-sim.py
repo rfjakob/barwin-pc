@@ -18,10 +18,12 @@ def ERROR(msg):
 def DEBUG_MSG_LN(msg):
 	swrite("DEBUG     %s\r\n" %msg)
 
+# https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L50
 def MSG(msg):
 	swrite("%s\r\n" %msg)
 
 def mysleep(secs):
+	# Selftest should run quickly
 	if selftest == False:
 		time.sleep(secs)
 
@@ -39,11 +41,12 @@ def pour_cocktail(parts):
 		if part == 0:
 			continue
 
-		swrite("POURING %d 0\r\n" % bottle)
-		mysleep(1)
-		
-		# Simulate empty bottle in one of 13 cocktails_poured
+		MSG("POURING %d 0" % bottle)
+		mysleep(1)		
+
+		# Simulate empty bottle in one of 13 cocktails poured
 		if bottle == 1 and cocktails_poured % 13 == 0:
+
 			# https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
 			ERROR("BOTTLE_EMPTY")
 
@@ -54,12 +57,15 @@ def pour_cocktail(parts):
 				# Got ABORT
 				return
 
-		# Simulate temporarily removed cup in of of 3 cocktails_poureds
+			MSG("POURING %d 0" % bottle)
+			mysleep(0.5)
+
+		# Simulate temporarily removed cup in of of 3 cocktails poureds
 		if bottle == 2 and cocktails_poured % 3 == 0:
 			MSG("WAITING_FOR_CUP")
 			mysleep(0.5)
 		
-		# Simulate permanently removed cup in one of 10 cocktails_poureds
+		# Simulate permanently removed cup in one of 10 cocktails poureds
 		if bottle == 5 and cocktails_poured % 10 == 0:
 			MSG("WAITING_FOR_CUP")
 			mysleep(1)
@@ -197,5 +203,6 @@ while True:
 		ERROR("INVAL_CMD");
 	
 	if selftest and cocktails_poured == 1:
+		print "Selftest seems to have passed. To be sure, check the output above for sanity."
 		exit(0)
 
