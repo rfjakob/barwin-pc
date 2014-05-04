@@ -192,8 +192,9 @@ public class EvolutionAlgorithmManager {
 		for (int i = 0; i < initMeanValues.length; i++) {
 			sumMeanValues += initMeanValues[i];
 		}
-		if (Math.round(sumMeanValues*100) != 100) {
-			throw new IllegalArgumentException("The values of initMeanValues does not sum up to one!");
+		// Normalize so the sum is guranteed to be one
+		for (int i = 0; i < initMeanValues.length; i++) {
+			initMeanValues[i] = initMeanValues[i] / sumMeanValues;
 		}
 				
 		Cocktail[] cocktails = new Cocktail[getPopulationSize()];
@@ -213,7 +214,9 @@ public class EvolutionAlgorithmManager {
 			for (int j = 0; j < booleanAllowedIngredients.length; j++) {
 				double val = c.getAmountsAsDouble()[j];
 				
-				if (val < initMeanValues[j] - initOffsets[j] || val > initMeanValues[j] + initOffsets[j]) {
+				if (val < initMeanValues[j] * ( 100 - initOffsets[j])/100.0 ||
+					val > initMeanValues[j] * ( 100 + initOffsets[j])/100.0 )
+				{
 					countToThrowException++;
 					continue outerloop;
 				}
