@@ -47,13 +47,16 @@ public class IngredientArray {
 		
 		try {
 			for (int i = 0; i < ingredients.length; i++) {
-				ingProps.load(new FileInputStream(GenBotConfig.ingredientsPath + fileNames.get(i)));
+				String curFileName = fileNames.get(i);
+				int arduinoOutputLine = Integer.parseInt(curFileName.substring(0,1));
+
+				ingProps.load(new FileInputStream(GenBotConfig.ingredientsPath + curFileName));
 				
 				ingredients[i] = new Ingredient(
 						ingProps.getProperty("name"),
 						Double.parseDouble(ingProps.getProperty("bottlePrice")),
 						Double.parseDouble(ingProps.getProperty("bottleSize")),
-						Integer.parseInt(ingProps.getProperty("arduinoOutputLine"))
+						arduinoOutputLine
 						);
 			}
 		} catch (IOException e) {
