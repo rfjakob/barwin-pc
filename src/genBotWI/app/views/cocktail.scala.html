@@ -7,7 +7,7 @@
 		<h4 class="panel-title">
 			<a data-toggle="collapse" href="#@(item.getName.replace(" ", "_"))_@str">
 				@item.getName @if(item.getCocktail.isQueued) { <span class="glyphicon glyphicon-list right"> } 
-							  @if(item.getCocktail.isPouring) { <span class="glyphicon glyphicon-record right"> } 
+							  @if((genBotRMI.getCurrentlyPouringCocktail() != null) && (item.getName == genBotRMI.getCurrentlyPouringCocktail.getName)) { <span class="glyphicon glyphicon-record right"> } 
 							  @if(item.getCocktail.isPoured) { <span class="glyphicon glyphicon-ok-sign right"> } 
 			</a>
 		</h4>
@@ -33,6 +33,7 @@
 					<input class="setFitnessInput form-control" type="text" name="fitness" value="@if(item.getCocktail.isRated){@{item.getCocktail.getRating}}" />
 					<input class="setFitnessButton btn btn-@if(item.getCocktail.isRated) {danger} else {warning}" type="button" value="@if(item.getCocktail.isRated) { Overwrite } else { Set }" />
 					<input class="pourButton btn btn-info" type="button" value="Pour" />
+					@if(item.getCocktail.isPoured && !item.getCocktail.isRated){ <input class="setUnpouredButton btn btn-warning" type="button" value="Set unpoured" />}
 				</fieldset>
 			</form>
 			<div class="clear"></div>

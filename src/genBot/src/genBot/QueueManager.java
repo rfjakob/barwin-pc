@@ -28,7 +28,9 @@ public class QueueManager extends Thread {
 		waitingForCup,
 		error,
 		waitingForReady,
-		waitingForEnjoy
+		waitingForEnjoy,
+		waitingForPouring,
+		pouring
 	}
 	
 	private Status status;
@@ -48,7 +50,9 @@ public class QueueManager extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("--- Believe it, finally I'm RUNNING\n\n\n");
+		System.out.println("--------------------------------");
+		System.out.println("--- Finally I'm RUNNING");
+		System.out.println("--------------------------------\n\n\n");
 		while (true) {
 			try {
 				Thread.sleep(100);
@@ -88,11 +92,14 @@ public class QueueManager extends Thread {
 			}
 			//System.out.println("GOT COMMAND " + me.raw);
 			switch (message.command) {
-				case "READY":						
-					//System.out.println("weight: " + message.args[0] + " cup: " + message.args[1]);
+				case "READY":
+					if(status != Status.waitingForPouring) {
+						currentlyPouring = null;
+					}
 					status = Status.ready;
 					statusClientCode = 0;
 					statusClientMessage = null;
+
 					break;
 				case "WAITING_FOR_CUP":
 					status = Status.waitingForCup;
@@ -100,8 +107,8 @@ public class QueueManager extends Thread {
 					statusClientCode = 1;
 					break;
 				case "ENJOY":
-					finishedPouring(message.args);
 					status = Status.waitingForReady;
+					finishedPouring(message.args);
 					statusClientMessage = "Take cup";
 					statusClientCode = 3;
 					break;
@@ -111,6 +118,7 @@ public class QueueManager extends Thread {
 					status = Status.error;
 					break;
 				case "POURING":
+					status = Status.pouring;
 					statusClientMessage = "Pouring ";
 					// Get string of ingredient
 					Ingredient ci = null;
@@ -138,19 +146,17 @@ public class QueueManager extends Thread {
 		
 		System.err.println("Lets mix a cocktail: " + toBePoured.getName());
 
-		sendToSerial(codePour(pourCocktail));
+		sendToArduino(ArduinoMessage.pour(pourCocktail));
+		status = Status.waitingForPouring;
 
 		currentlyPouring = toBePoured;
 	
 		pourCocktail.setQueued(false);
-		pourCocktail.setPouring(true);
 	}
-
 	
 	private void finishedPouring(int[] realValues) {
 		if(currentlyPouring != null) {
-			currentlyPouring.getCocktail().setPoured(true);		
-			currentlyPouring.getCocktail().setPouring(false);
+			currentlyPouring.getCocktail().setPoured(true);
 			
 			/* REPLACE REAL VALUES
 			int mandatoryLength = IngredientArray.getInstance().getAllIngredients().length; 
@@ -166,18 +172,6 @@ public class QueueManager extends Thread {
 
 			currentlyPouring = null;
 		}
-	}
-	
-	private String codePour(Cocktail pourCocktail) {
-		Ingredient[] ings = IngredientArray.getInstance().getAllIngredients();
-		
-		int[] milliLiters = new int[ings.length];
-		for (int i = 0; i < milliLiters.length; i++) {
-			milliLiters[ings[i].getArduinoOutputLine()] = (int) Math.round(pourCocktail.getAmount(ings[i]) * GenBotConfig.cocktailSize);
-		}
-		
-		ArduinoMessage m = new ArduinoMessage("POUR", milliLiters);
-		return m.raw;
 	}
 	
 	public CocktailQueue getQueue() {
@@ -202,8 +196,8 @@ public class QueueManager extends Thread {
 		return ama;
 	}
 
-	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
-		System.out.println("Hey Ardu: '" + s + "'");
-		serial.writeLine(s);
+	public void sendToArduino(ArduinoMessage m) throws RemoteException, SerialRMIException {
+		System.out.println("Hey Ardu: '" + m.raw + "'");
+		serial.writeLine(m.raw);
 	}
 }

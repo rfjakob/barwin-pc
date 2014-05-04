@@ -84,6 +84,17 @@ $(function() {
 		});
 	});
 
+	$("body").on('click', 'input.setUnpouredButton', function(){
+		$.post('/setUnpoured', {
+			'name' : $(this).parents(".cocktail").attr("data-name")
+		}, function(data) {
+			gb.stdActions(data);
+			if(data.valid) {
+				gb.refreshStack(data);
+			}
+		});
+	});
+
 	$('#stack a.tab').click(function(e) {
 		e.preventDefault()
 		$(this).tab('show')

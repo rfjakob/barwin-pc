@@ -22,7 +22,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	private Double fitness;
 	private boolean rated;
 	private boolean poured;
-	private boolean pouring;
 	private boolean queued;
 	private boolean eliteCocktail;
 	private boolean truncated;
@@ -61,7 +60,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		
 		this.rated 		= false;
 		this.poured 	= false;
-		this.pouring 	= false;
 		this.queued 	= false;
 		this.eliteCocktail = false;
 		this.truncated = false;
@@ -181,8 +179,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	
 	public void setPoured(boolean p) {
 		poured = p;
-		if(p)
-			setPouring(false);
 	}
 	
 	public boolean isQueued() {
@@ -273,14 +269,6 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 				e.printStackTrace();
 		}
 		return 0;
-	}
-
-	public void setPouring(boolean p) {
-		pouring = p;
-	}
-
-	public boolean isPouring() {
-		return pouring;
 	}
 	
 	public void changeAmounts(double[] amounts) {

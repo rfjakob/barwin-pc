@@ -238,6 +238,8 @@ public class EvolutionAlgorithmManager {
 		if (!canEvolve())
 			throw new NotEnoughRatedCocktailsException("Only " + cocktailGeneration.getRatedPopulationSize() + " cocktails are rated. As " + getTruncation() + " cocktails should be truncated and the best " + getElitism() + "cocktails should be copied to the next generation we would need at least " + (getTruncation() + getElitism() + 1) + " rated cocktails.");
 
+		System.out.println("Evolution taking place!! (" + evolutionStackName + ")");
+
 		Cocktail[] ratedCocktails = cocktailGeneration.getRatedPopulation();
 
 		CheckFitness fitnessCheck;

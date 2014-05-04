@@ -22,10 +22,6 @@ public class Admin extends AbstractController {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
 
-			//for (Ingredient i: genBotRMI.getIngredients())
-			//	System.out.println(i.getName());
-			//genBotRMI.getNamedPopulation("adsf").;
-			
 			for(String s: genBotRMI.listLoadedEvolutionStacks()) {
 				System.out.println(s);
 				for(Ingredient i: genBotRMI.getAllowedIngredients(s)) {
@@ -73,6 +69,7 @@ public class Admin extends AbstractController {
 			String name = parameters.get("name")[0].replace("_", " ");
 			String action = parameters.get("action")[0];
 			System.out.println(action);
+
 			if(action.equals("load")) 
 				genBotRMI.loadEvolutionStack(name);
 			else if(action.equals("remove"))
@@ -172,6 +169,19 @@ public class Admin extends AbstractController {
 		}
 	}
 
+	public static Result setUnpoured() {
+		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
+		String name = parameters.get("name")[0].replace("_", " ");;
+		String[] nameA = name.split("-");
+		try {
+			RemoteOrderInterface genBotRMI = genBotRMIConnect();
+			genBotRMI.setCocktailToUnpoured(nameA[0], name);
+			return getStack(genBotRMI, "Cocktail poured status reset", nameA[0]);
+		} catch (Exception e) {
+			return errorAjax(e);
+		}
+	}
+
 	public static Result evolve() {
 		Map<String, String[]> parameters = request().body().asFormUrlEncoded();
 		String name = parameters.get("name")[0].replace("_", " ");;
@@ -187,23 +197,12 @@ public class Admin extends AbstractController {
 	public static Result send(String message) {
 		try {
 			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			genBotRMI.sendToSerial(message);
+			ArduinoMessage m = new ArduinoMessage();
+			m.raw = message;
+			genBotRMI.sendToArduino(m);
 			ObjectNode result = Json.newObject();
 			result.put("valid", true);
 			result.put("message", "'" + message + "' sent");
-			return ok(result);
-		} catch (Exception e) {
-			return errorAjax(e);
-		}
-	}
-
-	public static Result sendDance() {
-		try {
-			RemoteOrderInterface genBotRMI = genBotRMIConnect();
-			genBotRMI.sendToSerial("DANCE");
-			ObjectNode result = Json.newObject();
-			result.put("valid", true);
-			result.put("message", "Bottles sent");
 			return ok(result);
 		} catch (Exception e) {
 			return errorAjax(e);

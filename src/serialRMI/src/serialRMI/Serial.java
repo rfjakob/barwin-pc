@@ -43,6 +43,7 @@ public class Serial implements SerialRMIInterface {
 	static BufferedWriter file;
 	static String logging = "";
 	static String logFolder = "log/";
+	static SerialPort serialPort;
 
 	private String readBuffer = "";
 	
@@ -154,7 +155,6 @@ public class Serial implements SerialRMIInterface {
 		if (portIdentifier.isCurrentlyOwned()) {
 			System.out.println("Warning: Port is currently in use");
 		} else {
-			SerialPort serialPort;
 			try {
 				serialPort = (SerialPort) portIdentifier.open("blup",
 						2000);
@@ -309,6 +309,14 @@ public class Serial implements SerialRMIInterface {
 
 	public void disconnect() {
 		connected = false;
+		if (serialPort != null) {
+			log("Disconnect", 2);
+	        try {
+	            in.close();
+	            out.close();
+	        } catch (IOException ex) {}
+	        serialPort.close();
+	    }
 	}
 	
 	@Override

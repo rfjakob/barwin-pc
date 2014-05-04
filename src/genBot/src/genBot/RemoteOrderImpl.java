@@ -64,11 +64,12 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	public String[] listLoadedEvolutionStacks() throws RemoteException {
 		return evolutionStackController.listEvolutionStacks();
 	}
+	
 
-	@Override
+	/*@Override
 	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException {
 		return evolutionStackController.containsEvolutionStack(evolutionStackName);
-	}
+	}*/
 
 	@Override
 	public Properties getProps(String evolutionStackName) throws RemoteException, IOException {
@@ -214,8 +215,8 @@ public class RemoteOrderImpl implements RemoteOrderInterface {
 	}
 	
 	@Override
-	public void sendToSerial(String s) throws RemoteException, SerialRMIException {
-		queueManager.sendToSerial(s);
+	public void sendToArduino(ArduinoMessage m) throws RemoteException, SerialRMIException {
+		queueManager.sendToArduino(m);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public interface RemoteOrderInterface extends Remote {
 	
 	public String[] listLoadedEvolutionStacks() throws RemoteException;
 	
-	public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
+	//public boolean containsEvolutionStack(String evolutionStackName) throws RemoteException;
 	
 	public Properties getProps(String evolutionStackName) throws RemoteException, IOException;
 	
@@ -66,7 +66,7 @@ public interface RemoteOrderInterface extends Remote {
 	public double getMaxPricePerLiter(String evolutionStackName)
 			throws RemoteException;
 	
-	public void sendToSerial(String s) throws RemoteException, SerialRMIException;
+	public void sendToArduino(ArduinoMessage m) throws RemoteException, SerialRMIException;
 
 	public Ingredient[] getIngredients() throws RemoteException;
 

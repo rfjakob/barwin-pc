@@ -55,11 +55,26 @@ public class User extends AbstractController {
 			
 			CocktailWithName t = null;
 			for(CocktailWithName c: genBotRMI.getNamedPopulation(name)) {
-				if(c.getCocktail().isQueued() || c.getCocktail().isPouring() || c.getCocktail().isPoured()) 
+				if(	   c.getCocktail().isQueued() 
+					|| (genBotRMI.getCurrentlyPouringCocktail() != null && c.getName() == genBotRMI.getCurrentlyPouringCocktail().getName()) 
+					|| c.getCocktail().isPoured()) 
 					continue;
 				t = c;
 				break;
 			}
+
+			if(t == null) {
+				genBotRMI.evolve(name);
+				for(CocktailWithName c: genBotRMI.getNamedPopulation(name)) {
+					if(	   c.getCocktail().isQueued() 
+						|| (genBotRMI.getCurrentlyPouringCocktail() != null && c.getName() == genBotRMI.getCurrentlyPouringCocktail().getName()) 
+						|| c.getCocktail().isPoured()) 
+						continue;
+					t = c;
+					break;
+				}
+			}
+
 			ObjectNode result = Json.newObject();
 			if(t == null) {
 				result.put("valid", false);

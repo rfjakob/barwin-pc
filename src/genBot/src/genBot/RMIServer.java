@@ -79,43 +79,47 @@ public class RMIServer {
 		System.out.println("Done");
 		System.out.println("--------------------------------");
 		System.out.println("- SERIAL PORT ------------------");
-		String[] availablePorts = serial.getSerialPorts();
-		if(availablePorts.length > 0) {
-			System.out.println("- Available ports: ");
-			System.out.println("-----");
-			int i = 0;
-			boolean exist = false; 
-			for(String tName: availablePorts) {
-				i++;
-				System.out.println("- " + i + ": " + tName);
-				if (serialPort.equals(tName)) 
-					exist = true;
-			}
-			System.out.println("-----");
-			if(!exist && !serialPort.equals("select")) 
-				System.out.println("- Serial port " + serialPort + " not available");
-			
-			if(!exist) {
-				System.out.print("- Use number to specify: ");
-				Scanner scanner = new Scanner(System.in);
-				if(scanner.hasNextInt()) {
-					serialPort = availablePorts[scanner.nextInt() - 1];
-				}
-				scanner.close();
-				System.out.println();
-				System.out.println("-----");
-			}
-			
-
+		if(serial.isConnected()) {
+			System.out.println("- Already connected!");
 		} else {
-			System.out.println("- No serial port available");
-			System.out.println("------------------------------------");
-			throw new SerialRMIException("ERROR NO SERIAL PORT");
-		}
+			String[] availablePorts = serial.getSerialPorts();
+			if(availablePorts.length > 0) {
+				System.out.println("- Available ports: ");
+				System.out.println("-----");
+				int i = 0;
+				boolean exist = false; 
+				for(String tName: availablePorts) {
+					i++;
+					System.out.println("- " + i + ": " + tName);
+					if (serialPort.equals(tName)) 
+						exist = true;
+				}
+				System.out.println("-----");
+				if(!exist && !serialPort.equals("select")) 
+					System.out.println("- Serial port " + serialPort + " not available");
+				
+				if(!exist) {
+					System.out.print("- Use number to specify: ");
+					Scanner scanner = new Scanner(System.in);
+					if(scanner.hasNextInt()) {
+						serialPort = availablePorts[scanner.nextInt() - 1];
+					}
+					scanner.close();
+					System.out.println();
+					System.out.println("-----");
+				}
+				
 
-		System.out.print(  "- Connecting to " + serialPort + " ... ");
-		serial.connect(serialPort);
-		System.out.println("Done");
+			} else {
+				System.out.println("- No serial port available");
+				System.out.println("------------------------------------");
+				throw new SerialRMIException("ERROR NO SERIAL PORT");
+			}
+
+			System.out.print(  "- Connecting to " + serialPort + " ... ");
+			serial.connect(serialPort);
+			System.out.println("Done");
+		}
 		System.out.println("--------------------------------\n\n\n");
 
 		return serial;
