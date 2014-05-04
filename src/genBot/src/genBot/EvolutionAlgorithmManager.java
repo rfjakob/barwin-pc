@@ -192,7 +192,7 @@ public class EvolutionAlgorithmManager {
 		for (int i = 0; i < initMeanValues.length; i++) {
 			sumMeanValues += initMeanValues[i];
 		}
-		// Normalize so the sum is guranteed to be one
+		// Normalize so the sum is guaranteed to be one
 		for (int i = 0; i < initMeanValues.length; i++) {
 			initMeanValues[i] = initMeanValues[i] / sumMeanValues;
 		}

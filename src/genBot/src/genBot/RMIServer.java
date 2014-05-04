@@ -47,8 +47,14 @@ public class RMIServer {
 			System.out.print("- " + String.format("%-30s", cocktailType));
 			Properties props = EvolutionAlgorithmManager.loadProps(cocktailType);
 			if(Boolean.parseBoolean(props.getProperty("autoLoad"))) {
-				System.out.println("    AUTOLOAD");
-				rmiImpl.loadEvolutionStack(cocktailType);
+				try {
+					rmiImpl.loadEvolutionStack(cocktailType);
+					System.out.println("    AUTOLOAD");
+				} catch (GeneratingRandomCocktailsException e)
+				{
+					System.out.println("    ERROR");
+					e.printStackTrace();
+				}
 			} else {
 				System.out.println("    SKIP");
 			}
