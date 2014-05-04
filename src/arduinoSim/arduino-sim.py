@@ -37,6 +37,11 @@ def pour_cocktail(parts):
 	global cocktails_poured
 	cocktails_poured += 1
 
+	# Cup is already on the table in 1 in 2 cases
+	if cocktails_poured % 2 == 0:
+		MSG("WAITING_FOR_CUP")
+		mysleep(0.5)
+
 	for part in parts:
 		part = int(part)
 		if part == 0:
@@ -130,7 +135,7 @@ bottles_nr = 7
 
 if len(sys.argv) == 2:
 	if sys.argv[1] == "selftest":
-		print "Enabling self-test mode"
+		print "Enabling selftest mode"
 		selftest = True
 	elif sys.argv[1] == "symlinkonly":
 		symlinkonly = True
