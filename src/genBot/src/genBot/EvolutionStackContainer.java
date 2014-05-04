@@ -82,7 +82,11 @@ public class EvolutionStackContainer {
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
 				files = listOfFiles[i].getName();
-				
+
+				// default.properties is not a cocktail
+				if (files.equals("default.properties"))
+					continue;
+
 				if (files.endsWith(".properties") || files.endsWith(".PROPERTIES")) {
 					String files1 = files.substring(0, files.lastIndexOf('.'));
 					fileNames.add(files1);

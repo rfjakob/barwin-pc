@@ -421,7 +421,10 @@ public class EvolutionAlgorithmManager {
 	/*** PROPERTIES ***/ 
 
 	public static Properties loadProps(String evolutionStackName) throws IOException {
-		Properties props = new Properties();
+		Properties defaultProps = new Properties();
+		defaultProps.load(new FileInputStream(GenBotConfig.stackPath + "default.properties"));
+
+		Properties props = new Properties(defaultProps);
 		props.load(new FileInputStream(GenBotConfig.stackPath + evolutionStackName + ".properties"));
 		return props;
 	}
