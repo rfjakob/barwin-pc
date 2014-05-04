@@ -69,6 +69,8 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 	 * The first generation needs random cocktails. They are constructed in this
 	 * static method. It may be better to create an own class for that.
 	 */
+	/*
+	// Unused
 	public static Cocktail newRandomCocktail() {
 		int ingredientNumber = IngredientArray.getInstance().getAllIngredients().length;
 		
@@ -91,6 +93,7 @@ public class Cocktail implements Comparable<Cocktail>, Serializable {
 		
 		return new Cocktail(ingredientAmounts);
 	}
+	*/
 
 	public static Cocktail newRandomCocktail(boolean[] booleanAllowedIngredients) {
 		int ingredientNumber = IngredientArray.getInstance().getNumberOfIngredients();
