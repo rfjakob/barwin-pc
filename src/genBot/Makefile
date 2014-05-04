@@ -9,7 +9,7 @@ all: ../../lib/genBot.jar
 # Compile class files (depend on java files)
 build/genBot/*.class: src/genBot/*.java
 	mkdir -p build
-	javac -cp ../serialRMI/src/ -d build src/genBot/*.java 
+	javac -cp ../serialRMI/build/ -d build src/genBot/*.java
 	
 clean:
 	rm -Rf build
