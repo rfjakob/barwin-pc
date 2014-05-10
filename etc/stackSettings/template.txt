@@ -1,0 +1,5 @@
+allowedIngredients=0000000
+#                  0123456
+
+initMeanValues=00 00 00 00 00 00 00
+#               0  1  2  3  4  5  6
