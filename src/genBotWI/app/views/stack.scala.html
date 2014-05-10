@@ -4,15 +4,17 @@
 		@for(name <- names) {
 		<li><a href="#@{name.replace(" ", "_")}" class="tab" data-toggle="tab">@name</a></li> 
 		}
+	</ul>
+	<ul class="nav nav-tabs" id="actions">
 		<li><a title="Queue" href="#_queue" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-list"></span></a></li>
 		<li><a title="Settings" href="#_settings" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a></li>
 		<li><a title="Create new cocktail" href="#_create" class="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span></a></li>
-		<a title="Refresh" class="btn action" href="#" id="refreshB"><span class="glyphicon glyphicon-refresh"></a>
-		<a title="Resume (after BOTTLE_EMPTY)" class="btn action directMessage" href="#" id="resumeB" data-message="RESUME"><span class="glyphicon glyphicon-forward"></a>
-		<a title="Abort" class="btn action directMessage" href="#" id="abortB" data-message="ABORT"><span class="glyphicon glyphicon-stop"></a>
-		<a title="Let the bottles dance!" class="btn action directMessage" href="#" id="danceB" data-message="DANCE"><span class="glyphicon glyphicon-music"></a>
-		<a title="Frontend" class="btn action" target="frontend" href="/"><span class="glyphicon glyphicon-th-large"></a>
-		<a title="Serial interface" class="btn action" target="serial" href="/serial"><span class="glyphicon glyphicon-transfer"></a>
+		<li><a title="Refresh" class="btn action" href="#" id="refreshB"><span class="glyphicon glyphicon-refresh"></a></li>
+		<li><a title="Resume (after BOTTLE_EMPTY)" class="btn action directMessage" href="#" id="resumeB" data-message="RESUME"><span class="glyphicon glyphicon-forward"></a></li>
+		<li><a title="Abort" class="btn action directMessage" href="#" id="abortB" data-message="ABORT"><span class="glyphicon glyphicon-stop"></a></li>
+		<li><a title="Let the bottles dance!" class="btn action directMessage" href="#" id="danceB" data-message="DANCE"><span class="glyphicon glyphicon-music"></a></li>
+		<li><a title="Frontend" class="btn action" target="frontend" href="/"><span class="glyphicon glyphicon-th-large"></a></li>
+		<li><a title="Serial interface" class="btn action" target="serial" href="/serial"><span class="glyphicon glyphicon-transfer"></a></li>
 	</ul>
 	<div class="tab-content">
 		@for(name <- names) {
