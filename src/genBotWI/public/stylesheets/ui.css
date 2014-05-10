@@ -416,7 +416,7 @@ a{
 	background-color: white;
 	border: 0.1em solid white;
 	border-radius: 0.4em;
-	padding: 0.45em;
+	padding: 0.45em 0.6em 0.45em 0.3em;
 	}
 .voteCents a {padding: 0 5%;}
 
