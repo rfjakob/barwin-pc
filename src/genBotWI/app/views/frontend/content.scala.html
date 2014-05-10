@@ -43,7 +43,7 @@
 					</div>
 					<div class="printMessage"><div id="VotingQuestion"></div></div>
 					<div id="WrapperVotePad"><div id="VotePad">				
-						<div id="CurrencyEuros">&#8364;</div><div id="CurrencyCents">&#162;</div>
+						<!-- <div id="CurrencyEuros">&#8364;</div><div id="CurrencyCents">&#162;</div> -->
 						<div id="VotePadLine1">
 							<div id="Vote1" class="voteEuros"><a id="Vote1a" href="#" onclick="(VoteValue.euro = 1); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.9 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.1 ); eurosKeyPressed('#Vote1'); return false;">1</a></div>
 							<div id="Vote2" class="voteEuros"><a id="Vote2a" href="#" onclick="(VoteValue.euro = 2); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.8 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.2 ); eurosKeyPressed('#Vote2'); return false;">2</a></div>
@@ -64,7 +64,7 @@
 						</div>
 						<div id="VotePadLine4">
 							<div id="Vote10" class="voteEuros"><a id="Vote10a" href="#"	onclick="(VoteValue.euro = 10); $('#PleaseVoteLowImage').fadeTo( 'fast' , 0.0 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 1.0 ); eurosKeyPressed('#Vote10'); return false;">10</a></div>
-							<div id="VoteEmpty" class="voteEuros">&nbsp;</div>
+							<div id="VoteEmpty" class="voteEuros">&#8364;</div>
 							<div id="Voteo" class="voteEuros"><a id="Voteoa" href="#"     onclick=" (VoteValue.euro = 0); $('#PleaseVoteLowImage').fadeTo( 'fast' , 1.0 ); $('#PleaseVoteHighImage').fadeTo( 'fast' , 0.0 ); eurosKeyPressed('#Voteo'); return false;">0</a></div>
 							<div class="votePadLineEnd"><div id="Vote75" class="voteCents"><a id="Vote75a" href="#" onclick="(VoteValue.cent = 0.75); centsKeyPressed('#Vote75'); return false;">.75</a></div></div>
 						</div>				

@@ -423,6 +423,8 @@ a{
 .voteEuros a:active, .voteCents a:active {background-color: black; border-radius: 0.4em; color: white !important;}
 
 #VoteEmpty{
+	color: #ffffff;
+	font-weight: bold;
 	background-color: black;
 	border-color: black;
 	}
