@@ -187,9 +187,14 @@ if selftest:
 
 cocktails_poured = -1
 
+i=0
 while True:
+	i+=1
 
-	swrite("READY 0 0\r\n")
+        if i < 10:
+		swrite("READY 0 0\r\n")
+	else:
+		swrite("READY 15 1\r\n")
 
 	if selftest:
 		testserial.write("POUR 10 20 10 30 10 0 0\r\n")
