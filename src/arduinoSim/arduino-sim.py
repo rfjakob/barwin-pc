@@ -8,221 +8,234 @@ that simulates a serial connection to Barwin's Arduino.
 This should make testing the PC software easier as the hardware is
 not required and all scenarios can be covered easily.
 """
-import sys
 import os
-import serial
-import time
 import re
+import time
+import serial
+import argparse
+from argparse import ArgumentDefaultsHelpFormatter as better_formatter
 
+VSERIAL_FRIENDLY_NAME = "/dev/ttyS99"
 
-def ERROR(msg):
-    """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L52"""
-    swrite("ERROR %s\r\n" % msg)
+class BarwinSimulation(object):
+    def __init__(self, bottlesnr):
+        self.bottlesnr = bottlesnr
+        self.cocktails_poured = 0
 
+        # starte symlink dance and create serial device
+        intermediate_symlink = self.create_symlinks()
+        self._vserial = self._create_vserial(intermediate_symlink)
 
-def DEBUG_MSG_LN(msg):
-    """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L29"""
-    swrite("DEBUG     %s\r\n" % msg)
+    @classmethod
+    def create_symlinks(cls):
+        """Symlink dance:
 
+        /dev/ttyS99 -> intermediate_symlink -> /dev/pts/X
+        ^ root only    ^ writeable by normal user
 
-def MSG(msg):
-    """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L50"""
-    swrite("%s\r\n" % msg)
+        The intermediate symlink is needed so we don't need root rights for
+        every run."""
+        intermediate_symlink = os.path.dirname(
+            os.path.realpath(__file__)) + "/../../var/ttyS99"
 
-def mysleep(secs):
-    time.sleep(secs)
+        # Create a symlink /dev/ttyS99 pointing to intermediate_symlink using
+        # sudo if it does not exist yet
+        if (not os.path.islink(VSERIAL_FRIENDLY_NAME)) or \
+                (os.readlink(VSERIAL_FRIENDLY_NAME) != intermediate_symlink):
+            print "Creating %s symlink via sudo..." % VSERIAL_FRIENDLY_NAME
+            ret = os.system("sudo ln -sfT %s %s" %
+                            (intermediate_symlink, VSERIAL_FRIENDLY_NAME))
+            if ret != 0:
+                raise RuntimeError("Failed to create symlink")
+        print "Symlink %s ok\n" % VSERIAL_FRIENDLY_NAME
 
+        return intermediate_symlink
 
-def pour_cocktail(parts):
-    """https://github.com/rfjakob/barwin-arduino/blob/master/lib/bottle/bottle.cpp#L165
+    def _create_vserial(self, intermediate_symlink):
+        """Create serial device for simulated Arduino."""
+        master_fd, slave_fd = os.openpty()
+        slave_fn = os.ttyname(slave_fd)
 
-    Testcase: POUR 0 1 2 3 4 5 6
-            RESUME
-            ABORT
-    """
-    bottle = 0
-    global cocktails_poured
-    cocktails_poured += 1
+        print "Virtual terminal: %s" % slave_fn
 
-    # Cup is already on the table in 1 in 2 cases
-    if cocktails_poured % 2 == 0:
-        MSG("WAITING_FOR_CUP")
-        mysleep(0.5)
+        vserial = serial.Serial()
+        vserial.fd = master_fd
+        vserial._isOpen = True
+        vserial.timeout = 0.05
 
-    for part in parts:
-        part = int(part)
-        if part == 0:
-            continue
-
-        MSG("POURING %d 0" % bottle)
-        mysleep(1)
-
-        # Simulate empty bottle in one of 13 cocktails poured
-        if bottle == 1 and cocktails_poured % 13 == 0:
-
-            # https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
-            ERROR("BOTTLE_EMPTY")
-
-            if wait_for_resume() == 1:
-                # Got ABORT
-                return
-
-            MSG("POURING %d 0" % bottle)
-            mysleep(0.5)
-
-        # Simulate temporarily removed cup in of of 3 cocktails poureds
-        if bottle == 2 and cocktails_poured % 3 == 0:
-            MSG("WAITING_FOR_CUP")
-            mysleep(0.5)
-
-        # Simulate permanently removed cup in one of 10 cocktails poureds
-        if bottle == 5 and cocktails_poured % 10 == 0:
-            MSG("WAITING_FOR_CUP")
-            mysleep(1)
-            ERROR("CUP_TO")
-            return 1
-
-        bottle += 1
-
-    # https://github.com/rfjakob/barwin-arduino/blob/master/src/sketch.ino#L298
-    MSG("ENJOY 34 12 18 20 26 33 8")
-
-
-def wait_for_resume():
-    while True:
-        if(vserial.inWaiting() == 0):
-            time.sleep(0.1)
-            continue
-
-        c = sread(50)
-        if c == "RESUME\r\n":
-            return 0
-        elif c == "ABORT\r\n":
-            return 1
-        else:
-            ERROR("ERROR INVAL_CMD")
-
-
-def wait_for_cup():
-    """https://github.com/rfjakob/barwin-arduino/blob/master/lib/ads1231/ads1231.cpp#L274"""
-    MSG("WAITING_FOR_CUP")
-
-
-def escapern(s):
-    """Escape \r\n"""
-    s = s.replace("\r", "\\r").replace("\n", "\\n")
-    # Fainter color for final \r\n
-    s = re.sub("\\\\r\\\\n$", '\033[2m\\\\r\\\\n', s)
-    return s
-
-
-def swrite(msg):
-    """Write to serial"""
-    print 'TX: \033[31m%s\033[0m' % escapern(msg)
-    vserial.write(msg)
-
-
-def sread(n):
-    """Read from serial"""
-    msg = vserial.read(n)
-    print 'RX: \033[32m%s\033[0m' % escapern(msg)
-    return msg
-
-
-def dancing_bottles():
-    DEBUG_MSG_LN(":D-<")
-    time.sleep(0.5)
-    DEBUG_MSG_LN(":D|-<")
-    time.sleep(0.5)
-    DEBUG_MSG_LN(":D/-<")
-    time.sleep(0.5)
-
-
-def create_symlinks():
-    """Symlink dance:
-
-    /dev/ttyS99 -> intermediate_symlink -> /dev/pts/X
-    ^ root only    ^ writeable by normal user
-
-    The intermediate symlink is needed so we don't need root rights for
-    every run."""
-    friendly_name = "/dev/ttyS99"
-    intermediate_symlink = os.path.dirname(
-        os.path.realpath(__file__)) + "/../../var/ttyS99"
-
-    # Create a symlink /dev/ttyS99 pointing to intermediate_symlink using sudo
-    # if it does not exist yet
-    if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != intermediate_symlink):
-        print "Creating %s symlink via sudo..." % friendly_name
-        ret = os.system("sudo ln -sfT %s %s" %
-                        (intermediate_symlink, friendly_name))
+        ret = os.system("ln -sfT %s %s" % (slave_fn, intermediate_symlink))
         if ret != 0:
-            raise RuntimeError("Failed to create symlink")
-    print "Symlink %s ok\n" % friendly_name
+            print "Failed"
+            exit(1)
+        print "Symlinked as:     %s" % VSERIAL_FRIENDLY_NAME
+        return vserial
 
-if __name__ == '__main__':
-    symlinkonly = False
-    bottles_nr = 7
+    def ERROR(self, msg):
+        """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L52"""
+        self.swrite("ERROR %s\r\n" % msg)
 
-    if len(sys.argv) == 2:
-        if sys.argv[1] == "selftest":
-            print "Enabling selftest mode"
-            selftest = True
-        elif sys.argv[1] == "symlinkonly":
-            symlinkonly = True
-        else:
-            print "Command line options: selftest, symlinkonly"
-            exit(3)
+    def DEBUG_MSG_LN(self, msg):
+        """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L29"""
+        self.swrite("DEBUG     %s\r\n" % msg)
 
-    create_symlinks()
+    def MSG(self, msg):
+        """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L50"""
+        self.swrite("%s\r\n" % msg)
 
-    if symlinkonly:
-        exit(0)
+    def mysleep(self, secs):
+        time.sleep(secs)
 
-    master_fd, slave_fd = os.openpty()
-    slave_fn = os.ttyname(slave_fd)
+    def pour_cocktail(self, parts):
+        """https://github.com/rfjakob/barwin-arduino/blob/master/lib/bottle/bottle.cpp#L165
 
-    print "Virtual terminal: %s" % slave_fn
+        Testcase: POUR 0 1 2 3 4 5 6
+                RESUME
+                ABORT
+        """
+        bottle = 0
+        self.cocktails_poured += 1
 
-    vserial = serial.Serial()
-    vserial.fd = master_fd
-    vserial._isOpen = True
-    vserial.timeout = 0.05
+        # Cup is already on the table in 1 in 2 cases
+        if self.cocktails_poured % 2 == 0:
+            self.MSG("WAITING_FOR_CUP")
+            self.mysleep(0.5)
 
-    ret = os.system("ln -sfT %s %s" % (slave_fn, intermediate_symlink))
-    if ret != 0:
-        print "Failed"
-        exit(1)
-    print "Symlinked as:     %s" % friendly_name
-
-    cocktails_poured = -1
-
-    i = 0
-    while True:
-        i += 1
-
-        if i < 10:
-            swrite("READY 0 0\r\n")
-        else:
-            swrite("READY 15 1\r\n")
-
-        if(vserial.inWaiting() == 0):
-            time.sleep(1)
-            continue
-
-        c = sread(50)
-        if c.startswith('POUR '):
-            c = c[5:]
-            parts = c.split(" ")
-
-            if len(parts) != bottles_nr:
-                DEBUG_MSG_LN("Got %d values instead of %d" %
-                            (len(parts), bottles_nr))
-                ERROR("INVAL_CMD")
+        for part in parts:
+            part = int(part)
+            if part == 0:
                 continue
 
-            pour_cocktail(parts)
-        elif c == 'DANCE\r\n':
-            dancing_bottles()
-        else:
-            ERROR("INVAL_CMD")
+            self.MSG("POURING %d 0" % bottle)
+            self.mysleep(1)
+
+            # Simulate empty bottle in one of 13 cocktails poured
+            if bottle == 1 and self.cocktails_poured % 13 == 0:
+
+                # https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
+                self.ERROR("BOTTLE_EMPTY")
+
+                if self.wait_for_resume() == 1:
+                    # Got ABORT
+                    return
+
+                self.MSG("POURING %d 0" % bottle)
+                self.mysleep(0.5)
+
+            # Simulate temporarily removed cup in of of 3 cocktails poureds
+            if bottle == 2 and self.cocktails_poured % 3 == 0:
+                self.MSG("WAITING_FOR_CUP")
+                self.mysleep(0.5)
+
+            # Simulate permanently removed cup in one of 10 cocktails poureds
+            if bottle == 5 and self.cocktails_poured % 10 == 0:
+                self.MSG("WAITING_FOR_CUP")
+                self.mysleep(1)
+                self.ERROR("CUP_TO")
+                return 1
+
+            bottle += 1
+
+        # https://github.com/rfjakob/barwin-arduino/blob/master/src/sketch.ino#L298
+        self.MSG("ENJOY 34 12 18 20 26 33 8")
+
+    def wait_for_resume(self):
+        while True:
+            if not self.savailable:
+                time.sleep(0.1)
+                continue
+
+            c = self.sread(50)
+            if c == "RESUME\r\n":
+                return 0
+            elif c == "ABORT\r\n":
+                return 1
+            else:
+                self.ERROR("ERROR INVAL_CMD")
+
+    def wait_for_cup(self):
+        """https://github.com/rfjakob/barwin-arduino/blob/master/lib/ads1231/ads1231.cpp#L274"""
+        self.MSG("WAITING_FOR_CUP")
+
+    @staticmethod
+    def escapern(s):
+        """Escape \r\n"""
+        s = s.replace("\r", "\\r").replace("\n", "\\n")
+        # Fainter color for final \r\n
+        s = re.sub("\\\\r\\\\n$", '\033[2m\\\\r\\\\n', s)
+        return s
+
+    def swrite(self, msg):
+        """Write to serial"""
+        print 'TX: \033[31m%s\033[0m' % self.escapern(msg)
+        self._vserial.write(msg)
+
+    def sread(self, n):
+        """Read from serial"""
+        msg = self._vserial.read(n)
+        print 'RX: \033[32m%s\033[0m' % self.escapern(msg)
+        return msg
+
+    @property
+    def savailable(self):
+        return self._vserial.inWaiting() > 0
+
+    def dancing_bottles(self):
+        self.DEBUG_MSG_LN(":D-<")
+        time.sleep(0.5)
+        self.DEBUG_MSG_LN(":D|-<")
+        time.sleep(0.5)
+        self.DEBUG_MSG_LN(":D/-<")
+        time.sleep(0.5)
+
+    def loop(self):
+            """This is the Arduino main loop."""
+            i = 0
+            while True:
+                i += 1
+
+                if i < 10:
+                    self.swrite("READY 0 0\r\n")
+                else:
+                    self.swrite("READY 15 1\r\n")
+
+                if not self.savailable:
+                    time.sleep(1)
+                    continue
+
+                cmd = self.sread(50)
+                if cmd.startswith('POUR '):
+                    cmd = cmd[5:]
+                    parts = cmd.split(" ")
+
+                    if len(parts) != self.bottlesnr:
+                        self.DEBUG_MSG_LN("Got %d values instead of %d" %
+                                          (len(parts), self.bottlesnr))
+                        self.ERROR("INVAL_CMD")
+                        continue
+
+                    self.pour_cocktail(parts)
+                elif cmd == 'DANCE\r\n':
+                    self.dancing_bottles()
+                else:
+                    self.ERROR("INVAL_CMD")
+                    self.DEBUG_MSG_LN("got '%s' (len=%d)" % (cmd, len(cmd)))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(formatter_class=better_formatter,
+                                     description="Simulation for Barwin via"
+                                     "virtual serial interface")
+
+    parser.add_argument('--bottlesnr', metavar='N', type=int, default=7,
+                        help="Numbers of available bottles")
+    parser.add_argument('--symlink-only', action='store_true',
+                        help="create some symlinks using sudo")
+
+    args = parser.parse_args()
+
+    if args.symlink_only:
+        BarwinSimulation.create_symlinks()
+    else:
+        barwin = BarwinSimulation(bottlesnr=args.bottlesnr)
+        barwin.loop()
+
