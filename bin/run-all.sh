@@ -27,16 +27,16 @@ make
 cd bin
 
 # Create the /dev/ttyS99 symlink here - may ask for the sudo password.
-# If we don't do it now, arduino-sim may ask for it later.
+# If we don't do it now, barwinsimu may ask for it later.
 # This will delay the startup, and genBot crashes immediately as
 # the serial line is not ready.
 if [ $SIMULATION = "1" ]; then
-    ./arduino-sim.py symlinkonly
+    ./barwinsimu.py symlinkonly
 fi
 
 if [ "$1" = "gnome-terminal" ]; then
     if [ $SIMULATION = "1" ]; then
-        gnome-terminal -e 'bash -c "./arduino-sim.py"' -t arduino-sim
+        gnome-terminal -e 'bash -c "./barwinsimu.py"' -t barwinsimu
     fi
     sleep 1
     gnome-terminal -e 'bash -c "./serialRMI.sh"' -t serialRMI
