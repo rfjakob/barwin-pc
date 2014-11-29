@@ -188,37 +188,37 @@ class BarwinSimulation(object):
         time.sleep(0.5)
 
     def loop(self):
-            """This is the Arduino main loop."""
-            i = 0
-            while True:
-                i += 1
+        """This is the Arduino main loop."""
+        i = 0
+        while True:
+            i += 1
 
-                if i < 10:
-                    self.swrite("READY 0 0\r\n")
-                else:
-                    self.swrite("READY 15 1\r\n")
+            if i < 10:
+                self.swrite("READY 0 0\r\n")
+            else:
+                self.swrite("READY 15 1\r\n")
 
-                if not self.savailable:
-                    time.sleep(1)
+            if not self.savailable:
+                time.sleep(1)
+                continue
+
+            cmd = self.sread(50)
+            if cmd.startswith('POUR '):
+                cmd = cmd[5:]
+                parts = cmd.split(" ")
+
+                if len(parts) != self.bottlesnr:
+                    self.DEBUG_MSG_LN("Got %d values instead of %d" %
+                                    (len(parts), self.bottlesnr))
+                    self.ERROR("INVAL_CMD")
                     continue
 
-                cmd = self.sread(50)
-                if cmd.startswith('POUR '):
-                    cmd = cmd[5:]
-                    parts = cmd.split(" ")
-
-                    if len(parts) != self.bottlesnr:
-                        self.DEBUG_MSG_LN("Got %d values instead of %d" %
-                                          (len(parts), self.bottlesnr))
-                        self.ERROR("INVAL_CMD")
-                        continue
-
-                    self.pour_cocktail(parts)
-                elif cmd == 'DANCE\r\n':
-                    self.dancing_bottles()
-                else:
-                    self.ERROR("INVAL_CMD")
-                    self.DEBUG_MSG_LN("got '%s' (len=%d)" % (cmd, len(cmd)))
+                self.pour_cocktail(parts)
+            elif cmd == 'DANCE\r\n':
+                self.dancing_bottles()
+            else:
+                self.ERROR("INVAL_CMD")
+                self.DEBUG_MSG_LN("got '%s' (len=%d)" % (cmd, len(cmd)))
 
 
 if __name__ == '__main__':
