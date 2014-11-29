@@ -19,19 +19,18 @@ def ERROR(msg):
     """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L52"""
     swrite("ERROR %s\r\n" % msg)
 
+
 def DEBUG_MSG_LN(msg):
     """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L29"""
     swrite("DEBUG     %s\r\n" % msg)
+
 
 def MSG(msg):
     """https://github.com/rfjakob/barwin-arduino/blob/master/lib/utils/utils.h#L50"""
     swrite("%s\r\n" % msg)
 
-
 def mysleep(secs):
-    # Selftest should run quickly
-    if selftest == False:
-        time.sleep(secs)
+    time.sleep(secs)
 
 
 def pour_cocktail(parts):
@@ -64,9 +63,6 @@ def pour_cocktail(parts):
             # https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
             ERROR("BOTTLE_EMPTY")
 
-            if selftest:
-                testserial.write("RESUME\r\n")
-
             if wait_for_resume() == 1:
                 # Got ABORT
                 return
@@ -91,6 +87,7 @@ def pour_cocktail(parts):
     # https://github.com/rfjakob/barwin-arduino/blob/master/src/sketch.ino#L298
     MSG("ENJOY 34 12 18 20 26 33 8")
 
+
 def wait_for_resume():
     while True:
         if(vserial.inWaiting() == 0):
@@ -105,9 +102,11 @@ def wait_for_resume():
         else:
             ERROR("ERROR INVAL_CMD")
 
+
 def wait_for_cup():
     """https://github.com/rfjakob/barwin-arduino/blob/master/lib/ads1231/ads1231.cpp#L274"""
     MSG("WAITING_FOR_CUP")
+
 
 def escapern(s):
     """Escape \r\n"""
@@ -116,16 +115,19 @@ def escapern(s):
     s = re.sub("\\\\r\\\\n$", '\033[2m\\\\r\\\\n', s)
     return s
 
+
 def swrite(msg):
     """Write to serial"""
     print 'TX: \033[31m%s\033[0m' % escapern(msg)
     vserial.write(msg)
+
 
 def sread(n):
     """Read from serial"""
     msg = vserial.read(n)
     print 'RX: \033[32m%s\033[0m' % escapern(msg)
     return msg
+
 
 def dancing_bottles():
     DEBUG_MSG_LN(":D-<")
@@ -135,8 +137,30 @@ def dancing_bottles():
     DEBUG_MSG_LN(":D/-<")
     time.sleep(0.5)
 
+
+def create_symlinks():
+    """Symlink dance:
+
+    /dev/ttyS99 -> intermediate_symlink -> /dev/pts/X
+    ^ root only    ^ writeable by normal user
+
+    The intermediate symlink is needed so we don't need root rights for
+    every run."""
+    friendly_name = "/dev/ttyS99"
+    intermediate_symlink = os.path.dirname(
+        os.path.realpath(__file__)) + "/../../var/ttyS99"
+
+    # Create a symlink /dev/ttyS99 pointing to intermediate_symlink using sudo
+    # if it does not exist yet
+    if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != intermediate_symlink):
+        print "Creating %s symlink via sudo..." % friendly_name
+        ret = os.system("sudo ln -sfT %s %s" %
+                        (intermediate_symlink, friendly_name))
+        if ret != 0:
+            raise RuntimeError("Failed to create symlink")
+    print "Symlink %s ok\n" % friendly_name
+
 if __name__ == '__main__':
-    selftest = False
     symlinkonly = False
     bottles_nr = 7
 
@@ -150,29 +174,9 @@ if __name__ == '__main__':
             print "Command line options: selftest, symlinkonly"
             exit(3)
 
-    # Symlink dance:
-    #
-    # /dev/ttyS99 -> intermediate_symlink -> /dev/pts/X
-    # ^ root only    ^ writeable by normal user
-    #
-    # The intermediate symlink is needed so we don't need root rights for
-    # every run.
-    friendly_name = "/dev/ttyS99"
-    intermediate_symlink = os.path.dirname(
-        os.path.realpath(__file__)) + "/../../var/ttyS99"
-
-    # Create a symlink /dev/ttyS99 pointing to intermediate_symlink using sudo
-    # if it does not exist yet
-    if (not os.path.islink(friendly_name)) or (os.readlink(friendly_name) != intermediate_symlink):
-        print "Creating %s symlink via sudo..." % friendly_name
-        ret = os.system("sudo ln -sfT %s %s" %
-                        (intermediate_symlink, friendly_name))
-        if ret != 0:
-            print "Failed"
-            exit(1)
+    create_symlinks()
 
     if symlinkonly:
-        print "Symlink %s ok" % friendly_name
         exit(0)
 
     master_fd, slave_fd = os.openpty()
@@ -191,9 +195,6 @@ if __name__ == '__main__':
         exit(1)
     print "Symlinked as:     %s" % friendly_name
 
-    if selftest:
-        testserial = serial.Serial("/dev/ttyS99")
-
     cocktails_poured = -1
 
     i = 0
@@ -204,10 +205,6 @@ if __name__ == '__main__':
             swrite("READY 0 0\r\n")
         else:
             swrite("READY 15 1\r\n")
-
-        if selftest:
-            testserial.write("POUR 10 20 10 30 10 0 0\r\n")
-            time.sleep(0.1)  # Needs some time to get to the other end of the vtty
 
         if(vserial.inWaiting() == 0):
             time.sleep(1)
@@ -229,7 +226,3 @@ if __name__ == '__main__':
             dancing_bottles()
         else:
             ERROR("INVAL_CMD")
-
-        if selftest and cocktails_poured == 1:
-            print "Selftest seems to have passed. To be sure, check the output above for sanity."
-            exit(0)
