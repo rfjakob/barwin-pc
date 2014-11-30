@@ -17,6 +17,9 @@ from argparse import ArgumentDefaultsHelpFormatter as better_formatter
 
 VSERIAL_FRIENDLY_NAME = "/dev/ttyS99"
 
+# from barwin-arduino/config.h:
+SEND_READY_INTERVAL = 2000    # in ms
+
 class BarwinSimulation(object):
     def __init__(self, bottlesnr):
         self.bottlesnr = bottlesnr
@@ -25,6 +28,7 @@ class BarwinSimulation(object):
         # starte symlink dance and create serial device
         intermediate_symlink = self.create_symlinks()
         self._vserial = self._create_vserial(intermediate_symlink)
+        self.is_cup_on_scale = False
 
     @classmethod
     def create_symlinks(cls):
@@ -96,9 +100,14 @@ class BarwinSimulation(object):
         self.cocktails_poured += 1
 
         # Cup is already on the table in 1 in 2 cases
-        if self.cocktails_poured % 2 == 0:
+        if not self.is_cup_on_scale:
             self.MSG("WAITING_FOR_CUP")
-            self.mysleep(0.5)
+            self.mysleep(2)
+            self.is_cup_on_scale = True
+
+        # errors on first non empty bottle to avoid too many and too few errors
+        # if many POUR commands contain only one non empty bottle
+        first_bottle = True
 
         for part in parts:
             part = int(part)
@@ -109,8 +118,7 @@ class BarwinSimulation(object):
             self.mysleep(1)
 
             # Simulate empty bottle in one of 13 cocktails poured
-            if bottle == 1 and self.cocktails_poured % 13 == 0:
-
+            if first_bottle and self.cocktails_poured % 13 == 0:
                 # https://github.com/rfjakob/barwin-arduino/blob/master/lib/errors/errors.cpp#L18
                 self.ERROR("BOTTLE_EMPTY")
 
@@ -121,19 +129,20 @@ class BarwinSimulation(object):
                 self.MSG("POURING %d 0" % bottle)
                 self.mysleep(0.5)
 
-            # Simulate temporarily removed cup in of of 3 cocktails poureds
-            if bottle == 2 and self.cocktails_poured % 3 == 0:
+            # Simulate temporarily removed cup in one of 3 cocktails poureds
+            if first_bottle and self.cocktails_poured % 3 == 0:
                 self.MSG("WAITING_FOR_CUP")
                 self.mysleep(0.5)
 
             # Simulate permanently removed cup in one of 10 cocktails poureds
-            if bottle == 5 and self.cocktails_poured % 10 == 0:
+            if first_bottle and self.cocktails_poured % 10 == 0:
                 self.MSG("WAITING_FOR_CUP")
                 self.mysleep(1)
                 self.ERROR("CUP_TO")
                 return 1
 
             bottle += 1
+            first_bottle = False
 
         # https://github.com/rfjakob/barwin-arduino/blob/master/src/sketch.ino#L298
         self.MSG("ENJOY 34 12 18 20 26 33 8")
@@ -193,13 +202,15 @@ class BarwinSimulation(object):
         while True:
             i += 1
 
-            if i < 10:
-                self.swrite("READY 0 0\r\n")
-            else:
-                self.swrite("READY 15 1\r\n")
+            if i % 5 == 0:
+                self.is_cup_on_scale = not self.is_cup_on_scale
+
+            weight = 15 if self.is_cup_on_scale else 0
+            self.swrite("READY {weight} {on_scale}\r\n".format(
+                weight=weight, on_scale=int(self.is_cup_on_scale)))
 
             if not self.savailable:
-                time.sleep(1)
+                time.sleep(SEND_READY_INTERVAL / 1000.)
                 continue
 
             cmd = self.sread(50)
